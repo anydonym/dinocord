@@ -1,7 +1,7 @@
 /**
  * The Gateway options, used to connect and facilitate events between the gateway client and Discord gateway.
  */
-export interface GatewayOptions {
+export default interface GatewayOptions {
   intents: Array<GatewayIntents|keyof typeof GatewayIntents>;
   token: string;
 }

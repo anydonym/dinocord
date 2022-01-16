@@ -3,7 +3,7 @@
  */
 export default abstract class IdBase {
   /** The object's ID. */
-  id:             string;
+  readonly id:  string;
 
   constructor (id: string) {
     this.id = id;

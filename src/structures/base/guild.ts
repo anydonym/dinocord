@@ -1,3 +1,5 @@
+import Role from '../implementations/role.ts';
+
 /**
  * The Guild payload structure. 
  */
