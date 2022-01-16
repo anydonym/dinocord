@@ -1,9 +1,15 @@
 export default interface Guild {
+  /** The guild ID. */
   id:                             string;
+  /** The guild name. */
   name:                           string;
+  /** The icon hash of the guild. */
   icon?:                          string;
+  /** The icon hash of the guild, returned when in the template object. */
   icon_hash?:                     string;
+  /** The splash hash. */
   splash?:                        string;
+  /** The discovery splash for the guild. Available if the guild is discoverable. */
   discovery_splash?:              string;
   owner?:                         boolean;
   owner_id:                       string;
@@ -19,10 +25,21 @@ export default interface Guild {
    * 0 means members will receive notifications for all messages, while 1 means that users will only receive notifcations on their mention.
    */
   default_message_notifications:  0 | 1;
-  explicit_content_filter:        number;
+  /**
+   * The level of explicit content filter.
+   * 0 means all media content will not be filtered, while 1 and 2 mean that media content send by members without roles and all members will be scanned, accordingly.
+   */
+  explicit_content_filter:        0 | 1 | 2;
+  /** The roles in the guild. */
   roles:                          Role[];
+  /** The custom guild emojis. */
   emojis:                         Emoji[];
+  /** The guild features. */
   features:                       GuildFeatures[];
+  /**
+   * The guild MFA requirement.
+   * 0 indicates that the guild has no MFA requirement for moderation permissions, while 1 means the otherwise.
+   */
   mfa_level:                      0 | 1;
   application_id?:                string;
   system_channel_id?:             string;
