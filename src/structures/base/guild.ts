@@ -1,3 +1,6 @@
+/**
+ * The Guild payload structure. 
+ */
 export default interface Guild {
   /** The guild ID. */
   id:                             string;
@@ -45,7 +48,7 @@ export default interface Guild {
   system_channel_id?:             string;
   system_channel_flags:           number;
   rules_channel_id?:              string;
-  joined_at?:                     string;
+  joined_at?:                     string; // ISO8601
   large?:                         boolean;
   unavailable?:                   boolean;
   member_count?:                  number;
