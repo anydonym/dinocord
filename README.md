@@ -1,2 +1,2 @@
 # dinocord
-A Deno Discord gateway library for bots.
+An intuitive Discord gateway library for Deno. Made in TypeScript.
