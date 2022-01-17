@@ -1,0 +1,1 @@
+export * as zlib from 'https://deno.land/x/compress/zlib/mod.ts';

@@ -14,18 +14,18 @@ export default class Role extends IdBase implements RolePayload {
   mentionable;
   readonly tags?;
 
-  constructor (rolePayload: RolePayload) {
-    super(rolePayload.id);
+  constructor (payload: RolePayload) {
+    super(payload.id);
 
-    this.name = rolePayload.name;
-    this.color = rolePayload.color;
-    this.hoist = rolePayload.hoist;
-    this.icon = rolePayload.icon;
-    this.unicode_emoji = rolePayload.unicode_emoji;
-    this.position = rolePayload.position;
-    this.permissions = rolePayload.permissions;
-    this.managed = rolePayload.managed;
-    this.mentionable = rolePayload.mentionable;
-    this.tags = rolePayload.tags
+    this.name = payload.name;
+    this.color = payload.color;
+    this.hoist = payload.hoist;
+    this.icon = payload.icon;
+    this.unicode_emoji = payload.unicode_emoji;
+    this.position = payload.position;
+    this.permissions = payload.permissions;
+    this.managed = payload.managed;
+    this.mentionable = payload.mentionable;
+    this.tags = payload.tags
   }
 }

@@ -1,4 +1,5 @@
 import User from '../implementations/user.ts';
+import Role from '../implementations/role.ts';
 
 /**
  * The Emoji payload structure.

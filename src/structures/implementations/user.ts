@@ -21,23 +21,24 @@ export default class User extends IdBase implements UserPayload {
 
   /**
    * Constructs a new User class.
+   * @param payload The User payload.
    */
-  constructor (userPayload: UserPayload) {
-    super(userPayload.id);
+  constructor (payload: UserPayload) {
+    super(payload.id);
 
-    this.username = userPayload.username;
-    this.discriminator = userPayload.discriminator;
-    this.avatar = userPayload.avatar;
-    this.bot = userPayload.bot;
-    this.system = userPayload.system;
-    this.mfa_enabled = userPayload.mfa_enabled;
-    this.banner = userPayload.banner;
-    this.accent_color = userPayload.accent_color;
-    this.locale = userPayload.locale;
-    this.verified = userPayload.verified;
-    this.email = userPayload.email;
-    this.flags = userPayload.flags;
-    this.premium_type = userPayload.premium_type;
-    this.public_flags = userPayload.public_flags;
+    this.username = payload.username;
+    this.discriminator = payload.discriminator;
+    this.avatar = payload.avatar;
+    this.bot = payload.bot;
+    this.system = payload.system;
+    this.mfa_enabled = payload.mfa_enabled;
+    this.banner = payload.banner;
+    this.accent_color = payload.accent_color;
+    this.locale = payload.locale;
+    this.verified = payload.verified;
+    this.email = payload.email;
+    this.flags = payload.flags;
+    this.premium_type = payload.premium_type;
+    this.public_flags = payload.public_flags;
   }
 }
