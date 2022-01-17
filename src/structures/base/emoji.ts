@@ -6,19 +6,19 @@ import Role from '../implementations/role.ts';
  */
 export default interface Emoji {
   /** The emoji ID. Nullable. */
-  id?:              string|undefined;
+  id?: string|undefined;
   /** The emoji name. */
-  name:             string|undefined;
+  name: string|undefined;
   /** The roles that are allowed to use the emoji. */
-  roles?:           Role[];
+  roles?: Role[];
   /** The user that has created this emoji. */
-  user?:            User;
+  user?: User;
   /** Whether the emoji mandates colon wrapping. */
-  require_colons?:  boolean;
+  require_colons?: boolean;
   /** Whether the emoji is managed. */
-  managed?:         boolean;
+  managed?: boolean;
   /** Whether the emoji is animated. */
-  animated?:        boolean;
+  animated?: boolean;
   /** Whether the emoji can be used. False if the guild loses Server Boosts. */
-  available?:       boolean;
+  available?: boolean;
 }

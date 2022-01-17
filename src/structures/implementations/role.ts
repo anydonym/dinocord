@@ -1,4 +1,4 @@
-import IdBase from '../idbase.a.ts';
+import { IdBase } from '../idbase.a.ts';
 import RolePayload, { RoleTags } from '../base/role.ts';
 
 export default class Role extends IdBase implements RolePayload {

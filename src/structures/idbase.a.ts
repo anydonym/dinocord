@@ -1,7 +1,7 @@
 /**
  * The base class. Contains an ID variable and a default toString() method.
  */
-export default abstract class IdBase {
+export abstract class IdBase {
   /** The object's ID. */
   readonly id:  string;
 

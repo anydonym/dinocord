@@ -3,34 +3,34 @@
  */
 export default interface Role {
   /** The role ID. */
-  id:             string;
+  id: string;
   /** The role name. */
-  name:           string;
+  name: string;
   /** The role color. Represented in hexadecimal color code. */
-  color:          number;
+  color: number;
   /** Whether this role is displayed separately from other roles. */
-  hoist?:         boolean;
+  hoist?: boolean;
   /** The role icon hash. */
-  icon?:          string;
+  icon?: string;
   /** The role Unicode emoji. */
   unicode_emoji?: string;
   /** The role position in the hierarchy. */
-  position:       number;
+  position: number;
   /** The role permission bit set. */
-  permissions:    string;
+  permissions: string;
   /** Whether this role is managed by integration. */
-  managed:        boolean;
+  managed: boolean;
   /** Whether this role can be mentioned. */
-  mentionable:    boolean;
+  mentionable: boolean;
   /** The role associated tags. */
-  tags?:          RoleTags;
+  tags?: RoleTags;
 }
 
 export interface RoleTags {
   /** The ID of the bot which the role belongs to. */
-  bot_id?:              string;
+  bot_id?: string;
   /** The ID of the integration which the role belongs to. */
-  integration_id?:      string;
+  integration_id?: string;
   /** Whether the role is guild premium booster role. */
-  premium_subscriber?:  null;
+  premium_subscriber?: null;
 }

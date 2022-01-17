@@ -1,18 +1,19 @@
-import IdBase from '../idbase.a.ts';
+import { IdBase } from '../idbase.a.ts';
 import WebhookPayload from '../base/webhook.ts';
 
 export default class Webhook extends IdBase implements WebhookPayload {
+  /** The webhook ID. */
   declare readonly id;
-  type;
-  guild_id?;
-  channel_id?;
+  readonly type;
+  readonly guild_id?;
+  readonly channel_id?;
   user?;
   name?;
   avatar?;
   token?;
-  application_id?;
-  source_guild;
-  source_channel;
+  readonly application_id?;
+  readonly source_guild;
+  readonly source_channel;
   url?;
 
   constructor (payload: WebhookPayload) {

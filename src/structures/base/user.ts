@@ -3,38 +3,38 @@
  */
 export default interface UserPayload {
   /** The user's ID. */
-  id:             string;
+  id: string;
   /** The user's username. */
-  username:       string;
+  username: string;
   /** The 4-digit ending discriminator of the user. */
-  discriminator:  string;
+  discriminator: string;
   /** The hash of the user's avatar. */
-  avatar?:        string;
+  avatar?: string;
   /** Whether or not the user is a bot. */
-  bot?:           boolean;
+  bot?: boolean;
   /** Whether or not the user is an Official Discord System user. */
-  system?:        boolean;
+  system?: boolean;
   /** The user's MFA status. */
-  mfa_enabled?:   boolean;
+  mfa_enabled?: boolean;
   /** The user's banner hash. */
-  banner?:        string;
+  banner?: string;
   /** The user's banner color in the form of an hexadecimal color code. */
-  accent_color?:  number;
+  accent_color?: number;
   /** The user language chosen on Discord. */
-  locale?:        string;
+  locale?: string;
   /** Whether or not the user's associated email has been verified. Requires `email` OAuth2 scope. */
-  verified?:      boolean;
+  verified?: boolean;
   /** The user's email. Requires `email` OAuth2 scope. */
-  email?:         string;
+  email?: string;
   /** The flags on the user's account. */
-  flags?:         UserFlags;
+  flags?: UserFlags;
   /**
    * The type of Nitro subscription the user has on their account.
    * 0 means the user has no active Nitro Subscription, while 1 and 2 mean the user has subscribed to Nitro Classic and Nitro, respectively.
    */
-  premium_type?:  0 | 1 | 2;
+  premium_type?: 0 | 1 | 2;
   /** The public flags of the user's account. */
-  public_flags?:  number;
+  public_flags?: number;
 }
 
 /**

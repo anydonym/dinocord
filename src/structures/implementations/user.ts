@@ -1,4 +1,4 @@
-import IdBase from '../idbase.a.ts';
+import { IdBase } from '../idbase.a.ts';
 import UserPayload, { UserFlags } from '../base/user.ts';
 
 export default class User extends IdBase implements UserPayload {

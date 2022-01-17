@@ -1,4 +1,4 @@
-import IdBase from '../idbase.a.ts';
+import { IdBase } from '../idbase.a.ts';
 import ChannelPayload, { ChannelType } from '../base/channel.ts';
 
 export default class Channel extends IdBase implements ChannelPayload {
