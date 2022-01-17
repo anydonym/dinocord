@@ -20,7 +20,7 @@ export default class User extends IdBase implements UserPayload {
   readonly public_flags?;
 
   /**
-   * Constructs a new User class.
+   * Constructs a new User instance.
    * @param payload The User payload.
    */
   constructor (payload: UserPayload) {

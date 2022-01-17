@@ -1,4 +1,8 @@
 import Role from '../implementations/role.ts';
+import Emoji from '../implementations/emoji.ts';
+import Channel from '../implementations/channel.ts';
+import VoiceState from '../implementations/voicestate.ts';
+import GuildMember from '../implementations/guildmember.ts';
 
 /**
  * The Guild payload structure. 

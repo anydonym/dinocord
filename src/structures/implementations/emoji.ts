@@ -1,7 +1,5 @@
 import { OptionalIdBase } from '../idbase.a.ts';
 import EmojiPayload from '../base/emoji.ts';
-import role from "./role";
-import user from "./user";
 
 export default class Emoji extends OptionalIdBase implements EmojiPayload {
   declare readonly id?;
@@ -14,7 +12,7 @@ export default class Emoji extends OptionalIdBase implements EmojiPayload {
   available?;
 
   /**
-   * Constructs a new Emoji class.
+   * Constructs a new Emoji instance.
    * @param payload The Emoji payload.
    */
   constructor (payload: EmojiPayload) {
