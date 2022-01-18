@@ -1,4 +1,5 @@
 import User from '../implementations/user.ts';
+import Team from './team.ts';
 
 export default interface Application {
   /** The application ID. */

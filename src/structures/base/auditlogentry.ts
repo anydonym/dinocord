@@ -1,3 +1,5 @@
+import Role from '../implementations/role.ts';
+
 export default interface AuditLogEntry {
   target_id?:   string;
   changes?:     AuditLogChange[];
@@ -6,6 +8,14 @@ export default interface AuditLogEntry {
   action_type:  AuditLogEvent;
   options?:     OptionalAuditEntryInfo;
   reason?:      string;
+}
+
+type mixed = string|number|boolean|Partial<Role>|PermissionOverwrite;
+
+export interface AuditLogChange {
+  new_value?: mixed;
+  old_value?: mixed;
+  key: string;
 }
 
 /**

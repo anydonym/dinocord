@@ -24,8 +24,12 @@ export default interface Sticker {
    * Type 1 is PNG, while 2 and 3 are APNG and LOTTILE, respectively.
    */
   format_type?: 1 | 2 | 3;
+  /** Whether the guild sticker is available for usage. */
   available?: boolean;
+  /** The ID of the guild which the sticker belongs to. */
   guild_id?: string;
+  /** The user that uploaded the sticker. */
   user?: User;
+  /** The sort order of the sticker, given it belongs to a Discord default sticker pack. */
   sort_value?: number;
 }

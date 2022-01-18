@@ -2,8 +2,10 @@
  * The Gateway options, used to connect and facilitate events between the gateway client and Discord gateway.
  */
 export default interface GatewayOptions {
-  intents: Array<GatewayIntents|keyof typeof GatewayIntents>;
+  /** The bot token. */
   token: string;
+  /** The intents to use. */
+  intents: Array<GatewayIntents|keyof typeof GatewayIntents>;
 }
 
 /**

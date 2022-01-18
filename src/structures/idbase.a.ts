@@ -2,7 +2,7 @@
  * The base class. Contains an ID variable and a default toString() method.
  */
 export abstract class IdBase {
-  /** The object's ID. */
+  /** The object ID. */
   readonly id:  string;
 
   constructor (id: string) {
@@ -13,11 +13,12 @@ export abstract class IdBase {
     return `[${this.constructor.name} ${this.id}]`;
   }
 }
+
 /**
  * The base class. Contains an optional ID variable and a default toString() method.
  */
  export abstract class OptionalIdBase {
-  /** The object's ID. */
+  /** The object ID. */
   readonly id?: string;
 
   constructor (id?: string) {

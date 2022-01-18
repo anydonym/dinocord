@@ -3,6 +3,8 @@ import Emoji from '../implementations/emoji.ts';
 import Channel from '../implementations/channel.ts';
 import VoiceState from '../implementations/voicestate.ts';
 import GuildMember from '../implementations/guildmember.ts';
+import PresenceUpdate from './presenceupdate.ts';
+import GuildScheduledEvent from '../implementations/guildscheduledevent.ts';
 
 /**
  * The Guild payload structure. 
@@ -20,15 +22,25 @@ export default interface Guild {
   splash?: string;
   /** The discovery splash for the guild. Available if the guild is discoverable. */
   discovery_splash?: string;
+  /** Whether the user is the owner of the guild. */
   owner?: boolean;
+  /** The ID of the owner of the guild. */
   owner_id: string;
+  /** The permissions for the user in the guild. */
   permissions?: string;
-  region?: string;
+  /** ID of the AFK channel, if set. */
   afk_channel_id?: string;
+  /** The AFK timeout, if set. */
   afk_timeout: number;
+  /** Whether the server widget is enabled. */
   widget_enabled?: boolean;
+  /** The channel ID which the server widget leads to, if set. */
   widget_channel_id?: string;
-  verification_level: number;
+  /**
+   * The verification level required for the guild.
+   * Use the @enum GuildVerificationLevel for possible values.
+   */
+  verification_level: GuildVerificationLevel;
   /**
    * The message notification level set for the guild.
    * 0 means members will receive notifications for all messages, while 1 means that users will only receive notifcations on their mention.
@@ -83,6 +95,19 @@ export default interface Guild {
   premium_progress_bar_enabled: boolean;
 }
 
+export enum GuildVerificationLevel {
+  /** Unrestricted. */
+  NONE      = 0,
+  /** Must have a verified email on one's Discord account. */
+  LOW       = 1,
+  /** Must also be registered on Discord for longer than 5 minutes. */
+  MEDIUM    = 2,
+  /** Must also be a member of this server for longer than 10 minutes. */
+  HIGH      = 3,
+  /** Must have a verified phone number on one's Discord account. */
+  VERY_HIGH = 4
+}
+
 /**
  * Discord Guild Features.
  */
@@ -108,4 +133,22 @@ export enum GuildFeatures {
   VERIFIED                          = 'VERIFIED',
   VIP_REGIONS                       = 'VIP_REGIONS',
   WELCOME_SCREEN_ENABLED            = 'WELCOME_SCREEN_ENABLED'
+}
+
+export interface WelcomeScreen {
+  /** The description of the guild in the welcome screen. */
+  description?: string;
+  /** The array of welcome channels set for this guild. */
+  welcome_channels: WelcomeScreenChannel[];
+}
+
+export interface WelcomeScreenChannel {
+  /** The ID of the channel this welcome screen channel represents. */
+  channel_id: string;
+  /** The description set for this welcome channel. */
+  description: string;
+  /** The emoji ID, if it is a custom emoji. */
+  emoji_id?: string;
+  /** The name of the emoji used for the welcome screen channel, string if custom, Unicode is global and otherwise null. */
+  emoji_name?: string;
 }

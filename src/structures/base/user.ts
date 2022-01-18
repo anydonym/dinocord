@@ -22,9 +22,15 @@ export default interface UserPayload {
   accent_color?: number;
   /** The user language chosen on Discord. */
   locale?: string;
-  /** Whether or not the user's associated email has been verified. Requires `email` OAuth2 scope. */
+  /**
+   * Whether or not the user's associated email has been verified.
+   * @requires `email` OAuth2 scope.
+   */
   verified?: boolean;
-  /** The user's email. Requires `email` OAuth2 scope. */
+  /**
+   * The user's email.
+   * @requires `email` OAuth2 scope.
+   */
   email?: string;
   /** The flags on the user's account. */
   flags?: UserFlags;

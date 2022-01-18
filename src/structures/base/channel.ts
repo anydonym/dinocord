@@ -1,5 +1,8 @@
 import User from '../implementations/user.ts';
 
+/**
+ * @todo Separate interfaces for different channel types
+ */
 export default interface Channel {
   id: string;
   type: ChannelType;
