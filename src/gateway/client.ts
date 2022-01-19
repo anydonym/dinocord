@@ -1,4 +1,5 @@
 import GatewayOptions from './options.ts';
+import { GatewayEventTypes } from './resources/gatewayevents.ts';
 
 export default class GatewayClient {
   options: GatewayOptions;
@@ -17,7 +18,12 @@ export default class GatewayClient {
     throw new Error('Unimplemented.');
   }
 
-  async handleMessage(event: MessageEvent) {
+  private async handleMessage(event: MessageEvent) {
     throw new Error('Unimplemented.');
+  }
+
+
+  listen<E extends keyof typeof GatewayEventTypes>(callback: (parameters: typeof GatewayEventTypes[E]) => void) {
+    throw new Error('Unimplemented.')
   }
 }
