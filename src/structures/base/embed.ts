@@ -1,15 +1,27 @@
 export default interface Embed {
+  /** The embed title. */
   title?: string | undefined;
+  /** The embed description. */
   description?: string | undefined;
+  /** The embed URL, set on the title part of the embed. */
   url?: string | undefined;
+  /** The embed timestamp. Must be a valid ISO8601 timestamp. */
   timestamp?: string | undefined;
+  /** The embed color. */
   color?: number | undefined;
+  /** The embed footer. */
   footer?: EmbedFooter | undefined;
+  /** The embed image. */
   image?: EmbedImage | undefined;
+  /** The embed thumbnail. */
   thumbnail?: EmbedThumbnail | undefined;
+  /** The embed video. */
   video?: EmbedVideo | undefined;
+  /** The embed provider. */
   provider?: EmbedProvider | undefined;
+  /** The embed author. */
   author?: EmbedAuthor | undefined;
+  /** The embed fields. */
   fields?: EmbedField[] | undefined;
 }
 

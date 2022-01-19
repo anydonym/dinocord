@@ -1,3 +1,6 @@
+/**
+ * The Stage Instance payload structure.
+ */
 export default interface StageInstance {
   id: string;
   guild_id: string;

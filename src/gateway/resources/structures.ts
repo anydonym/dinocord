@@ -1,5 +1,8 @@
 import PresenceUpdate from '../../structures/base/presenceupdate.ts';
 
+/**
+ * The Identify payload structure, used to authenticate with the gateway.
+ */
 export interface Identify {
   /** The bot token. */
   token: string;
@@ -22,6 +25,9 @@ export interface Identify {
   intents: number;
 }
 
+/**
+ * The Resume payload structure, used to resume a session.
+ */
 export interface Resume {
   /** The bot token. */
   token: string;

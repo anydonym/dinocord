@@ -1,5 +1,8 @@
 import Role from '../implementations/role.ts';
 
+/**
+ * The Audit Log Entry payload structure.
+ */
 export default interface AuditLogEntry {
   target_id?:   string;
   changes?:     AuditLogChange[];
@@ -12,6 +15,9 @@ export default interface AuditLogEntry {
 
 type mixed = string|number|boolean|Partial<Role>|PermissionOverwrite;
 
+/**
+ * The changes within an instance of audit log.
+ */
 export interface AuditLogChange {
   new_value?: mixed;
   old_value?: mixed;

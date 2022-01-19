@@ -22,8 +22,12 @@ export default class GatewayClient {
     throw new Error('Unimplemented.');
   }
 
-
-  listen<E extends keyof typeof GatewayEventTypes>(callback: (parameters: typeof GatewayEventTypes[E]) => void) {
+  /**
+   * Listens to the event.
+   * @param callback The callback function to call.
+   * @requires E (event name) to be specified.
+   */
+  listen<E extends keyof typeof GatewayEventTypes>(callback: (parameters: typeof GatewayEventTypes[E], rawdata: object) => void) {
     throw new Error('Unimplemented.')
   }
 }

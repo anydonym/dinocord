@@ -1,16 +1,33 @@
 import Emoji from '../implementations/emoji.ts';
 
+/**
+ * The Activity payload structure.
+ */
 export default interface Activity {
+  /** The activity name. */
   name: string;
+  /**
+   * The activity type.
+   * Refer to @enum ActivityType for possible activity types.
+   */
   type: ActivityType;
+  /** The activity stream URL, if type is 1. */
   url?: string;
+  /** The Unix timestamp (in ms) for when the activity was added to the user's session. */
   created_at: number;
+  /** The Unix timestamps for the beginning and/or the end of the game. */
   timestamps?: ActivityTimestamp[];
+  /** The application ID for the activity. */
   application_id?: string;
+  /** The activity details. */
   details?: string;
+  /** The activity party state. */
   state?: string;
+  /** The emoji, if the activity is a custom status. */
   emoji?: Emoji;
+  /** The information for the current party of the user. */
   party?: ActivityParty;
+  /**  */
   assets?: ActivityAsset[];
   secrets?: ActivitySecret[];
   instance?: boolean;
@@ -37,7 +54,9 @@ export enum ActivityType {
 }
 
 export interface ActivityTimestamp {
+  /** The beginning of the activity. */
   start?: number;
+  /** The end of the activity. */
   end?: number;
 }
 
@@ -49,7 +68,7 @@ export interface ActivityParty {
 }
 
 export interface ActivityAsset {
-  large_imgae?: string;
+  large_image?: string;
   large_text?: string;
   small_image?: string;
   small_text?: string;

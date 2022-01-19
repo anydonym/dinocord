@@ -1,6 +1,9 @@
 import User from '../implementations/user.ts';
 import Team from './team.ts';
 
+/**
+ * The Application payload structure.
+ */
 export default interface Application {
   /** The application ID. */
   id: string;
