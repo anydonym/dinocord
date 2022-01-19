@@ -3,6 +3,7 @@ import GuildScheduledEvent from './guildscheduledevent.ts';
 import Channel from '../implementations/channel.ts';
 import User from '../implementations/user.ts';
 import Webhook from '../implementations/webhook.ts';
+import Integration from "../implementations/integration.ts";
 
 /**
  * Discord Audit Log.

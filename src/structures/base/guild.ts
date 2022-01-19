@@ -5,6 +5,8 @@ import VoiceState from '../implementations/voicestate.ts';
 import GuildMember from '../implementations/guildmember.ts';
 import PresenceUpdate from './presenceupdate.ts';
 import GuildScheduledEvent from '../implementations/guildscheduledevent.ts';
+import StageInstance from '../implementations/stageinstance.ts';
+import Sticker from '../implementations/sticker.ts';
 
 /**
  * The Guild payload structure. 

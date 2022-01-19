@@ -1,5 +1,5 @@
 import { IdBase } from '../idbase.a.ts';
-import GuildPayload, { GuildFeatures } from '../base/guild.ts';
+import GuildPayload from '../base/guild.ts';
 
 export default class Guild extends IdBase implements GuildPayload {
   declare readonly id;
@@ -11,7 +11,6 @@ export default class Guild extends IdBase implements GuildPayload {
   owner?;
   readonly owner_id;
   permissions?;
-  region?;
   afk_channel_id?;
   afk_timeout;
   widget_enabled?;
@@ -70,7 +69,6 @@ export default class Guild extends IdBase implements GuildPayload {
     this.owner = payload.owner;
     this.owner_id = payload.owner_id;
     this.permissions = payload.permissions;
-    this.region = payload.region;
     this.afk_channel_id = payload.afk_channel_id;
     this.afk_timeout = payload.afk_timeout;
     this.widget_enabled = payload.widget_enabled;

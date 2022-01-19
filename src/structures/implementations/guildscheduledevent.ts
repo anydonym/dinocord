@@ -1,5 +1,5 @@
 import { IdBase } from '../idbase.a.ts';
-import GuildScheduledEventPayload, { EntityMetadata,EntityType } from '../base/guildscheduledevent.ts';
+import GuildScheduledEventPayload from '../base/guildscheduledevent.ts';
 
 export default class GuildScheduledEvent extends IdBase implements GuildScheduledEventPayload {
   declare readonly id;

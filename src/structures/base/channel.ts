@@ -8,7 +8,7 @@ export default interface Channel {
   type: ChannelType;
   guild_id?: string;
   position?: number;
-  permission_overwrites: Overwrite[];
+  permission_overwrites: PermissionOverwrite[];
   name?: string;
   topic?: string;
   nsfw?: boolean;

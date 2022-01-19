@@ -36,9 +36,9 @@ export default interface UserPayload {
   flags?: UserFlags;
   /**
    * The type of Nitro subscription the user has on their account.
-   * 0 means the user has no active Nitro Subscription, while 1 and 2 mean the user has subscribed to Nitro Classic and Nitro, respectively.
+   * Use the @enum PremiumType for possible values.
    */
-  premium_type?: 0 | 1 | 2;
+  premium_type?: PremiumType;
   /** The public flags of the user's account. */
   public_flags?: number;
 }
@@ -62,4 +62,10 @@ export enum UserFlags {
   VERIFIED_DEVELOPER          = 1 << 17,
   CERTIFIED_MODERATOR         = 1 << 18,
   BOT_HTTP_INTERACTIONS       = 1 << 19
+}
+
+export enum PremiumType {
+  NONE          = 0,
+  NITRO_CLASSIC = 1,
+  NITRO         = 2
 }
