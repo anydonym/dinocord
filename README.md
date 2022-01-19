@@ -1,4 +1,4 @@
 # dinocord (WIP)
-A custom, intuitive and unopinionated implementation of Discord Gateway library. Made in TypeScript for Deno.
+A custom, intuitive and unopinionated library implementation of Discord Gateway. Made in TypeScript for Deno.
 
 Expected release date: January 24th, 2022

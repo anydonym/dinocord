@@ -1,4 +1,5 @@
 import Channel from '../../structures/implementations/channel.ts';
+import Message from '../../structures/implementations/message.ts';
 
 export enum GatewayEvents {
   HELLO,
@@ -102,8 +103,8 @@ export const GatewayEventTypes: { [key in keyof typeof GatewayEvents]: any } = {
   INTERACTION_CREATE: undefined,
   INVITE_CREATE: undefined,
   INVITE_DELETE: undefined,
-  MESSAGE_CREATE: undefined,
-  MESSAGE_DELETE: undefined,
+  MESSAGE_CREATE: [Message],
+  MESSAGE_DELETE: [Message],
   MESSAGE_DELETE_BULK: undefined,
   MESSAGE_REACTION_ADD: undefined,
   MESSAGE_REACTION_REMOVE: undefined,
