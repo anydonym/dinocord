@@ -14,6 +14,10 @@ export default class Role extends IdBase implements RolePayload {
   mentionable;
   readonly tags?;
 
+  /**
+   * Constructs a new Role instance.
+   * @param payload The Role payload.
+   */
   constructor (payload: RolePayload) {
     super(payload.id);
 

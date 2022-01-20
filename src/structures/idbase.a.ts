@@ -1,5 +1,5 @@
 /**
- * The base class. Contains an ID variable and a default toString() method.
+ * The base ID class. Contains an ID property and a default toString() method.
  */
 export abstract class IdBase {
   /** The object ID. */
@@ -10,12 +10,12 @@ export abstract class IdBase {
   }
 
   toString(): string {
-    return `[${this.constructor.name} ${this.id}]`;
+    return `[object ${this.constructor.name} ${this.id}]`;
   }
 }
 
 /**
- * The base class. Contains an optional ID variable and a default toString() method.
+ * The base ID class with ID being optional. Contains an optional ID property and a default toString() method.
  */
  export abstract class OptionalIdBase {
   /** The object ID. */
@@ -26,6 +26,6 @@ export abstract class IdBase {
   }
 
   toString(): string {
-    return `[${this.constructor.name}${this.id ? ' ' + this.id : 'unknown'}]`;
+    return `[object ${this.constructor.name}${this.id ? ' ' + this.id : 'unknown'}]`;
   }
 }

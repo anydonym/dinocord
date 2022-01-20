@@ -1,5 +1,6 @@
 import GatewayOptions from './options.ts';
 import { GatewayEventTypes } from './resources/gatewayevents.ts';
+import { DISCORD_GATEWAY_URL } from '../constants.ts';
 
 export default class GatewayClient {
   options: GatewayOptions;
@@ -10,7 +11,7 @@ export default class GatewayClient {
   }
 
   connect() {
-    // this.ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+    // this.ws = new WebSocket(DISCORD_GATEWAY_URL);
     throw new Error('Unimplemented.');
   }
 

@@ -62,12 +62,12 @@ export enum GatewayEvents {
 }
 
 export const GatewayEventTypes: { [key in keyof typeof GatewayEvents]: any } = {
-  "HELLO": [],
-  "READY": [],
-  "CHANNEL_CREATE": [Channel],
-  "CHANNEL_UPDATE": [Channel],
-  "CHANNEL_DELETE": [Channel],
-  RESUMED: undefined,
+  HELLO: [],
+  READY: [],
+  CHANNEL_CREATE: [Channel],
+  CHANNEL_UPDATE: [Channel],
+  CHANNEL_DELETE: [Channel],
+  RESUMED: [],
   RECONNECT: undefined,
   INVALID_SESSION: undefined,
   CHANNEL_PINS_UPDATE: undefined,
