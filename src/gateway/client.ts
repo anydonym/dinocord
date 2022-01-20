@@ -1,17 +1,36 @@
-import GatewayOptions from './options.ts';
+import GatewayOptions, { GatewayIntents } from './options.ts';
 import { GatewayEventTypes } from './resources/gatewayevents.ts';
+import { GatewayOpcodes } from './resources/codes.ts';
+import * as PayloadStructures from './resources/structures.ts';
+
 import { DISCORD_GATEWAY_URL } from '../constants.ts';
+import bitwiseCheck from '../util/bitwisecheck.ts';
 
 export default class GatewayClient {
   options: GatewayOptions;
-  ws?: WebSocket;
+
+  heartbeat_interval?: number;
 
   constructor (options: GatewayOptions) {
     this.options = options;
   }
 
+  /**
+   * Facilitate a connection to the Discord gateway.
+   */
   connect() {
-    // this.ws = new WebSocket(DISCORD_GATEWAY_URL);
+    if (typeof this.options.intents != 'number')
+      this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
+      .reduce((pv, nv) =>
+        (typeof pv == 'string' ? GatewayIntents[pv as keyof typeof GatewayIntents] : pv) +
+        (typeof nv == 'string' ? GatewayIntents[nv as keyof typeof GatewayIntents] : nv),
+        0
+      );
+
+    if (!bitwiseCheck(this.options.intents, GatewayIntents))
+      throw new Error(`Invalid Intents: Intents must be a sum of bitwise values of (1 << x). Got: ${this.options.intents}`);
+
+
     throw new Error('Unimplemented.');
   }
 
@@ -20,7 +39,8 @@ export default class GatewayClient {
   }
 
   private async handleMessage(event: MessageEvent) {
-    throw new Error('Unimplemented.');
+    let json = <PayloadStructures.GatewayPayload> JSON.parse(event.data);
+    
   }
 
   /**

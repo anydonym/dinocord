@@ -6,7 +6,7 @@ export default interface PresenceUpdate {
   /** The user this presence update belongs to. */
   user: User;
   /** The guild ID. */
-  guild_id: string;
+  guild_id: bigint;
   /** The status that the User set. */
   status: Status;
   /** The user's current activities. */

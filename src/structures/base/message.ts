@@ -9,11 +9,11 @@ import Channel from '../implementations/channel.ts';
 
 export default interface Message {
   /** The message ID. */
-  id: string;
+  id: bigint;
   /** The channel ID where this message was sent. */
-  channel_id: string;
+  channel_id: bigint;
   /** The guild ID where this message was sent, if one. */
-  guild_id?: string;
+  guild_id?: bigint;
   /** The message author. */
   author: User;
   /** The message associated guild member. */
@@ -45,13 +45,13 @@ export default interface Message {
   /** Whether the message is pinned. */
   pinned: boolean;
   /** The ID of the webhook which sent this message, if any. */
-  webhook_id?: string;
+  webhook_id?: bigint;
   /** The type of message. */
   type: MessageType;
   /** The message activity. */
   activity?: MessageActivity;
   application?: Partial<Application>;
-  application_id?: string;
+  application_id?: bigint;
   message_reference?: MessageReference;
   flags?: number;
   referenced_message?: MessageImplementation;
@@ -91,7 +91,7 @@ export enum MessageType {
 
 export interface MessageActivity {
   type: number;
-  party_id?: string;
+  party_id?: bigint;
 }
 
 export enum MessageActivityType {

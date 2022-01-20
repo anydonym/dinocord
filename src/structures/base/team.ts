@@ -4,13 +4,13 @@ export default interface Team {
   /** The team icon hash. */
   icon?: string;
   /** The team ID. */
-  id: string;
+  id: bigint;
   /** The members of the team. */
   members: TeamMember[];
   /** The team name. */
   name: string;
   /** The ID of the owner of the team. */
-  owner_user_id: string;
+  owner_user_id: bigint;
 }
 
 export interface TeamMember {
@@ -22,7 +22,7 @@ export interface TeamMember {
   /** The permissions of this team member. */
   permissions: string[];
   /** The ID of the team which this member belongs to. */
-  team_id: string;
+  team_id: bigint;
   /** The avatar, username, discriminator and ID of the user this member represents. */
   user: Partial<User>;
 }

@@ -1,3 +1,6 @@
+// src
+export * as Constants             from './src/constants.ts';
+
 // src/gateway
 export * as GatewayClient         from './src/gateway/client.ts';
 export * as GatewayOptions        from './src/gateway/options.ts';
@@ -48,3 +51,6 @@ export * as Permission            from './src/structures/permission.ts';
   export * as ImplUser            from './src/structures/implementations/user.ts';
   export * as ImplVoiceState      from './src/structures/implementations/voicestate.ts';
   export * as ImplWebhook         from './src/structures/implementations/webhook.ts';
+
+// src/util
+export * as UtilBitwiseCheck      from './src/util/bitwisecheck.ts';

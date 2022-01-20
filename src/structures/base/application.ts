@@ -6,11 +6,11 @@ import Team from './team.ts';
  */
 export default interface Application {
   /** The application ID. */
-  id: string;
+  id: bigint;
   /** The application name. */
   name: string;
   /** The icon hash of the application. */
-  icon?: string;
+  icon?: string | undefined;
   /** The application description. */
   description: string;
   /** An array of RPC origins for the application, if RPC is enabled. */
@@ -30,11 +30,11 @@ export default interface Application {
   /** The application verify key. */
   verify_key: string;
   /** The team the application belongs to. */
-  team?: Team;
+  team?: Team | undefined;
   /** If this application is a game sold on Discord, will be the guild which it is linked to. */
-  guild_id?: string;
+  guild_id?: bigint;
   /** If this application is a game sold on Discord, will be the ID of the Game SKU that is created, if exists/ */
-  primary_sku_id?: string;
+  primary_sku_id?: bigint;
   /** If this application is a game sold on Discord, will be the URL slug which links to the store page. */
   slug?: string;
   /** The application default RPC invite cover image hash. */

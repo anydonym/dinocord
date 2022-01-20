@@ -2,12 +2,12 @@ import User from '../implementations/user.ts';
 import Application from '../implementations/application.ts';
 
 export default interface Integration {
-  id: string;
+  id: bigint;
   name: string;
   type: string;
   enabled: boolean;
   syncing?: boolean;
-  role_id?: string;
+  role_id?: bigint;
   enable_emoticons?: boolean;
   expire_behavior: 0 | 1;
   expire_grace_period?: number;
@@ -20,12 +20,12 @@ export default interface Integration {
 }
 
 export interface IntegrationAccount {
-  id: string;
+  id: bigint;
   name: string;
 }
 
 export interface IntegrationApplication {
-  id: string;
+  id: bigint;
   name: string;
   icon?: string;
   description: string;

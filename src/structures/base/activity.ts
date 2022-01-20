@@ -18,7 +18,7 @@ export default interface Activity {
   /** The Unix timestamps for the beginning and/or the end of the game. */
   timestamps?: ActivityTimestamp[];
   /** The application ID for the activity. */
-  application_id?: string;
+  application_id?: bigint;
   /** The activity details. */
   details?: string;
   /** The activity party state. */
@@ -62,7 +62,7 @@ export interface ActivityTimestamp {
 
 export interface ActivityParty {
   /** The ID of the party. */
-  id?: string;
+  id?: bigint;
   /** The current and max size of the party, respectively, */
   size?: [number, number];
 }

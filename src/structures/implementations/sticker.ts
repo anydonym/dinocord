@@ -3,15 +3,15 @@ import StickerPayload from '../base/sticker.ts';
 
 export default class Sticker extends IdBase implements StickerPayload {
   declare readonly id;
-  pack_id?;
+  readonly pack_id?;
   name;
   description?;
   tags?;
-  type?;
-  format_type?;
+  readonly type?;
+  readonly format_type?;
   available?;
-  guild_id?;
-  user?;
+  readonly guild_id?;
+  readonly user?;
   sort_value?;
 
   /**

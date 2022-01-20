@@ -3,7 +3,7 @@
  */
 export default interface UserPayload {
   /** The user's ID. */
-  id: string;
+  id: bigint;
   /** The user's username. */
   username: string;
   /** The 4-digit ending discriminator of the user. */

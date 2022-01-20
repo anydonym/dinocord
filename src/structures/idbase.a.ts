@@ -3,9 +3,9 @@
  */
 export abstract class IdBase {
   /** The object ID. */
-  readonly id:  string;
+  readonly id: bigint;
 
-  constructor (id: string) {
+  constructor (id: bigint) {
     this.id = id;
   }
 
@@ -19,9 +19,9 @@ export abstract class IdBase {
  */
  export abstract class OptionalIdBase {
   /** The object ID. */
-  readonly id?: string;
+  readonly id?: bigint;
 
-  constructor (id?: string) {
+  constructor (id?: bigint) {
     this.id = id;
   }
 

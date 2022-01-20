@@ -2,15 +2,15 @@ import GuildMember from '../implementations/guildmember.ts';
 
 export default interface VoiceState {
   /** The guild ID of the voice state. */
-  guild_id?: string;
+  guild_id?: bigint;
   /** The channel ID the user is connected to. */
-  channel_id: string;
+  channel_id: bigint;
   /** The user ID of the voice state. */
-  user_id: string;
+  user_id: bigint;
   /** The Guild Member the voice state points to. */
   member?: GuildMember;
   /** The voice state session ID. */
-  session_id: string;
+  session_id: bigint;
   /** Whether the user is deafened server-side. */
   deaf: boolean;
   /** Whether the user is muted server-side. */

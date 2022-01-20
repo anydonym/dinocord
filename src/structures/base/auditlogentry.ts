@@ -4,10 +4,10 @@ import Role from '../implementations/role.ts';
  * The Audit Log Entry payload structure.
  */
 export default interface AuditLogEntry {
-  target_id?:   string;
+  target_id?:   bigint;
   changes?:     AuditLogChange[];
-  user_id?:     string;
-  id:           string;
+  user_id?:     bigint | undefined;
+  id:           bigint;
   action_type:  AuditLogEvent;
   options?:     OptionalAuditEntryInfo;
   reason?:      string;

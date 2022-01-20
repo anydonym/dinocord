@@ -5,7 +5,7 @@ export default interface GatewayOptions {
   /** The bot token. */
   token: string;
   /** The intents to use. */
-  intents: Array<GatewayIntents|keyof typeof GatewayIntents>;
+  intents: Array<GatewayIntents|keyof typeof GatewayIntents> | number;
 }
 
 /**
