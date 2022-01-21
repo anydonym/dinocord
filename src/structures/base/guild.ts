@@ -1,12 +1,12 @@
-import Role from '../implementations/role.ts';
-import Emoji from '../implementations/emoji.ts';
-import Channel from '../implementations/channel.ts';
-import VoiceState from '../implementations/voicestate.ts';
-import GuildMember from '../implementations/guildmember.ts';
+import Role from './role.ts';
+import Emoji from './emoji.ts';
+import Channel from './channel.ts';
+import VoiceState from './voicestate.ts';
+import GuildMember from './guildmember.ts';
 import PresenceUpdate from './presenceupdate.ts';
-import GuildScheduledEvent from '../implementations/guildscheduledevent.ts';
-import StageInstance from '../implementations/stageinstance.ts';
-import Sticker from '../implementations/sticker.ts';
+import GuildScheduledEvent from './guildscheduledevent.ts';
+import StageInstance from './stageinstance.ts';
+import Sticker from './sticker.ts';
 
 /**
  * The Guild payload structure. 

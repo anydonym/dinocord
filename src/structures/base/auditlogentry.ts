@@ -1,4 +1,4 @@
-import Role from '../implementations/role.ts';
+import Role from './role.ts';
 
 /**
  * The Audit Log Entry payload structure.

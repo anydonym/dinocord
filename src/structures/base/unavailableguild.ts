@@ -1,4 +1,4 @@
-import Emoji from '../implementations/emoji.ts';
+import Emoji from './emoji.ts';
 import { GuildFeatures } from './guild.ts';
 
 /**

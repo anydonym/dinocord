@@ -1,6 +1,6 @@
-import User from '../implementations/user.ts';
-import Guild from '../implementations/guild.ts';
-import Channel from '../implementations/channel.ts';
+import User from './user.ts';
+import Guild from './guild.ts';
+import Channel from './channel.ts';
 
 export default interface Webhook {
   /** The webhook ID. */

@@ -1,9 +1,33 @@
-import User from '../implementations/user.ts';
+import User from './user.ts';
 
 /**
  * @todo Separate interfaces for different channel types
  */
 export default interface Channel {
+  id: bigint;
+  type: ChannelType;
+  guild_id?: bigint;
+  position?: number;
+  permission_overwrites: PermissionOverwrite[];
+  name?: string;
+  topic?: string | undefined;
+  nsfw?: boolean;
+  last_message_id?: bigint | undefined;
+  bitrate?: number;
+  user_limit?: number;
+  rate_limit_per_user?: number;
+  recipents?: User[];
+  icon?: string | undefined;
+  owner_id?: bigint;
+  last_pin_timestamp?: string | undefined;
+  rtc_region?: string | undefined;
+  video_quality_mode?: number;
+  message_count?: number;
+  member_count?: number;
+  thread_metadata?: ThreadMetadata;
+  member?: ThreadMember;
+  default_auto_archive_duration?: number;
+  permissions?: string;
 }
 
 export enum ChannelType {

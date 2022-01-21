@@ -1,4 +1,4 @@
-import User from '../implementations/user.ts';
+import User from './user.ts';
 import Team from './team.ts';
 
 /**

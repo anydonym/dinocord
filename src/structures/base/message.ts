@@ -1,12 +1,17 @@
-import User from '../implementations/user.ts';
-import GuildMember from '../implementations/guildmember.ts';
-import Role from '../implementations/role.ts';
+import User from './user.ts';
+import GuildMember from './guildmember.ts';
+import Role from './role.ts';
 
-import Embed from '../implementations/embed.ts';
-import Application from '../implementations/application.ts';
+import Embed from './embed.ts';
+import Application from './application.ts';
 
-import Channel from '../implementations/channel.ts';
+import Channel from './channel.ts';
 
+import Sticker from './sticker.ts';
+
+/**
+ * The Message payload structure.
+ */
 export default interface Message {
   /** The message ID. */
   id: bigint;
@@ -48,16 +53,25 @@ export default interface Message {
   webhook_id?: bigint;
   /** The type of message. */
   type: MessageType;
-  /** The message activity. */
+  /** The message activity. Sent in RPC-related chat embeds. */
   activity?: MessageActivity;
+  /** The message application, partial. Sent in RPC-related chat embeds. */
   application?: Partial<Application>;
+  /** The message application ID, if the message is an Application Interaction or application-owned webhook. */
   application_id?: bigint;
+  /** The message reference, showing the data of the crosspost source, channel follow add/pin/reply. */
   message_reference?: MessageReference;
+  /** Message flags, combined as a bitfield. */
   flags?: number;
-  referenced_message?: MessageImplementation;
+  /** The referenced message. */
+  referenced_message?: Message;
+  /** Sent if the message is a response to an Interaction. */
   interaction?: MessageInteraction;
+  /** The thread that was started from the message. Includes thread member object. */
   thread?: Channel;
+  /** Sent if the message contains components, such as buttons, action rows, etc. */
   components?: MessageComponent[];
+  /** Sent if the message contains stickers. */
   sticker_items?: Sticker[];
 }
 

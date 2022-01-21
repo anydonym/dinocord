@@ -1,4 +1,4 @@
-import Emoji from '../implementations/emoji.ts';
+import Emoji from './emoji.ts';
 
 /**
  * The Activity payload structure.

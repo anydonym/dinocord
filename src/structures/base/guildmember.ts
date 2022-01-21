@@ -1,4 +1,4 @@
-import User from '../implementations/user.ts';
+import User from './user.ts';
 
 export default interface GuildMember {
   /** The user associated with the guild member instance. */

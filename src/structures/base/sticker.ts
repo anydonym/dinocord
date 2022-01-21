@@ -1,4 +1,4 @@
-import User from '../implementations/user.ts';
+import User from './user.ts';
 
 /**
  * The Sticker payload structure.

@@ -1,9 +1,9 @@
 import AuditLogEntry from './auditlogentry.ts';
 import GuildScheduledEvent from './guildscheduledevent.ts';
-import Channel from '../implementations/channel.ts';
-import User from '../implementations/user.ts';
-import Webhook from '../implementations/webhook.ts';
-import Integration from "../implementations/integration.ts";
+import Channel from './channel.ts';
+import User from './user.ts';
+import Webhook from './webhook.ts';
+import Integration from "./integration.ts";
 
 /**
  * The Audit Log payload structure.
