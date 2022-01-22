@@ -13,7 +13,7 @@ export default class Webhook extends IdBase implements WebhookPayload {
   token?;
   readonly application_id?;
   readonly source_guild;
-  readonly source_channel;
+  // readonly source_channel;
   url?;
 
   constructor (payload: WebhookPayload) {
@@ -28,7 +28,7 @@ export default class Webhook extends IdBase implements WebhookPayload {
     this.token = payload.token;
     this.application_id = payload.application_id;
     this.source_guild = payload.source_guild;
-    this.source_channel = payload.source_channel;
+    // this.source_channel = payload.source_channel;
     this.url = payload.url;
   }
 }

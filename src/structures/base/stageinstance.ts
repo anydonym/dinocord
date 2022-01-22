@@ -10,6 +10,9 @@ export default interface StageInstance {
   discoverable_disabled: boolean;
 }
 
+/**
+ * The possible values for privacy level.
+ */
 export enum StagePrivacyLevel {
   PUBLIC = 1,
   GUILD_ONLY = 2

@@ -12,6 +12,7 @@ export * as GatewayOptions        from './src/gateway/options.ts';
 // src/structures
 export * as Permission            from './src/structures/permission.ts';
   // src/structures/base
+  export * as BaseAttachment      from './src/structures/base/attachment.ts';
   export * as BaseActivity        from './src/structures/base/activity.ts';
   export * as BaseApplication     from './src/structures/base/application.ts';
   export * as BaseAuditLog        from './src/structures/base/auditlog.ts';
@@ -37,7 +38,7 @@ export * as Permission            from './src/structures/permission.ts';
   export * as BaseWebhook         from './src/structures/base/webhook.ts';
   // src/structures/implementations
   export * as ImplApplication     from './src/structures/implementations/application.ts';
-  export * as ImplChannel         from './src/structures/implementations/channel.ts';
+  // export * as ImplChannel         from './src/structures/implementations/channel.ts';
   export * as ImplEmbed           from './src/structures/implementations/embed.ts';
   export * as ImplEmoji           from './src/structures/implementations/emoji.ts';
   export * as ImplGuild           from './src/structures/implementations/guild.ts';

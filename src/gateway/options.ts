@@ -1,3 +1,5 @@
+import BotPresenceUpdate from './resources/botpresenceupdate.ts';
+
 /**
  * The Gateway options, used to connect and facilitate events between the gateway client and Discord gateway.
  */
@@ -6,6 +8,8 @@ export default interface GatewayOptions {
   token: string;
   /** The intents to use. */
   intents: Array<GatewayIntents|keyof typeof GatewayIntents> | number;
+  /** The presence to use. */
+  presence?: BotPresenceUpdate;
 }
 
 /**

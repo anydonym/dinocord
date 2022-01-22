@@ -2,6 +2,9 @@ import User from './user.ts';
 import Activity from './activity.ts';
 import ClientStatus from './clientstatus.ts';
 
+/**
+ * The Presence Update payload structure.
+ */
 export default interface PresenceUpdate {
   /** The user this presence update belongs to. */
   user: User;

@@ -1,18 +1,22 @@
 import Role from './role.ts';
+import PermissionOverwrite from './permissionoverwrite.ts';
 
 /**
  * The Audit Log Entry payload structure.
  */
 export default interface AuditLogEntry {
-  target_id?:   bigint;
-  changes?:     AuditLogChange[];
-  user_id?:     bigint | undefined;
-  id:           bigint;
-  action_type:  AuditLogEvent;
-  options?:     OptionalAuditEntryInfo;
-  reason?:      string;
+  target_id?: bigint;
+  changes?: AuditLogChange[];
+  user_id?: bigint | undefined;
+  id: bigint;
+  action_type: AuditLogEvent;
+  options?: OptionalAuditEntryInfo;
+  reason?: string;
 }
 
+/**
+ * Discord "mixed" type.
+ */
 type mixed = string|number|boolean|Partial<Role>|PermissionOverwrite;
 
 /**

@@ -27,7 +27,7 @@ export default interface Webhook {
   /** The guild of the channel which the webhook follows. */
   source_guild: Partial<Guild>;
   /** The channel which the webhook follows. */
-  source_channel: Partial<Channel>;
+  // source_channel: Partial<Channel>;
   /** The URL for webhook execution. */
   url?: string;
 }

@@ -1,12 +1,14 @@
 import User from './user.ts';
 import GuildMember from './guildmember.ts';
 import Role from './role.ts';
-
+import Attachment from './attachment.ts';
 import Embed from './embed.ts';
+import Reaction from './reaction.ts';
 import Application from './application.ts';
-
+import MessageReference from './messagereference.ts';
 import Channel from './channel.ts';
-
+import MessageInteraction from './messageinteraction.ts';
+import MessageComponent from './messagecomponent.ts';
 import Sticker from './sticker.ts';
 
 /**
@@ -76,7 +78,10 @@ export default interface Message {
 }
 
 export interface ChannelMention {
-
+  id: bigint;
+  guild_id: bigint;
+  type: number;
+  name: string;
 }
 
 export enum MessageType {
