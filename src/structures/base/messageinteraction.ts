@@ -1,7 +1,7 @@
 import User from './user.ts';
 
 export default interface MessageInteraction {
-  id: bigint;
+  id: string;
   type: InteractionType;
   name: string;
   user: User;

@@ -1,11 +1,11 @@
 import User from './user.ts';
 
 export default interface GuildScheduledEvent {
-  id: bigint;
-  guild_id: bigint;
-  channel_id?: bigint;
+  id: string;
+  guild_id: string;
+  channel_id?: string;
   creator: User;
-  creator_id?: bigint;
+  creator_id?: string;
   name: string;
   description?: string;
   scheduled_start_time: string;
@@ -13,7 +13,7 @@ export default interface GuildScheduledEvent {
   privacy_level: 2;
   status: 1 | 2 | 3 | 4;
   entity_type: EntityType;
-  entity_id?: bigint;
+  entity_id?: string;
   entity_metadata?: EntityMetadata;
   user_count?: number;
 }

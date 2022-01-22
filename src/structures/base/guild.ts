@@ -13,7 +13,7 @@ import Sticker from './sticker.ts';
  */
 export default interface Guild {
   /** The guild ID. */
-  id: bigint;
+  id: string;
   /** The guild name. */
   name: string;
   /** The icon hash of the guild. */
@@ -27,17 +27,17 @@ export default interface Guild {
   /** Whether the user is the owner of the guild. */
   owner?: boolean;
   /** The ID of the owner of the guild. */
-  owner_id: bigint;
+  owner_id: string;
   /** The permissions for the user in the guild. */
   permissions?: string | undefined;
   /** ID of the AFK channel, if set. */
-  afk_channel_id?: bigint | undefined;
+  afk_channel_id?: string | undefined;
   /** The AFK timeout, if set. */
   afk_timeout: number;
   /** Whether the server widget is enabled. */
   widget_enabled?: boolean;
   /** The channel ID which the server widget leads to, if set. */
-  widget_channel_id?: bigint | undefined;
+  widget_channel_id?: string | undefined;
   /**
    * The verification level required for the guild.
    * Use the @enum GuildVerificationLevel for possible values.
@@ -64,10 +64,10 @@ export default interface Guild {
    * 0 indicates that the guild has no MFA requirement for moderation permissions, while 1 means the otherwise.
    */
   mfa_level: 0 | 1;
-  application_id?: bigint | undefined;
-  system_channel_id?: bigint | undefined;
+  application_id?: string | undefined;
+  system_channel_id?: string | undefined;
   system_channel_flags: number;
-  rules_channel_id?: bigint;
+  rules_channel_id?: string;
   joined_at?: string; // ISO8601
   large?: boolean;
   unavailable?: boolean;
@@ -85,7 +85,7 @@ export default interface Guild {
   premium_tier: number;
   premium_subscription_count?: number;
   preferred_locale: string;
-  public_updates_channel_id?: bigint;
+  public_updates_channel_id?: string;
   max_video_channel_users?: number;
   approximate_member_count?: number;
   approximate_presence_count?: number;
@@ -146,11 +146,11 @@ export interface WelcomeScreen {
 
 export interface WelcomeScreenChannel {
   /** The ID of the channel this welcome screen channel represents. */
-  channel_id: bigint;
+  channel_id: string;
   /** The description set for this welcome channel. */
   description: string;
   /** The emoji ID, if it is a custom emoji. */
-  emoji_id?: bigint;
+  emoji_id?: string;
   /** The name of the emoji used for the welcome screen channel, string if custom, Unicode is global and otherwise null. */
   emoji_name?: string;
 }

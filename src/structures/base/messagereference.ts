@@ -1,6 +1,6 @@
 export default interface MessageReference {
-  message_id?: bigint;
-  channel_id?: bigint;
-  guild_id?: bigint;
+  message_id?: string;
+  channel_id?: string;
+  guild_id?: string;
   fall_if_not_exists?: boolean;
 }

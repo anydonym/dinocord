@@ -1,6 +1,6 @@
 export enum GatewayOpcodes {
-  DISPATCH              = 1,
-  HEARTBEAT             = 2,
+  DISPATCH              = 0,
+  HEARTBEAT             = 1,
   IDENTIFY              = 2,
   PRESENCE_UPDATE       = 3,
   VOICE_STATE_UPDATE    = 4,

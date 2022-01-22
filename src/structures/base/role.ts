@@ -3,7 +3,7 @@
  */
 export default interface Role {
   /** The role ID. */
-  id: bigint;
+  id: string;
   /** The role name. */
   name: string;
   /** The role color. Represented in hexadecimal color code. */
@@ -28,9 +28,9 @@ export default interface Role {
 
 export interface RoleTags {
   /** The ID of the bot which the role belongs to. */
-  bot_id?: bigint;
+  bot_id?: string;
   /** The ID of the integration which the role belongs to. */
-  integration_id?: bigint;
+  integration_id?: string;
   /** Whether the role is guild premium booster role. */
   premium_subscriber?: null;
 }

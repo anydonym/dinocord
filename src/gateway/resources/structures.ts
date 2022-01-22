@@ -47,7 +47,7 @@ export interface Resume {
   /** The bot token. */
   token: string;
   /** The ID for the session. */
-  session_id: bigint;
+  session_id: string;
   /** Last `seq` number received. */
   seq: number;
 }

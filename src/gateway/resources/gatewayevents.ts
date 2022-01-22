@@ -1,14 +1,14 @@
 // import Channel from '../../structures/implementations/channel.ts';
-import Message from '../../structures/implementations/message.ts';
+import Message from '../../structures/base/message.ts';
 
 export interface GatewayEventTypes {
-  HELLO: [],
-  READY: [],
-  CHANNEL_CREATE: [],
-  CHANNEL_UPDATE: [],
-  CHANNEL_DELETE: [],
-  RESUMED: [],
-  RECONNECT: undefined,
+  HELLO: void,
+  READY: void,
+  CHANNEL_CREATE: void,
+  CHANNEL_UPDATE: void,
+  CHANNEL_DELETE: undefined,
+  RESUMED: void,
+  RECONNECT: void,
   INVALID_SESSION: undefined,
   CHANNEL_PINS_UPDATE: undefined,
   THREAD_CREATE: undefined,
@@ -43,8 +43,8 @@ export interface GatewayEventTypes {
   INTERACTION_CREATE: undefined,
   INVITE_CREATE: undefined,
   INVITE_DELETE: undefined,
-  MESSAGE_CREATE: [Message],
-  MESSAGE_DELETE: [Message],
+  MESSAGE_CREATE: Message,
+  MESSAGE_DELETE: Message,
   MESSAGE_DELETE_BULK: undefined,
   MESSAGE_REACTION_ADD: undefined,
   MESSAGE_REACTION_REMOVE: undefined,

@@ -2,9 +2,9 @@
  * The Stage Instance payload structure.
  */
 export default interface StageInstance {
-  id: bigint;
-  guild_id: bigint;
-  channel_id: bigint;
+  id: string;
+  guild_id: string;
+  channel_id: string;
   topic: string;
   privacy_level: StagePrivacyLevel;
   discoverable_disabled: boolean;

@@ -5,10 +5,10 @@ import PermissionOverwrite from './permissionoverwrite.ts';
  * The Audit Log Entry payload structure.
  */
 export default interface AuditLogEntry {
-  target_id?: bigint;
+  target_id?: string;
   changes?: AuditLogChange[];
-  user_id?: bigint | undefined;
-  id: bigint;
+  user_id?: string | undefined;
+  id: string;
   action_type: AuditLogEvent;
   options?: OptionalAuditEntryInfo;
   reason?: string;

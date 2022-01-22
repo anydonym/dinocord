@@ -16,11 +16,11 @@ import Sticker from './sticker.ts';
  */
 export default interface Message {
   /** The message ID. */
-  id: bigint;
+  id: string;
   /** The channel ID where this message was sent. */
-  channel_id: bigint;
+  channel_id: string;
   /** The guild ID where this message was sent, if one. */
-  guild_id?: bigint;
+  guild_id?: string;
   /** The message author. */
   author: User;
   /** The message associated guild member. */
@@ -52,7 +52,7 @@ export default interface Message {
   /** Whether the message is pinned. */
   pinned: boolean;
   /** The ID of the webhook which sent this message, if any. */
-  webhook_id?: bigint;
+  webhook_id?: string;
   /** The type of message. */
   type: MessageType;
   /** The message activity. Sent in RPC-related chat embeds. */
@@ -60,7 +60,7 @@ export default interface Message {
   /** The message application, partial. Sent in RPC-related chat embeds. */
   application?: Partial<Application>;
   /** The message application ID, if the message is an Application Interaction or application-owned webhook. */
-  application_id?: bigint;
+  application_id?: string;
   /** The message reference, showing the data of the crosspost source, channel follow add/pin/reply. */
   message_reference?: MessageReference;
   /** Message flags, combined as a bitfield. */
@@ -78,8 +78,8 @@ export default interface Message {
 }
 
 export interface ChannelMention {
-  id: bigint;
-  guild_id: bigint;
+  id: string;
+  guild_id: string;
   type: number;
   name: string;
 }
@@ -110,7 +110,7 @@ export enum MessageType {
 
 export interface MessageActivity {
   type: number;
-  party_id?: bigint;
+  party_id?: string;
 }
 
 export enum MessageActivityType {

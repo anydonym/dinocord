@@ -5,9 +5,9 @@ import User from './user.ts';
  */
 export default interface Sticker {
   /** The sticker ID. */
-  id: bigint;
+  id: string;
   /** The pack ID, if this sticker is a standard sticker. */
-  pack_id?: bigint;
+  pack_id?: string;
   /** The sticker name. */
   name: string;
   /** The sticker description. */
@@ -27,7 +27,7 @@ export default interface Sticker {
   /** Whether the guild sticker is available for usage. */
   available?: boolean;
   /** The ID of the guild which the sticker belongs to. */
-  guild_id?: bigint;
+  guild_id?: string;
   /** The user that uploaded the sticker. */
   user?: User;
   /** The sort order of the sticker, given it belongs to a Discord default sticker pack. */

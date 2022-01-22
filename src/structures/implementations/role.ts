@@ -4,7 +4,7 @@ import bitwiseCheck from '../../util/bitwisecheck.ts';
 import { Permission } from '../permission.ts';
 
 export default class Role extends IdBase implements RolePayload {
-  declare readonly id: bigint;
+  declare readonly id: string;
   name;
   color;
   hoist?;

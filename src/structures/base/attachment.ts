@@ -3,7 +3,7 @@
  */
 export default interface Attachment {
   /** Attachment ID. */
-  id: bigint;
+  id: string;
   /** The attachment file name. */
   filename: string;
   /** The attachment file description. */

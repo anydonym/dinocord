@@ -6,7 +6,7 @@ import { GuildFeatures } from './guild.ts';
  */
 export default interface UnavailableGuild {
   /** The guild ID. */
-  id: bigint;
+  id: string;
   /** The guild name. */
   name: string;
   /** The guild icon hash. */

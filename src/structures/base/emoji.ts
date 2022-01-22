@@ -6,7 +6,7 @@ import Role from './role.ts';
  */
 export default interface Emoji {
   /** The emoji ID. Nullable. */
-  id?: bigint | undefined;
+  id?: string | undefined;
   /** The emoji name. */
   name?: string | undefined;
   /** The roles that are allowed to use the emoji. */
