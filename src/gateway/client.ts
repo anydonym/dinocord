@@ -1,8 +1,8 @@
 import GatewayOptions, { GatewayIntents } from './options.ts';
-import { GatewayEventTypes } from './resources/gatewayevents.ts';
+import GatewayEventTypes from './resources/gatewayevents.ts';
 import { GatewayOpcodes } from './resources/codes.ts';
 import * as PayloadStructures from './resources/structures.ts';
-
+import InternalEventTypes from './resources/internalevents.ts';
 import { DISCORD_GATEWAY_WS } from '../constants.ts';
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import * as Activity from '../structures/base/activity.ts';
@@ -10,7 +10,8 @@ import * as Activity from '../structures/base/activity.ts';
 export default class GatewayClient {
   private ws!: WebSocket;
   private options: GatewayOptions;
-  private listeners: [keyof GatewayEventTypes, Function][];
+  private gateway_listeners: [keyof GatewayEventTypes, Function][];
+  private internal_listeners: [keyof InternalEventTypes, Function][];
   // private sidelisteners: [keyof SideEventTypes, Function][];
 
   get websocket() {
@@ -23,7 +24,8 @@ export default class GatewayClient {
 
   constructor (options: GatewayOptions) {
     this.options = options;
-    this.listeners = [];
+    this.gateway_listeners = [];
+    this.internal_listeners = [];
   }
 
   /**
@@ -51,48 +53,62 @@ export default class GatewayClient {
         });
 
     this.ws = new WebSocket(DISCORD_GATEWAY_WS);
-    this.ws.addEventListener('message', (event) => {
-      console.log(event.data.op)
-      this.#receive(event);
-    });
+    this.ws.addEventListener('message', (event) => this.#receive(event));
   }
 
   /**
-   * Listens to the event.
-   * @param eventName The event name.
+   * Listen to the event broadcasted by the gateway.
+   * @param event_name The event name.
    * @param callback The callback function.
    * @returns This instance of client.
    */
-  listen<E extends keyof GatewayEventTypes>(eventName: E, callback: (payload: GatewayEventTypes[E]) => void) {
-    this.listeners.push([eventName, callback]);
+  listenGateway<E extends keyof GatewayEventTypes>(event_name: E, callback: (payload: GatewayEventTypes[E]) => void) {
+    this.gateway_listeners.push([event_name, callback]);
+    return this;
+  }
+
+  /**
+   * Listen to the internal client event, such as debug, error, etc.
+   * @param event_name The event name.
+   * @param callback The callback function.
+   * @returns This instance of client.
+   */
+  listenInternal<E extends keyof InternalEventTypes>(event_name: E, callback: (payload: InternalEventTypes[E]) => void) {
+    this.internal_listeners.push([event_name, callback]);
     return this;
   }
 
   /**
    * Emits the event and calls all the listeners of the event emitted.
-   * @param eventName The event name.
+   * @param event_name The event name.
    * @param payload The event payload.
    */
-  emit<E extends keyof GatewayEventTypes>(eventName: E, payload: GatewayEventTypes[E]) {
-    this.listeners.filter((v) => v[0] == eventName).forEach((v) => v[1](payload));
+  emitGateway<E extends keyof GatewayEventTypes>(event_name: E, payload: GatewayEventTypes[E]) {
+    this.gateway_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
   }
 
+  emitInternal<E extends keyof InternalEventTypes>(event_name: E, payload: InternalEventTypes[E]) {
+    this.internal_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
+  }
 
-  #send(data: { 'op': GatewayOpcodes, 'd'?: object } & object) {
+  #sendWs(data: { 'op': GatewayOpcodes, 'd'?: object } & object) {
     if (this.ws.readyState == this.ws.OPEN)
       this.ws.send(JSON.stringify(Object.assign({ 'd': {} }, data)));
   }
 
   #receive(event: MessageEvent) {
     let data = <PayloadStructures.GatewayPayload> JSON.parse(event.data);
-    // console.log('received from gateway: ' + event.data)
-    console.log('received opcode: ', data.op)
+
+    this.emitInternal('DEBUG', {
+      'event_type': 'Gateway->MessageEvent',
+      'message': 'Received a message from the gateway. Opcode: ' + data.op
+    });
+
     switch (data.op) {
       case GatewayOpcodes.HELLO:
-        console.log('Hello!')
         this.#heartbeat_interval = data.d.heartbeat_interval;
 
-        this.#send({
+        this.#sendWs({
           'op': GatewayOpcodes.IDENTIFY,
           'd': <PayloadStructures.Identify> {
             'token':      this.options.token,
@@ -114,11 +130,10 @@ export default class GatewayClient {
         this.#immediateHeartbeat();
         break;
       case GatewayOpcodes.HEARTBEAT_ACK:
-        this.#heartbeat_received = true;
         this.#last_seq = data.d;
         break;
       case GatewayOpcodes.DISPATCH:
-        this.emit(data.t as keyof GatewayEventTypes, data.d);
+        this.emitGateway(data.t as keyof GatewayEventTypes, data.d);
         if (data.t as keyof GatewayEventTypes === 'READY')
           this.#session_id = data.d.session_id;
         break;
@@ -126,12 +141,11 @@ export default class GatewayClient {
   }
 
   #heartbeat_interval!: number;
-  #heartbeat_received!: boolean;
   #last_seq!: number;
   #session_id!: number;
 
   async #heartbeater() {
-    function randomInterval(callback: () => void, min: number, max: number) {
+    ((callback: () => void, min: number, max: number) => {
       let timeout: number, tick = () => {
         clearTimeout(timeout);
 
@@ -142,14 +156,12 @@ export default class GatewayClient {
       }
   
       tick();
-    }
-
-    randomInterval(() => this.#send({ 'op': GatewayOpcodes.HEARTBEAT }), 0, this.#heartbeat_interval);
-    this.#heartbeat_received = false;
+    })(() => {
+      this.#sendWs({ 'op': GatewayOpcodes.HEARTBEAT });
+    }, 0, this.#heartbeat_interval);
   }
 
   async #immediateHeartbeat() {
-    this.#heartbeat_received = false;
-    this.#send({ 'op': GatewayOpcodes.HEARTBEAT });
+    this.#sendWs({ 'op': GatewayOpcodes.HEARTBEAT });
   }
 }

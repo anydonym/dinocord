@@ -1,7 +1,7 @@
 // import Channel from '../../structures/implementations/channel.ts';
 import Message from '../../structures/base/message.ts';
 
-export interface GatewayEventTypes {
+export default interface GatewayEventTypes {
   HELLO: void,
   READY: void,
   CHANNEL_CREATE: void,
