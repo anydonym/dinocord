@@ -18,19 +18,21 @@ export default class Embed implements EmbedPayload {
    * Constructs a new Embed instance.
    * @param payload The payload structure.
    */
-  constructor (payload: EmbedPayload) {
-    this.title = payload.title;
-    this.description = payload.description;
-    this.url = payload.url;
-    this.timestamp = payload.timestamp;
-    this.color = payload.color;
-    this.footer = payload.footer;
-    this.image = payload.image;
-    this.thumbnail = payload.thumbnail;
-    this.video = payload.video;
-    this.provider = payload.provider;
-    this.author = payload.author;
-    this.fields = payload.fields;
+  constructor (payload?: EmbedPayload) {
+    if (payload) {
+      this.title = payload.title;
+      this.description = payload.description;
+      this.url = payload.url;
+      this.timestamp = payload.timestamp;
+      this.color = payload.color;
+      this.footer = payload.footer;
+      this.image = payload.image;
+      this.thumbnail = payload.thumbnail;
+      this.video = payload.video;
+      this.provider = payload.provider;
+      this.author = payload.author;
+      this.fields = payload.fields;
+    }
   }
 
   /**
@@ -38,7 +40,7 @@ export default class Embed implements EmbedPayload {
    * @param title The embed title.
    */
   setTitle(title?: typeof this.title) {
-    this.title ??= title;
+    this.title = title;
   }
 
   /**
@@ -46,7 +48,7 @@ export default class Embed implements EmbedPayload {
    * @param description The embed description.
    */
   setDescription(description?: typeof this.description) {
-    this.description ??= description;
+    this.description = description;
   }
 
   /**
@@ -54,7 +56,7 @@ export default class Embed implements EmbedPayload {
    * @param url The embed URL.
    */
   setURL(url?: typeof this.url) {
-    this.url ??= url;
+    this.url = url;
   }
 
   /**
@@ -62,7 +64,7 @@ export default class Embed implements EmbedPayload {
    * @param timestamp The embed timestamp. Must be a valid ISO8601 timestamp.
    */
   setTimestamp(timestamp?: typeof this.timestamp) {
-    this.timestamp ??= timestamp;
+    this.timestamp = timestamp;
   }
 
   /**
@@ -71,7 +73,7 @@ export default class Embed implements EmbedPayload {
    */
   setColor(color?: typeof this.color) {
     if (color)
-      this.color ??= (color > 0xFFFFFF) ? undefined : color;
+      this.color = (color > 0xFFFFFF) ? undefined : color;
   }
 
   /**
@@ -79,7 +81,7 @@ export default class Embed implements EmbedPayload {
    * @param footer The embed footer.
    */
   setFooter(footer?: typeof this.footer) {
-    this.footer ??= Object.assign(this.footer ?? {}, footer);
+    this.footer = Object.assign(this.footer ?? {}, footer);
   }
 
   /**
@@ -87,7 +89,7 @@ export default class Embed implements EmbedPayload {
    * @param image The embed image.
    */
   setImage(image?: typeof this.image) {
-    this.image ??= Object.assign(this.image ?? {}, image);
+    this.image = Object.assign(this.image ?? {}, image);
   }
 
   /**
@@ -95,7 +97,7 @@ export default class Embed implements EmbedPayload {
    * @param thumbnail The embed thumbnail.
    */
   setThumbnail(thumbnail?: typeof this.thumbnail) {
-    this.thumbnail ??= Object.assign(this.thumbnail ?? {}, thumbnail);
+    this.thumbnail = Object.assign(this.thumbnail ?? {}, thumbnail);
   }
 
   /**
@@ -103,7 +105,7 @@ export default class Embed implements EmbedPayload {
    * @param video The embed video.
    */
   setVideo(video?: typeof this.video) {
-    this.video ??= Object.assign(this.video ?? {}, video);
+    this.video = Object.assign(this.video ?? {}, video);
   }
 
   /**
@@ -111,7 +113,7 @@ export default class Embed implements EmbedPayload {
    * @param provider The embed provider.
    */
   setProvider(provider?: typeof this.provider) {
-    this.provider ??= Object.assign(this.provider ?? {}, provider);
+    this.provider = Object.assign(this.provider ?? {}, provider);
   }
 
   /**
@@ -119,7 +121,7 @@ export default class Embed implements EmbedPayload {
    * @param author The embed author.
    */
   setAuthor(author?: typeof this.author) {
-    this.author ??= Object.assign(this.author ?? {}, author);
+    this.author = Object.assign(this.author ?? {}, author);
   }
 
   /**
@@ -131,6 +133,25 @@ export default class Embed implements EmbedPayload {
     if (operation == 'enhance')
       this.fields = (this.fields ?? []).concat(...(fields ?? []));
     else
-      this.fields ??= fields;
+      this.fields = fields ?? [];
+  }
+
+  toString(type: 'json'|'string' = 'string') {
+    return type == 'json'
+    ? JSON.stringify({
+        'author': this.author,
+        'title': this.title,
+        'color': this.color,
+        'description': this.description,
+        'url': this.url,
+        'timestamp': this.timestamp,
+        'footer': this.footer,
+        'image': this.image,
+        'thumbnail': this.thumbnail,
+        'video': this.video,
+        'provider': this.provider,
+        'fields': this.fields
+      })
+    : `[object ${this.constructor.name} "${this.title}"]`
   }
 }

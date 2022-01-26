@@ -8,15 +8,11 @@ import bitwiseCheck from '../util/bitwisecheck.ts';
 import * as Activity from '../structures/base/activity.ts';
 
 export default class GatewayClient {
-  private ws!: WebSocket;
+  ws!: WebSocket;
   private options: GatewayOptions;
   private gateway_listeners: [keyof GatewayEventTypes, Function][];
   private internal_listeners: [keyof InternalEventTypes, Function][];
   // private sidelisteners: [keyof SideEventTypes, Function][];
-
-  get websocket() {
-    return this.ws;
-  }
 
   get gatewayOptions() {
     return this.options;

@@ -24,6 +24,7 @@ export default class Application extends IdBase implements ApplicationPayload {
 
   /**
    * Constructs a new Application instance.
+   * @param payload The Application payload.
    */
   constructor (payload: ApplicationPayload) {
     super(payload.id);
