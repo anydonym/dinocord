@@ -1,11 +1,12 @@
 import GatewayOptions, { GatewayIntents } from './options.ts';
 import GatewayEventTypes from './resources/gatewayevents.ts';
 import { GatewayOpcodes } from './resources/codes.ts';
-import * as PayloadStructures from './resources/structures.ts';
+import * as PayloadStructures from './resources/gatewaystructures.ts';
 import InternalEventTypes from './resources/internalevents.ts';
 import { DISCORD_GATEWAY_WS } from '../constants.ts';
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import * as Activity from '../structures/base/activity.ts';
+import json from '../util/json.ts';
 
 export default class GatewayClient {
   ws!: WebSocket;
@@ -75,7 +76,7 @@ export default class GatewayClient {
   }
 
   /**
-   * Emits the event and calls all the listeners of the event emitted.
+   * Emits the event and calls all the listeners of the event emitted from the Discord gateway.
    * @param event_name The event name.
    * @param payload The event payload.
    */
@@ -83,13 +84,18 @@ export default class GatewayClient {
     this.gateway_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
   }
 
+  /**
+   * Emits the event and calls all the listeners of the internal event emitted.
+   * @param event_name The event name.
+   * @param payload The event payload.
+   */
   emitInternal<E extends keyof InternalEventTypes>(event_name: E, payload: InternalEventTypes[E]) {
     this.internal_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
   }
 
   #sendWs(data: { 'op': GatewayOpcodes, 'd'?: object } & object) {
     if (this.ws.readyState == this.ws.OPEN)
-      this.ws.send(JSON.stringify(Object.assign({ 'd': {} }, data)));
+      this.ws.send(json(data, { d: {} }));
   }
 
   #receive(event: MessageEvent) {
@@ -102,8 +108,6 @@ export default class GatewayClient {
 
     switch (data.op) {
       case GatewayOpcodes.HELLO:
-        this.#heartbeat_interval = data.d.heartbeat_interval;
-
         this.#sendWs({
           'op': GatewayOpcodes.IDENTIFY,
           'd': <PayloadStructures.Identify> {
@@ -120,14 +124,18 @@ export default class GatewayClient {
           }
         });
 
+        this.#heartbeat_interval = data.d.heartbeat_interval;
         this.#heartbeater();
         break;
+
       case GatewayOpcodes.HEARTBEAT:
         this.#immediateHeartbeat();
         break;
+
       case GatewayOpcodes.HEARTBEAT_ACK:
         this.#last_seq = data.d;
         break;
+
       case GatewayOpcodes.DISPATCH:
         this.emitGateway(data.t as keyof GatewayEventTypes, data.d);
         if (data.t as keyof GatewayEventTypes === 'READY')

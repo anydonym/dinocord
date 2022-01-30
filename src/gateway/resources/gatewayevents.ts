@@ -1,5 +1,5 @@
 // import Channel from '../../structures/implementations/channel.ts';
-import Message from '../../structures/base/message.ts';
+import MessagePayload from '../../structures/base/message.ts';
 
 export default interface GatewayEventTypes {
   HELLO: void,
@@ -43,8 +43,8 @@ export default interface GatewayEventTypes {
   INTERACTION_CREATE: undefined,
   INVITE_CREATE: undefined,
   INVITE_DELETE: undefined,
-  MESSAGE_CREATE: Message,
-  MESSAGE_DELETE: Message,
+  MESSAGE_CREATE: MessagePayload,
+  MESSAGE_DELETE: MessagePayload,
   MESSAGE_DELETE_BULK: undefined,
   MESSAGE_REACTION_ADD: undefined,
   MESSAGE_REACTION_REMOVE: undefined,

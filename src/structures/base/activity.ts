@@ -27,14 +27,21 @@ export default interface Activity {
   emoji?: Emoji;
   /** The information for the current party of the user. */
   party?: ActivityParty;
-  /**  */
+  /** Images for the activity and their texts. */
   assets?: ActivityAsset[];
+  /** The secrets for joining/spectating the activity. */
   secrets?: ActivitySecret[];
+  /** Whether the activity is an instantiated game session. */
   instance?: boolean;
+  /** The activity flags. */
   flags?: ActivityFlag[];
+  /** The custom activity buttons. */
   buttons?: ActivityButton[];
 }
 
+/**
+ * The Activity type enum.
+ */
 export enum ActivityType {
   /** Playing {content} */
   GAME        = 0,
@@ -53,6 +60,9 @@ export enum ActivityType {
   COMPETING   = 5
 }
 
+/**
+ * The Activity timestamp structure.
+ */
 export interface ActivityTimestamp {
   /** The beginning of the activity. */
   start?: number;
@@ -74,12 +84,18 @@ export interface ActivityAsset {
   small_text?: string;
 }
 
+/**
+ * The Activity secret structure.
+ */
 export interface ActivitySecret {
   join?: string;
   spectate?: string;
   match?: string;
 }
 
+/**
+ * The Activity flag enum.
+ */
 export enum ActivityFlag {
   INSTANCE                    = 1 << 0,
   JOIN                        = 1 << 1,
