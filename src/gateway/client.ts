@@ -10,15 +10,14 @@ import json from '../util/json.ts';
 
 export default class GatewayClient {
   ws!: WebSocket;
-  private options: GatewayOptions;
-  private gateway_listeners: [keyof GatewayEventTypes, Function][];
-  private internal_listeners: [keyof InternalEventTypes, Function][];
-  // private sidelisteners: [keyof SideEventTypes, Function][];
+  readonly options:   GatewayOptions;
+  gateway_listeners:  [keyof GatewayEventTypes, Function][];
+  internal_listeners: [keyof InternalEventTypes, Function][];
 
-  get gatewayOptions() {
-    return this.options;
-  }
-
+  /**
+   * Build a new Gateway Client.
+   * @param options The options to use for the gateway.
+   */
   constructor (options: GatewayOptions) {
     this.options = options;
     this.gateway_listeners = [];
@@ -93,7 +92,7 @@ export default class GatewayClient {
     this.internal_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
   }
 
-  #sendWs(data: { 'op': GatewayOpcodes, 'd'?: object } & object) {
+  private sendWs(data: { 'op': GatewayOpcodes, 'd'?: object | number | string | null } & object) {
     if (this.ws.readyState == this.ws.OPEN)
       this.ws.send(json(data, { d: {} }));
   }
@@ -103,36 +102,23 @@ export default class GatewayClient {
 
     this.emitInternal('DEBUG', {
       'event_type': 'Gateway->MessageEvent',
-      'message': 'Received a message from the gateway. Opcode: ' + data.op
+      'message': `Message received from the Gateway (${data.op}).`
     });
 
     switch (data.op) {
       case GatewayOpcodes.HELLO:
-        this.#sendWs({
-          'op': GatewayOpcodes.IDENTIFY,
-          'd': <PayloadStructures.Identify> {
-            'token':      this.options.token,
-            'intents':    this.options.intents,
-      
-            'properties': {
-              '$os':      Deno.build.os,
-              '$browser': 'dinocord',
-              '$device':  'Deno ' + Deno.version.deno
-            },
-      
-            'presence':   this.options.presence
-          }
-        });
-
+        this.#hello();
         this.#heartbeat_interval = data.d.heartbeat_interval;
         this.#heartbeater();
         break;
 
       case GatewayOpcodes.HEARTBEAT:
-        this.#immediateHeartbeat();
+        this.emitInternal('HEARTBEAT', undefined);
+        this.#heartbeat();
         break;
 
       case GatewayOpcodes.HEARTBEAT_ACK:
+        this.emitInternal('HEARTBEAT_ACK', undefined);
         this.#last_seq = data.d;
         break;
 
@@ -149,23 +135,63 @@ export default class GatewayClient {
   #session_id!: number;
 
   async #heartbeater() {
-    ((callback: () => void, min: number, max: number) => {
-      let timeout: number, tick = () => {
-        clearTimeout(timeout);
+    ((cb = () => this.#heartbeat(), min = 0, max = this.#heartbeat_interval) => {
+      let num: number, call = () => {
+        clearTimeout(num);
 
-        timeout = setTimeout(() => {
-            tick();
-            callback();
-        }, Math.random() * (max - min) + min)
+        num = setTimeout(
+          () => { call(); cb(); },
+          Math.random() * (max - min) + min
+        );
       }
   
-      tick();
-    })(() => {
-      this.#sendWs({ 'op': GatewayOpcodes.HEARTBEAT });
-    }, 0, this.#heartbeat_interval);
+      call();
+    })();
   }
 
-  async #immediateHeartbeat() {
-    this.#sendWs({ 'op': GatewayOpcodes.HEARTBEAT });
+  async #hello() {
+    this.sendWs({
+      'op': GatewayOpcodes.IDENTIFY,
+      'd': {
+        'token':      this.options.token,
+        'intents':    this.options.intents,
+  
+        'properties': {
+          '$os':      Deno.build.os,
+          '$browser': 'dinocord',
+          '$device':  'Deno ' + Deno.version.deno
+        },
+  
+        'presence':   this.options.presence
+      }
+    });
+  }
+
+  async #heartbeat() {
+    this.emitInternal('HEARTBEAT', {
+      'last_seq': this.#last_seq
+    });
+
+    if (this.#last_seq)
+      this.sendWs({
+        'op': GatewayOpcodes.HEARTBEAT,
+        'd': this.#last_seq
+      });
+    else {
+      this.sendWs({
+        'op': GatewayOpcodes.HEARTBEAT
+      });
+    }
+  }
+
+  async #resume() {
+    this.sendWs({
+      'op': GatewayOpcodes.RESUME,
+      'd': {
+        'token': this.options.token,
+        'session_id': this.#session_id,
+        'seq': this.#last_seq
+      }
+    });
   }
 }
