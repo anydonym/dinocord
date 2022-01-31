@@ -8,7 +8,7 @@ export interface GatewayPayload {
 	/** Payload opcode. */
 	op: GatewayOpcodes;
 	/** Payload data. */
-  // deno-lint-ignore no-explicit-any
+	// deno-lint-ignore no-explicit-any
 	d?: any;
 	/** Sequence number, used for resuming and heartbeats. */
 	s?: number;

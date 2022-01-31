@@ -13,9 +13,9 @@ import json from '../util/json.ts';
 export default class GatewayClient {
 	ws!: WebSocket;
 	readonly options: GatewayOptions;
-  // deno-lint-ignore ban-types
+	// deno-lint-ignore ban-types
 	gateway_listeners: [keyof GatewayEventTypes, Function][];
-  // deno-lint-ignore ban-types
+	// deno-lint-ignore ban-types
 	internal_listeners: [keyof InternalEventTypes, Function][];
 
 	/**
@@ -149,7 +149,7 @@ export default class GatewayClient {
 	private sendWs(
 		data: {
 			'op': GatewayCodes.GatewayOpcodes;
-      // deno-lint-ignore ban-types
+			// deno-lint-ignore ban-types
 			'd'?: object | string | number;
 		} & Record<string, unknown>,
 	) {
@@ -205,16 +205,16 @@ export default class GatewayClient {
 		) => {
 			let num: number;
 			const call = () => {
-					clearTimeout(num);
+				clearTimeout(num);
 
-					num = setTimeout(
-						() => {
-							call();
-							cb();
-						},
-						Math.random() * (max - min) + min,
-					);
-				};
+				num = setTimeout(
+					() => {
+						call();
+						cb();
+					},
+					Math.random() * (max - min) + min,
+				);
+			};
 
 			call();
 		})();
