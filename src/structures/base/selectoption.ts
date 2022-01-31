@@ -1,4 +1,4 @@
-import Emoji from './emoji.ts';
+import Emoji from "./emoji.ts";
 
 export default interface SelectOption {
   label: string;

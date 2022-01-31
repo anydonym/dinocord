@@ -1,4 +1,4 @@
-import Emoji from './emoji.ts';
+import Emoji from "./emoji.ts";
 
 /**
  * The Activity payload structure.
@@ -44,20 +44,20 @@ export default interface Activity {
  */
 export enum ActivityType {
   /** Playing {content} */
-  GAME        = 0,
+  GAME = 0,
   /** Streaming {content} */
-  STREAMING   = 1,
+  STREAMING = 1,
   /** Listening to {content} */
-  LISTENING   = 2,
+  LISTENING = 2,
   /** Watching {contnt} */
-  WATCHING    = 3,
+  WATCHING = 3,
   /**
    * {emoji} {content}
    * @notice Cannot be used for bots. See this issue for more: https://github.com/discord/discord-api-docs/issues/1160#issuecomment-546549516
    */
-  CUSTOM      = 4,
+  CUSTOM = 4,
   /** Competing in {content} */
-  COMPETING   = 5
+  COMPETING = 5,
 }
 
 /**
@@ -97,15 +97,15 @@ export interface ActivitySecret {
  * The Activity flag enum.
  */
 export enum ActivityFlag {
-  INSTANCE                    = 1 << 0,
-  JOIN                        = 1 << 1,
-  SPECTATE                    = 1 << 2,
-  JOIN_REQUEST                = 1 << 3,
-  SYNC                        = 1 << 4,
-  PLAY                        = 1 << 5,
-  PARTY_PRIVACY_FRIENDS       = 1 << 6,
+  INSTANCE = 1 << 0,
+  JOIN = 1 << 1,
+  SPECTATE = 1 << 2,
+  JOIN_REQUEST = 1 << 3,
+  SYNC = 1 << 4,
+  PLAY = 1 << 5,
+  PARTY_PRIVACY_FRIENDS = 1 << 6,
   PARTY_PRIVACY_VOICE_CHANNEL = 1 << 7,
-  EMBEDDED                    = 1 << 8
+  EMBEDDED = 1 << 8,
 }
 
 export interface ActivityButton {

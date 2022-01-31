@@ -1,7 +1,8 @@
-import { IdBase } from '../idbase.a.ts';
-import GuildScheduledEventPayload from '../base/guildscheduledevent.ts';
+import { IdBase } from "../idbase.a.ts";
+import GuildScheduledEventPayload from "../base/guildscheduledevent.ts";
 
-export default class GuildScheduledEvent extends IdBase implements GuildScheduledEventPayload {
+export default class GuildScheduledEvent extends IdBase
+  implements GuildScheduledEventPayload {
   declare readonly id;
   readonly guild_id;
   channel_id?;
@@ -18,7 +19,7 @@ export default class GuildScheduledEvent extends IdBase implements GuildSchedule
   entity_metadata?;
   user_count?;
 
-  constructor (payload: GuildScheduledEventPayload) {
+  constructor(payload: GuildScheduledEventPayload) {
     super(payload.id);
 
     this.guild_id = payload.guild_id;

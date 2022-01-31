@@ -1,4 +1,4 @@
-import User from './user.ts';
+import User from "./user.ts";
 
 export default interface MessageInteraction {
   id: string;
@@ -11,5 +11,5 @@ export enum InteractionType {
   PING = 1,
   APPLICATION_COMMAND = 2,
   MESSAGE_COMPONENT = 3,
-  APPLICATION_COMMAND_AUTOCOMPLETE = 4
+  APPLICATION_COMMAND_AUTOCOMPLETE = 4,
 }

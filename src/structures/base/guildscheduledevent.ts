@@ -1,4 +1,4 @@
-import User from './user.ts';
+import User from "./user.ts";
 
 export default interface GuildScheduledEvent {
   id: string;
@@ -21,7 +21,7 @@ export default interface GuildScheduledEvent {
 export enum EntityType {
   STAGE_INSTANCE,
   VOICE,
-  EXTERNAL
+  EXTERNAL,
 }
 
 export interface EntityMetadata {

@@ -1,5 +1,5 @@
-import { IdBase } from '../idbase.a.ts';
-import GuildPayload from '../base/guild.ts';
+import { IdBase } from "../idbase.a.ts";
+import GuildPayload from "../base/guild.ts";
 
 export default class Guild extends IdBase implements GuildPayload {
   declare readonly id;
@@ -58,9 +58,9 @@ export default class Guild extends IdBase implements GuildPayload {
    * Constructs a new Guild instance.
    * @param payload The Guild payload.
    */
-  constructor (payload: GuildPayload) {
+  constructor(payload: GuildPayload) {
     super(payload.id);
-    
+
     this.name = payload.name;
     this.icon = payload.icon;
     this.icon_hash = payload.icon_hash;

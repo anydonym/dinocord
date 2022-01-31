@@ -1,6 +1,6 @@
-import User from './user.ts';
-import Activity from './activity.ts';
-import ClientStatus from './clientstatus.ts';
+import User from "./user.ts";
+import Activity from "./activity.ts";
+import ClientStatus from "./clientstatus.ts";
 
 /**
  * The Presence Update payload structure.
@@ -19,8 +19,8 @@ export default interface PresenceUpdate {
 }
 
 export enum Status {
-  IDLE      = 'idle',
-  DND       = 'dnd',
-  ONLINE    = 'online',
-  OFFLINE   = 'offline'
+  IDLE = "idle",
+  DND = "dnd",
+  ONLINE = "online",
+  OFFLINE = "offline",
 }

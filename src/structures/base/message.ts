@@ -1,15 +1,15 @@
-import User from './user.ts';
-import GuildMember from './guildmember.ts';
-import Role from './role.ts';
-import Attachment from './attachment.ts';
-import Embed from './embed.ts';
-import Reaction from './reaction.ts';
-import Application from './application.ts';
-import MessageReference from './messagereference.ts';
-import Channel from './channel.ts';
-import MessageInteraction from './messageinteraction.ts';
-import MessageComponent from './messagecomponent.ts';
-import Sticker from './sticker.ts';
+import User from "./user.ts";
+import GuildMember from "./guildmember.ts";
+import Role from "./role.ts";
+import Attachment from "./attachment.ts";
+import Embed from "./embed.ts";
+import Reaction from "./reaction.ts";
+import Application from "./application.ts";
+import MessageReference from "./messagereference.ts";
+import Channel from "./channel.ts";
+import MessageInteraction from "./messageinteraction.ts";
+import MessageComponent from "./messagecomponent.ts";
+import Sticker from "./sticker.ts";
 
 /**
  * The Message payload structure.
@@ -86,26 +86,26 @@ export interface ChannelMention {
 
 export enum MessageType {
   DEFAULT = 0,
-  RECIPENT_ADD                                  = 1,
-  RECIPENT_REMOVE                               = 2,
-  CALL                                          = 3,
-  CHANNEL_NAME_CHANGE                           = 4,
-  CHANNEL_ICON_CHANGE                           = 5,
-  CHANNEL_PINNED_CHANGE                         = 6,
-  GUILD_MEMBER_JOIN                             = 7,
-  USER_PREMIUM_GUILD_SUBSCRIPTION               = 8,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1        = 9,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2        = 10,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3        = 11,
-  CHANNEL_FOLLOW_ADD                            = 12,
-  GUILD_DISCOVERY_DISQUALIFIED                  = 13,
-  GUILD_DISCOVERY_REQUALIFIED                   = 14,
-  GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING  = 15,
-  GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING    = 16,
-  THREAD_CREATED                                = 17,
-  REPLY                                         = 18,
-  CHAT_INPUT_COMMAND                            = 19,
-  CONTEXT_MENU_COMMAND                          = 21
+  RECIPENT_ADD = 1,
+  RECIPENT_REMOVE = 2,
+  CALL = 3,
+  CHANNEL_NAME_CHANGE = 4,
+  CHANNEL_ICON_CHANGE = 5,
+  CHANNEL_PINNED_CHANGE = 6,
+  GUILD_MEMBER_JOIN = 7,
+  USER_PREMIUM_GUILD_SUBSCRIPTION = 8,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1 = 9,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2 = 10,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3 = 11,
+  CHANNEL_FOLLOW_ADD = 12,
+  GUILD_DISCOVERY_DISQUALIFIED = 13,
+  GUILD_DISCOVERY_REQUALIFIED = 14,
+  GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 15,
+  GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 16,
+  THREAD_CREATED = 17,
+  REPLY = 18,
+  CHAT_INPUT_COMMAND = 19,
+  CONTEXT_MENU_COMMAND = 21,
 }
 
 export interface MessageActivity {
@@ -114,19 +114,19 @@ export interface MessageActivity {
 }
 
 export enum MessageActivityType {
-  JOIN          = 1,
-  SPECTATE      = 2,
-  LISTEN        = 3,
-  JOIN_REQUEST  = 4
+  JOIN = 1,
+  SPECTATE = 2,
+  LISTEN = 3,
+  JOIN_REQUEST = 4,
 }
 
 export enum MessageFlags {
-  CROSSPOSTED             = 1 << 0,
-  IS_CROSSPOST            = 1 << 1,
-  SUPPRESS_EMBEDS         = 1 << 2,
-  SOURCE_MESSAGE_DELETED  = 1 << 3,
-  URGENT                  = 1 << 4,
-  HAS_THREAD              = 1 << 5,
-  EPHEMERAL               = 1 << 6,
-  LOADING                 = 1 << 7
+  CROSSPOSTED = 1 << 0,
+  IS_CROSSPOST = 1 << 1,
+  SUPPRESS_EMBEDS = 1 << 2,
+  SOURCE_MESSAGE_DELETED = 1 << 3,
+  URGENT = 1 << 4,
+  HAS_THREAD = 1 << 5,
+  EPHEMERAL = 1 << 6,
+  LOADING = 1 << 7,
 }

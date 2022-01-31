@@ -1,5 +1,5 @@
-import Emoji from './emoji.ts';
-import { GuildFeatures } from './guild.ts';
+import Emoji from "./emoji.ts";
+import { GuildFeatures } from "./guild.ts";
 
 /**
  * The Unavailable Guild payload structure.

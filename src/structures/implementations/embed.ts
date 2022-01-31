@@ -1,4 +1,12 @@
-import EmbedPayload, { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo } from '../base/embed.ts';
+import EmbedPayload, {
+  EmbedAuthor,
+  EmbedField,
+  EmbedFooter,
+  EmbedImage,
+  EmbedProvider,
+  EmbedThumbnail,
+  EmbedVideo,
+} from "../base/embed.ts";
 
 export default class Embed implements EmbedPayload {
   title?: string | undefined;
@@ -18,7 +26,7 @@ export default class Embed implements EmbedPayload {
    * Constructs a new Embed instance.
    * @param payload The payload structure.
    */
-  constructor (payload?: EmbedPayload) {
+  constructor(payload?: EmbedPayload) {
     if (payload) {
       this.title = payload.title;
       this.description = payload.description;
@@ -72,8 +80,9 @@ export default class Embed implements EmbedPayload {
    * @param color The embed color.
    */
   setColor(color?: typeof this.color) {
-    if (color)
+    if (color) {
       this.color = (color > 0xFFFFFF) ? undefined : color;
+    }
   }
 
   /**
@@ -129,29 +138,30 @@ export default class Embed implements EmbedPayload {
    * @param fields The fields to add to or replace.
    * @param operation What dinocord should do with the fields. `enhance` to add the fields to the current fields list, or `override` to force an override, given that `fields` is not undefined in both cases.
    */
-  setFields(fields?: typeof this.fields, operation?: 'enhance' | 'override') {
-    if (operation == 'enhance')
+  setFields(fields?: typeof this.fields, operation?: "enhance" | "override") {
+    if (operation == "enhance") {
       this.fields = (this.fields ?? []).concat(...(fields ?? []));
-    else
+    } else {
       this.fields = fields ?? [];
+    }
   }
 
-  toString(type: 'json'|'string' = 'string') {
-    return type == 'json'
-    ? JSON.stringify({
-        'author': this.author,
-        'title': this.title,
-        'color': this.color,
-        'description': this.description,
-        'url': this.url,
-        'timestamp': this.timestamp,
-        'footer': this.footer,
-        'image': this.image,
-        'thumbnail': this.thumbnail,
-        'video': this.video,
-        'provider': this.provider,
-        'fields': this.fields
+  toString(type: "json" | "string" = "string") {
+    return type == "json"
+      ? JSON.stringify({
+        "author": this.author,
+        "title": this.title,
+        "color": this.color,
+        "description": this.description,
+        "url": this.url,
+        "timestamp": this.timestamp,
+        "footer": this.footer,
+        "image": this.image,
+        "thumbnail": this.thumbnail,
+        "video": this.video,
+        "provider": this.provider,
+        "fields": this.fields,
       })
-    : `[object ${this.constructor.name} "${this.title}"]`
+      : `[object ${this.constructor.name} "${this.title}"]`;
   }
 }

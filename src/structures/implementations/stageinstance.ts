@@ -1,7 +1,8 @@
-import { IdBase } from '../idbase.a.ts';
-import StageInstancePayload from '../base/stageinstance.ts';
+import { IdBase } from "../idbase.a.ts";
+import StageInstancePayload from "../base/stageinstance.ts";
 
-export default class StageInstance extends IdBase implements StageInstancePayload {
+export default class StageInstance extends IdBase
+  implements StageInstancePayload {
   declare readonly id;
   readonly guild_id;
   readonly channel_id;
@@ -9,7 +10,7 @@ export default class StageInstance extends IdBase implements StageInstancePayloa
   privacy_level;
   discoverable_disabled;
 
-  constructor (payload: StageInstancePayload) {
+  constructor(payload: StageInstancePayload) {
     super(payload.id);
 
     this.guild_id = payload.guild_id;

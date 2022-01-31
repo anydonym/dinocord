@@ -1,5 +1,5 @@
-import User from './user.ts';
-import Application from './application.ts';
+import User from "./user.ts";
+import Application from "./application.ts";
 
 export default interface Integration {
   id: string;

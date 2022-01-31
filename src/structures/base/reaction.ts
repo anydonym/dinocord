@@ -1,4 +1,4 @@
-import Emoji from './emoji.ts';
+import Emoji from "./emoji.ts";
 
 /**
  * The Reaction payload structure.

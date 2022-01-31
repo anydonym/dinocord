@@ -1,4 +1,4 @@
-import User from './user.ts';
+import User from "./user.ts";
 
 export default interface Team {
   /** The team icon hash. */
@@ -28,6 +28,6 @@ export interface TeamMember {
 }
 
 export enum MembershipState {
-  INVITED   = 1,
-  ACCEPTED  = 2
+  INVITED = 1,
+  ACCEPTED = 2,
 }

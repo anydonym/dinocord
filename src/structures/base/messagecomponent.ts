@@ -1,5 +1,5 @@
-import Emoji from './emoji.ts';
-import SelectOption from './selectoption.ts';
+import Emoji from "./emoji.ts";
+import SelectOption from "./selectoption.ts";
 
 export default interface MessageComponent {
   type: ComponentType;
@@ -17,7 +17,7 @@ export default interface MessageComponent {
 }
 
 export enum ComponentType {
-  ACTION_ROW  = 1,
-  BUTTON      = 2,
-  SELECT_MENU = 3
+  ACTION_ROW = 1,
+  BUTTON = 2,
+  SELECT_MENU = 3,
 }

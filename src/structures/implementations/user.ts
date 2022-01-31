@@ -1,5 +1,5 @@
-import { IdBase } from '../idbase.a.ts';
-import UserPayload from '../base/user.ts';
+import { IdBase } from "../idbase.a.ts";
+import UserPayload from "../base/user.ts";
 
 export default class User extends IdBase implements UserPayload {
   /** The user's ID. */
@@ -23,7 +23,7 @@ export default class User extends IdBase implements UserPayload {
    * Constructs a new User instance.
    * @param payload The User payload.
    */
-  constructor (payload: UserPayload) {
+  constructor(payload: UserPayload) {
     super(payload.id);
 
     this.username = payload.username;

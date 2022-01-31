@@ -19,6 +19,6 @@ export default interface PermissionOvewrite {
  * The possible permission overwrite types.
  */
 export enum OverwriteType {
-  ROLE    = 0,
-  MEMBER  = 1
+  ROLE = 0,
+  MEMBER = 1,
 }

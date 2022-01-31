@@ -1,5 +1,5 @@
-import { IdBase } from '../idbase.a.ts';
-import StickerPayload from '../base/sticker.ts';
+import { IdBase } from "../idbase.a.ts";
+import StickerPayload from "../base/sticker.ts";
 
 export default class Sticker extends IdBase implements StickerPayload {
   declare readonly id;
@@ -17,7 +17,7 @@ export default class Sticker extends IdBase implements StickerPayload {
   /**
    * Constructs a new Sticker instance.
    */
-  constructor (payload: StickerPayload) {
+  constructor(payload: StickerPayload) {
     super(payload.id);
 
     this.pack_id = payload.pack_id;

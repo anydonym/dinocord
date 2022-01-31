@@ -11,7 +11,7 @@ export default interface ClientStatus {
  * The possible types of client status.
  */
 export enum ClientStatusType {
-  ONLINE  = 'online',
-  IDLE    = 'idle',
-  DND     = 'dnd'
+  ONLINE = "online",
+  IDLE = "idle",
+  DND = "dnd",
 }

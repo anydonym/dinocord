@@ -1,5 +1,5 @@
-import User from './user.ts';
-import Team from './team.ts';
+import User from "./user.ts";
+import Team from "./team.ts";
 
 /**
  * The Application payload structure.
@@ -51,5 +51,5 @@ export enum ApplicationFlags {
   VERIFICATION_PENDING_GUILD_LIMIT = 1 << 16,
   EMBEDDED = 1 << 17,
   GATEWAY_MESSAGE_CONTENT = 1 << 18,
-  GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19
+  GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19,
 }

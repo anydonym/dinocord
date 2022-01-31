@@ -1,6 +1,6 @@
-import { IdBase } from '../idbase.a.ts';
-import MessagePayload, { MessageFlags } from '../base/message.ts';
-import bitwiseCheck from '../../util/bitwisecheck.ts';
+import { IdBase } from "../idbase.a.ts";
+import MessagePayload, { MessageFlags } from "../base/message.ts";
+import bitwiseCheck from "../../util/bitwisecheck.ts";
 
 export default class Message extends IdBase implements MessagePayload {
   declare readonly id;
@@ -38,7 +38,7 @@ export default class Message extends IdBase implements MessagePayload {
    * Constructs a new Message instance.
    * @param payload The Message payload.
    */
-  constructor (payload: MessagePayload) {
+  constructor(payload: MessagePayload) {
     super(payload.id);
 
     this.channel_id = payload.channel_id;

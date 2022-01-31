@@ -1,11 +1,11 @@
-import PermissionOverwrite from '../../structures/base/permissionoverwrite.ts';
+import PermissionOverwrite from "../../structures/base/permissionoverwrite.ts";
 
 /**
  * @todo Set icon type to binary.
  */
 export interface MODIFY_CHANNEL$GROUP_DM {
   name: string;
-  icon: number;  
+  icon: number;
 }
 
 export interface MODIFY_CHANNEL$GUILD {

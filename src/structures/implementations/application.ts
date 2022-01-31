@@ -1,5 +1,5 @@
-import { IdBase } from '../idbase.a.ts';
-import ApplicationPayload from '../base/application.ts';
+import { IdBase } from "../idbase.a.ts";
+import ApplicationPayload from "../base/application.ts";
 
 export default class Application extends IdBase implements ApplicationPayload {
   /** The application ID. */
@@ -26,7 +26,7 @@ export default class Application extends IdBase implements ApplicationPayload {
    * Constructs a new Application instance.
    * @param payload The Application payload.
    */
-  constructor (payload: ApplicationPayload) {
+  constructor(payload: ApplicationPayload) {
     super(payload.id);
 
     this.name = payload.name;

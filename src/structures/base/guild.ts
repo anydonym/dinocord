@@ -1,15 +1,15 @@
-import Role from './role.ts';
-import Emoji from './emoji.ts';
-import Channel from './channel.ts';
-import VoiceState from './voicestate.ts';
-import GuildMember from './guildmember.ts';
-import PresenceUpdate from './presenceupdate.ts';
-import GuildScheduledEvent from './guildscheduledevent.ts';
-import StageInstance from './stageinstance.ts';
-import Sticker from './sticker.ts';
+import Role from "./role.ts";
+import Emoji from "./emoji.ts";
+import Channel from "./channel.ts";
+import VoiceState from "./voicestate.ts";
+import GuildMember from "./guildmember.ts";
+import PresenceUpdate from "./presenceupdate.ts";
+import GuildScheduledEvent from "./guildscheduledevent.ts";
+import StageInstance from "./stageinstance.ts";
+import Sticker from "./sticker.ts";
 
 /**
- * The Guild payload structure. 
+ * The Guild payload structure.
  */
 export default interface Guild {
   /** The guild ID. */
@@ -99,42 +99,42 @@ export default interface Guild {
 
 export enum GuildVerificationLevel {
   /** Unrestricted. */
-  NONE      = 0,
+  NONE = 0,
   /** Must have a verified email on one's Discord account. */
-  LOW       = 1,
+  LOW = 1,
   /** Must also be registered on Discord for longer than 5 minutes. */
-  MEDIUM    = 2,
+  MEDIUM = 2,
   /** Must also be a member of this server for longer than 10 minutes. */
-  HIGH      = 3,
+  HIGH = 3,
   /** Must have a verified phone number on one's Discord account. */
-  VERY_HIGH = 4
+  VERY_HIGH = 4,
 }
 
 /**
  * Discord Guild Features.
  */
 export enum GuildFeatures {
-  ANIMATED_ICON                     = 'ANIMATED_ICON',
-  BANNER                            = 'BANNER',
-  COMMERCE                          = 'COMMERCE',
-  COMMUNITY                         = 'COMMUNITY',
-  DISCOVERABLE                      = 'DISCOVERABLE',
-  FEATURABLE                        = 'FEATURABLE',
-  INVITE_SPLASH                     = 'INVITE_SPLASH',
-  MEMBER_VERIFICATION_GATE_ENABLED  = 'MEMBER_VERIFICATION_GATE_ENABLED',
-  MORE_STICKERS                     = 'MORE_STICKERS',
-  NEWS                              = 'NEWS',
-  PARTNERED                         = 'PARTNERED',
-  PREVIEW_ENABLED                   = 'PREVIEW_ENABLED',
-  PRIVATE_THREADS                   = 'PRIVATE_THREADS',
-  ROLE_ICONS                        = 'ROLE_ICONS',
-  SEVEN_DAY_THREAD_ARCHIVE          = 'SEVEN_DAY_THREAD_ARCHIVE',
-  THREE_DAY_THREAD_ARCHIVE          = 'THREE_DAY_THREAD_ARCHIVE',
-  TICKETED_EVENTS_ENABLED           = 'TICKETED_EVENTS_ENABLED',
-  VANITY_URL                        = 'VANITY_URL',
-  VERIFIED                          = 'VERIFIED',
-  VIP_REGIONS                       = 'VIP_REGIONS',
-  WELCOME_SCREEN_ENABLED            = 'WELCOME_SCREEN_ENABLED'
+  ANIMATED_ICON = "ANIMATED_ICON",
+  BANNER = "BANNER",
+  COMMERCE = "COMMERCE",
+  COMMUNITY = "COMMUNITY",
+  DISCOVERABLE = "DISCOVERABLE",
+  FEATURABLE = "FEATURABLE",
+  INVITE_SPLASH = "INVITE_SPLASH",
+  MEMBER_VERIFICATION_GATE_ENABLED = "MEMBER_VERIFICATION_GATE_ENABLED",
+  MORE_STICKERS = "MORE_STICKERS",
+  NEWS = "NEWS",
+  PARTNERED = "PARTNERED",
+  PREVIEW_ENABLED = "PREVIEW_ENABLED",
+  PRIVATE_THREADS = "PRIVATE_THREADS",
+  ROLE_ICONS = "ROLE_ICONS",
+  SEVEN_DAY_THREAD_ARCHIVE = "SEVEN_DAY_THREAD_ARCHIVE",
+  THREE_DAY_THREAD_ARCHIVE = "THREE_DAY_THREAD_ARCHIVE",
+  TICKETED_EVENTS_ENABLED = "TICKETED_EVENTS_ENABLED",
+  VANITY_URL = "VANITY_URL",
+  VERIFIED = "VERIFIED",
+  VIP_REGIONS = "VIP_REGIONS",
+  WELCOME_SCREEN_ENABLED = "WELCOME_SCREEN_ENABLED",
 }
 
 export interface WelcomeScreen {

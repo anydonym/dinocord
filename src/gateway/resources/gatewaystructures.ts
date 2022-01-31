@@ -1,5 +1,5 @@
-import PresenceUpdate from '../../structures/base/presenceupdate.ts';
-import { GatewayOpcodes } from './codes.ts';
+import PresenceUpdate from "../../structures/base/presenceupdate.ts";
+import { GatewayOpcodes } from "./codes.ts";
 
 /**
  * The Gateway payload structure, received for events.

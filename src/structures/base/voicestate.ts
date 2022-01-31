@@ -1,4 +1,4 @@
-import GuildMember from './guildmember.ts';
+import GuildMember from "./guildmember.ts";
 
 export default interface VoiceState {
   /** The guild ID of the voice state. */

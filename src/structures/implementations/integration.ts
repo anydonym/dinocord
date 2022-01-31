@@ -1,5 +1,5 @@
-import { IdBase } from '../idbase.a.ts';
-import IntegrationPayload from '../base/integration.ts';
+import { IdBase } from "../idbase.a.ts";
+import IntegrationPayload from "../base/integration.ts";
 
 export default class Integration extends IdBase implements IntegrationPayload {
   declare readonly id;
@@ -22,7 +22,7 @@ export default class Integration extends IdBase implements IntegrationPayload {
    * Constructs a new Integration instance.
    * @param payload The Integration payload.
    */
-  constructor (payload: IntegrationPayload) {
+  constructor(payload: IntegrationPayload) {
     super(payload.id);
 
     this.name = payload.name;

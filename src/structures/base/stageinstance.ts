@@ -15,5 +15,5 @@ export default interface StageInstance {
  */
 export enum StagePrivacyLevel {
   PUBLIC = 1,
-  GUILD_ONLY = 2
+  GUILD_ONLY = 2,
 }

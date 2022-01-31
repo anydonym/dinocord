@@ -1,4 +1,4 @@
-import VoiceStatePayload from '../base/voicestate.ts';
+import VoiceStatePayload from "../base/voicestate.ts";
 
 export default class VoiceState implements VoiceStatePayload {
   guild_id?;
@@ -15,7 +15,7 @@ export default class VoiceState implements VoiceStatePayload {
   suppress;
   request_to_speak_timestamp?;
 
-  constructor (payload: VoiceStatePayload) {
+  constructor(payload: VoiceStatePayload) {
     this.guild_id = payload.guild_id;
     this.channel_id = payload.channel_id;
     this.user_id = payload.user_id;

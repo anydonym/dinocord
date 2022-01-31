@@ -1,4 +1,4 @@
-import GuildMemberPayload from '../base/guildmember.ts';
+import GuildMemberPayload from "../base/guildmember.ts";
 
 export default class GuildMember implements GuildMemberPayload {
   readonly user?;
@@ -17,7 +17,7 @@ export default class GuildMember implements GuildMemberPayload {
    * Constructs a new Guild Member instance.
    * @param payload The Guild Member payload.
    */
-  constructor (payload: GuildMemberPayload) {
+  constructor(payload: GuildMemberPayload) {
     this.user = payload.user;
     this.nick = payload.nick;
     this.avatar = payload.avatar;
