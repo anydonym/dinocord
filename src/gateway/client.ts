@@ -47,9 +47,13 @@ export default class GatewayClient {
 
     this.ws = new WebSocket(DISCORD_GATEWAY_WS);
     this.ws.addEventListener('message', (event) => this.#receive(event));
-    this.ws.addEventListener('close', (event) => this.#handleCloseEvent(event.code))
+    this.ws.addEventListener('close', (event) => this.#closed(event.code))
   }
 
+  /**
+   * Closes the connection from the client to the gateway.
+   * @param close_code The close code to use.
+   */
   async disconnect(close_code: number = 1000) {
     this.ws.close(close_code);
   }
@@ -98,6 +102,9 @@ export default class GatewayClient {
     return filtered.length > 0;
   }
 
+  /**
+   * @deprecated Not yet usable
+   */
   async updatePresence(presenceupdate: BotPresenceUpdate) {
     this.sendWs({
       'op': GatewayCodes.GatewayOpcodes.PRESENCE_UPDATE,
@@ -133,7 +140,7 @@ export default class GatewayClient {
 
     switch (data.op) {
       case GatewayCodes.GatewayOpcodes.HELLO:
-        this.#hello();
+        this.#identify();
         this.#heartbeat_interval = data.d.heartbeat_interval;
         this.#heartbeater();
         break;
@@ -176,7 +183,7 @@ export default class GatewayClient {
     })();
   }
 
-  async #hello() {
+  async #identify() {
     this.sendWs({
       'op': GatewayCodes.GatewayOpcodes.IDENTIFY,
       'd': {
@@ -224,9 +231,11 @@ export default class GatewayClient {
     });
   }
 
-  async #handleCloseEvent(code: GatewayCodes.GatewayCloseEventCodes) {
-    if (Object.entries(GatewayCodes.GatewayCloseEventCodes).filter((t) => t[0] == code.toString())) return;
-
+  /**
+   * Handles the gateway close event.
+   * @param code The close code.
+   */
+  async #closed(code: GatewayCodes.GatewayCloseEventCodes & number) {
     let message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
       4000: 'An unknown error occured. Try reconnecting?',
       4001: 'An invalid Gateway opcode or payload was sent.',
@@ -244,11 +253,24 @@ export default class GatewayClient {
       4014: 'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.'
     };
 
-    let error_code = typeof code == 'number' ? code : GatewayCodes[code], error_name = GatewayCodes.GatewayCloseEventCodes[error_code];
-
-    let error = new Error(message_table[error_code]);
-    error.name = error_name;
+    let error = new Error(message_table[code]);
+    error.name = GatewayCodes.GatewayCloseEventCodes[code];
 
     this.emitInternal('ERROR', { 'error_type': 'GatewayCloseEvent', 'error': error });
+
+    if ([
+      GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
+      GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
+      GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
+      GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ
+    ].includes(code))
+      this.#resume();
+    else if ([
+      GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
+      GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
+      GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
+      GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT
+    ])
+      this.#identify();
   }
 }
