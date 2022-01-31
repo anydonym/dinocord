@@ -7,8 +7,11 @@ export * as Constants               from './src/constants.ts';
     // src/gateway/resources
     export * as GatewayCodes        from './src/gateway/resources/codes.ts';
     export * as GatewayEvents       from './src/gateway/resources/gatewayevents.ts';
+    export * as GatewayInternalEvents     from './src/gateway/resources/internalevents.ts';
+    export * as GatewayRESTStructures     from './src/gateway/resources/reststructures.ts';
     export * as GatewayStructures   from './src/gateway/resources/gatewaystructures.ts';
   // src/structures
+  export * as AIdBase               from './src/structures/idbase.a.ts';
   export * as Permission            from './src/structures/permission.ts';
     // src/structures/base
     export * as BaseAttachment      from './src/structures/base/attachment.ts';

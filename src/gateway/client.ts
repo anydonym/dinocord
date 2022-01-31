@@ -1,11 +1,13 @@
-import GatewayOptions, { GatewayIntents } from './options.ts';
-import GatewayEventTypes from './resources/gatewayevents.ts';
-import { GatewayOpcodes } from './resources/codes.ts';
+import * as Activity from '../structures/base/activity.ts';
 import * as PayloadStructures from './resources/gatewaystructures.ts';
+import * as GatewayCodes from './resources/codes.ts';
+
+import GatewayOptions, { GatewayIntents, BotPresenceUpdate } from './options.ts';
+import GatewayEventTypes from './resources/gatewayevents.ts';
 import InternalEventTypes from './resources/internalevents.ts';
 import { DISCORD_GATEWAY_WS } from '../constants.ts';
+
 import bitwiseCheck from '../util/bitwisecheck.ts';
-import * as Activity from '../structures/base/activity.ts';
 import json from '../util/json.ts';
 
 export default class GatewayClient {
@@ -41,15 +43,15 @@ export default class GatewayClient {
 
     if (this.options.presence)
       if (this.options.presence.activities)
-        this.options.presence.activities = this.options.presence.activities.flatMap((v) => {
-          return {
-            'name': v.name,
-            'type': (typeof v.type == 'string') ? Activity.ActivityType[v.type] : v.type
-          }
-        });
+        this.options.presence = this.parsePresence(this.options.presence);
 
     this.ws = new WebSocket(DISCORD_GATEWAY_WS);
     this.ws.addEventListener('message', (event) => this.#receive(event));
+    this.ws.addEventListener('close', (event) => this.#handleCloseEvent(event.code))
+  }
+
+  async disconnect(close_code: number = 1000) {
+    this.ws.close(close_code);
   }
 
   /**
@@ -79,8 +81,10 @@ export default class GatewayClient {
    * @param event_name The event name.
    * @param payload The event payload.
    */
-  emitGateway<E extends keyof GatewayEventTypes>(event_name: E, payload: GatewayEventTypes[E]) {
-    this.gateway_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
+  async emitGateway<E extends keyof GatewayEventTypes>(event_name: E, payload: GatewayEventTypes[E]) {
+    let filtered = this.gateway_listeners.filter((v) => v[0] == event_name);
+    filtered.forEach((v) => v[1](payload));
+    return filtered.length > 0;
   }
 
   /**
@@ -88,11 +92,33 @@ export default class GatewayClient {
    * @param event_name The event name.
    * @param payload The event payload.
    */
-  emitInternal<E extends keyof InternalEventTypes>(event_name: E, payload: InternalEventTypes[E]) {
-    this.internal_listeners.filter((v) => v[0] == event_name).forEach((v) => v[1](payload));
+  async emitInternal<E extends keyof InternalEventTypes>(event_name: E, payload: InternalEventTypes[E]) {
+    let filtered = this.internal_listeners.filter((v) => v[0] == event_name);
+    filtered.forEach((v) => v[1](payload));
+    return filtered.length > 0;
   }
 
-  private sendWs(data: { 'op': GatewayOpcodes, 'd'?: object | number | string | null } & object) {
+  async updatePresence(presenceupdate: BotPresenceUpdate) {
+    this.sendWs({
+      'op': GatewayCodes.GatewayOpcodes.PRESENCE_UPDATE,
+      'd': this.parsePresence(presenceupdate)
+    })
+  }
+
+  private parsePresence(presenceupdate: BotPresenceUpdate) {
+    let presence = presenceupdate;
+
+    presence.activities = presenceupdate.activities.flatMap((v) => {
+      return {
+        'name': v.name,
+        'type': (typeof v.type == 'string') ? Activity.ActivityType[v.type] : v.type
+      }
+    });
+
+    return presence;
+  }
+
+  private sendWs(data: { 'op': GatewayCodes.GatewayOpcodes, 'd'?: object | number | string | null } & object) {
     if (this.ws.readyState == this.ws.OPEN)
       this.ws.send(json(data, { d: {} }));
   }
@@ -106,23 +132,24 @@ export default class GatewayClient {
     });
 
     switch (data.op) {
-      case GatewayOpcodes.HELLO:
+      case GatewayCodes.GatewayOpcodes.HELLO:
         this.#hello();
         this.#heartbeat_interval = data.d.heartbeat_interval;
         this.#heartbeater();
         break;
 
-      case GatewayOpcodes.HEARTBEAT:
+      case GatewayCodes.GatewayOpcodes.HEARTBEAT:
         this.emitInternal('HEARTBEAT', undefined);
         this.#heartbeat();
         break;
 
-      case GatewayOpcodes.HEARTBEAT_ACK:
+      case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
         this.emitInternal('HEARTBEAT_ACK', undefined);
         this.#last_seq = data.d;
         break;
 
-      case GatewayOpcodes.DISPATCH:
+      case GatewayCodes.GatewayOpcodes.DISPATCH:
+        this.emitInternal('DISPATCH', { 'event_name': data.t! })
         this.emitGateway(data.t as keyof GatewayEventTypes, data.d);
         if (data.t as keyof GatewayEventTypes === 'READY')
           this.#session_id = data.d.session_id;
@@ -151,7 +178,7 @@ export default class GatewayClient {
 
   async #hello() {
     this.sendWs({
-      'op': GatewayOpcodes.IDENTIFY,
+      'op': GatewayCodes.GatewayOpcodes.IDENTIFY,
       'd': {
         'token':      this.options.token,
         'intents':    this.options.intents,
@@ -168,30 +195,60 @@ export default class GatewayClient {
   }
 
   async #heartbeat() {
-    this.emitInternal('HEARTBEAT', {
-      'last_seq': this.#last_seq
-    });
+    this.emitInternal('HEARTBEAT', undefined);
 
-    if (this.#last_seq)
-      this.sendWs({
-        'op': GatewayOpcodes.HEARTBEAT,
-        'd': this.#last_seq
-      });
-    else {
-      this.sendWs({
-        'op': GatewayOpcodes.HEARTBEAT
-      });
-    }
+    if (this.ws.readyState == this.ws.OPEN)
+      if (this.#last_seq)
+        this.sendWs({
+          'op': GatewayCodes.GatewayOpcodes.HEARTBEAT,
+          'd': this.#last_seq
+        });
+      else
+        this.sendWs({
+          'op': GatewayCodes.GatewayOpcodes.HEARTBEAT
+        });
+    else
+      this.#resume().then(() => this.#heartbeat());
   }
 
   async #resume() {
+    this.ws = new WebSocket(DISCORD_GATEWAY_WS);
+
     this.sendWs({
-      'op': GatewayOpcodes.RESUME,
+      'op': GatewayCodes.GatewayOpcodes.RESUME,
       'd': {
         'token': this.options.token,
         'session_id': this.#session_id,
         'seq': this.#last_seq
       }
     });
+  }
+
+  async #handleCloseEvent(code: GatewayCodes.GatewayCloseEventCodes) {
+    if (Object.entries(GatewayCodes.GatewayCloseEventCodes).filter((t) => t[0] == code.toString())) return;
+
+    let message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
+      4000: 'An unknown error occured. Try reconnecting?',
+      4001: 'An invalid Gateway opcode or payload was sent.',
+      4002: 'An invalid payload was sent.',
+      4003: 'A payload was sent before authentication.',
+      4004: 'An invalid token was specified. Authentication failed.',
+      4005: 'An IDENTIFY payload was sent after authentication.',
+      4007: 'An invalid sequence ID was provided while resuming. Try reconnecting?',
+      4008: 'Too much payloads have been sent quickly!',
+      4009: 'The session timed out. Try reconnecting?',
+      4010: 'An invalid shard was sent while IDENTIFYing.',
+      4011: 'Sharding required to connect.',
+      4012: 'Invalid API version.',
+      4013: 'Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.',
+      4014: 'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.'
+    };
+
+    let error_code = typeof code == 'number' ? code : GatewayCodes[code], error_name = GatewayCodes.GatewayCloseEventCodes[error_code];
+
+    let error = new Error(message_table[error_code]);
+    error.name = error_name;
+
+    this.emitInternal('ERROR', { 'error_type': 'GatewayCloseEvent', 'error': error });
   }
 }

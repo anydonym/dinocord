@@ -1,3 +1,8 @@
+export const AuditLog = {
+  GET_GUILD_AUDIT_LOG:            (guild_id: string) =>
+    ['get',     `/guilds/${guild_id}/audit-logs`]
+}
+
 export const Channel = {
   GET_CHANNEL:                    (channel_id: string) =>
     ['get',     `/channels/${channel_id}`],
@@ -49,3 +54,14 @@ export const Message = {
   BULK_DELETE_MESSAGES:           (channel_id: string) =>
     ['post',    `/channels/${channel_id}/messages/bulk-delete`]
 };
+
+export const Emoji = {
+  LIST_GUILD_EMOJIS:              (guild_id: string) =>
+    ['get',     `/guilds/${guild_id}/emojis`],
+  GET_GUILD_EMOJI:                (guild_id: string, emoji_id: string) =>
+    ['get',     `/guilds/${guild_id}/emojis/${emoji_id}`],
+  MODIFY_GUILD_EMOJI:             (guild_id: string, emoji_id: string) =>
+    ['patch',   `/guilds/${guild_id}/emojis/${emoji_id}`],
+  DELETE_GUILD_EMOJI:             (guild_id: string, emoji_id: string) =>
+    ['delete',  `/guilds/${guild_id}/emojis/${emoji_id}`]
+}

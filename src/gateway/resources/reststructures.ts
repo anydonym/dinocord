@@ -35,8 +35,19 @@ export interface MODIFY_CHANNEL$THREAD {
  * @warning `around`, `before` and `after` are mutually exclusive - only one may be specified.
  */
 export interface GET_CHANNEL_MESSAGES {
-  around?: bigint;
-  before?: bigint;
-  after?: bigint;
+  around?: string;
+  before?: string;
+  after?: string;
   limit?: number;
+}
+
+export interface CREATE_GUILD_EMOJI {
+  name: string;
+  image: string;
+  roles: string[];
+}
+
+export interface MODIFY_GUILD_EMOJI {
+  name: string;
+  roles: string[] | null;
 }
