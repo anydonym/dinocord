@@ -1,0 +1,24 @@
+{
+	"lint": {
+		"files": {
+			"include": ["./mod.ts", "src/"]
+		},
+
+		"rules": {
+			"exclude": ["require-await"]
+		}
+	},
+
+	"fmt": {
+		"files": {
+			"include": ["./mod.ts", "./denocfg.json", "src/"]
+		},
+		"options": {
+			"useTabs": true,
+			"lineWidth": 100,
+			"indentWidth": 2,
+			"singleQuote": true,
+			"proseWrap": "preserve"
+		}
+	}
+}

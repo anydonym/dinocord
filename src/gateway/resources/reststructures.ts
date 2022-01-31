@@ -1,33 +1,33 @@
-import PermissionOverwrite from "../../structures/base/permissionoverwrite.ts";
+import PermissionOverwrite from '../../structures/base/permissionoverwrite.ts';
 
 /**
  * @todo Set icon type to binary.
  */
 export interface MODIFY_CHANNEL$GROUP_DM {
-  name: string;
-  icon: number;
+	name: string;
+	icon: number;
 }
 
 export interface MODIFY_CHANNEL$GUILD {
-  name: string;
-  type: number;
-  position?: number;
-  topic?: string;
-  nsfw?: boolean;
-  rate_limit_per_user?: number;
-  bitrate?: number;
-  user_limit?: number;
-  permission_overwrites?: PermissionOverwrite[];
-  parent_id?: string;
+	name: string;
+	type: number;
+	position?: number;
+	topic?: string;
+	nsfw?: boolean;
+	rate_limit_per_user?: number;
+	bitrate?: number;
+	user_limit?: number;
+	permission_overwrites?: PermissionOverwrite[];
+	parent_id?: string;
 }
 
 export interface MODIFY_CHANNEL$THREAD {
-  name: string;
-  archived: boolean;
-  auto_archive_duration: number;
-  locked: boolean;
-  invitable: boolean;
-  rate_limit_per_user?: number;
+	name: string;
+	archived: boolean;
+	auto_archive_duration: number;
+	locked: boolean;
+	invitable: boolean;
+	rate_limit_per_user?: number;
 }
 
 /**
@@ -35,19 +35,19 @@ export interface MODIFY_CHANNEL$THREAD {
  * @warning `around`, `before` and `after` are mutually exclusive - only one may be specified.
  */
 export interface GET_CHANNEL_MESSAGES {
-  around?: string;
-  before?: string;
-  after?: string;
-  limit?: number;
+	around?: string;
+	before?: string;
+	after?: string;
+	limit?: number;
 }
 
 export interface CREATE_GUILD_EMOJI {
-  name: string;
-  image: string;
-  roles: string[];
+	name: string;
+	image: string;
+	roles: string[];
 }
 
 export interface MODIFY_GUILD_EMOJI {
-  name: string;
-  roles: string[] | null;
+	name: string;
+	roles: string[] | null;
 }
