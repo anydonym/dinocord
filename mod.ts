@@ -11,6 +11,7 @@ export * as GatewayInternalEvents from './src/gateway/resources/internalevents.t
 export * as GatewayRESTStructures from './src/gateway/resources/reststructures.ts';
 export * as GatewayStructures from './src/gateway/resources/payloadstructures.ts';
 // src/structures
+export * as Embed from './src/structures/embed.ts';
 export * as AIdBase from './src/structures/idbase.a.ts';
 export * as Permission from './src/structures/permission.ts';
 // src/structures/base
@@ -47,7 +48,6 @@ export * as BaseWebhook from './src/structures/base/webhook.ts';
 // src/structures/implementations
 export * as ImplApplication from './src/structures/implementations/application.ts';
 // export * as ImplChannel         from './src/structures/implementations/channel.ts';
-export * as ImplEmbed from './src/structures/implementations/embed.ts';
 export * as ImplEmoji from './src/structures/implementations/emoji.ts';
 export * as ImplGuild from './src/structures/implementations/guild.ts';
 export * as ImplGuildMember from './src/structures/implementations/guildmember.ts';

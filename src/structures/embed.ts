@@ -6,7 +6,7 @@ import EmbedPayload, {
 	EmbedProvider,
 	EmbedThumbnail,
 	EmbedVideo,
-} from '../base/embed.ts';
+} from './base/embed.ts';
 
 export default class Embed implements EmbedPayload {
 	title?: string | undefined;

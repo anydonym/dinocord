@@ -130,4 +130,23 @@ export const Guild = {
 
 	GET_GUILD_CHANNELS: (guild_id: string) => ['get', `/guilds/${guild_id}/channels`],
 	CREATE_GUILD_CHANNEL: (guild_id: string) => ['post', `/guilds/${guild_id}/channels`],
+	MODIFY_GUILD_CHANNEL_POSITIONS: (guild_id: string) => ['patch', `/guilds/${guild_id}/channels`],
+
+	LIST_ACTIVE_THREADS: (guild_id: string) => ['get', `/guilds/${guild_id}/threads/active`],
+
+	GET_GUILD_MEMBER: (
+		guild_id: string,
+		user_id: string,
+	) => ['get', `/guilds/${guild_id}/members/${user_id}`],
+	/** @requires `GUILD_MEMBERS` Priviliged Intent. */
+	LIST_GUILD_MEMBERS: (guild_id: string) => ['get', `/guilds/${guild_id}/members`],
+	SEARCH_GUILD_MEMBERS: (guild_id: string) => ['get', `/guilds/${guild_id}/members/search`],
+	ADD_GUILD_MEMBER: (
+		guild_id: string,
+		user_id: string,
+	) => ['put', `/guilds/${guild_id}/members/${user_id}`],
+	MODIFY_GUILD_MEMBER: (
+		guild_id: string,
+		user_id: string,
+	) => ['patch', `/guilds/${guild_id}/members/${user_id}`],
 };

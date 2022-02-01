@@ -13,9 +13,9 @@ import json from '../util/json.ts';
 export default class GatewayClient {
 	ws!: WebSocket;
 	readonly options: GatewayOptions;
-	// deno-lint-ignore ban-types
+	// deno-lint-ignore no-explicit-any
 	gateway_listeners: [keyof GatewayEventTypes, (payload: any) => void][];
-	// deno-lint-ignore ban-types
+	// deno-lint-ignore no-explicit-any
 	internal_listeners: [keyof InternalEventTypes, (payload: any) => void][];
 
 	/**
