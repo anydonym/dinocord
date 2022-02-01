@@ -10,11 +10,19 @@ import { DISCORD_GATEWAY_WS } from '../constants.ts';
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
 
+export type GatewayEventPayloadType<E extends keyof typeof GatewayEventTypes> =
+	typeof GatewayEventTypes[E][0] extends Record<never, never> ? /// @ts-ignore It is not undefined
+	InstanceType<typeof GatewayEventTypes[E][1]>
+		: undefined;
+
+/**
+ * The client class, the interface between the application and the gateway.
+ */
 export default class GatewayClient {
 	ws!: WebSocket;
 	readonly options: GatewayOptions;
 	// deno-lint-ignore no-explicit-any
-	gateway_listeners: [keyof GatewayEventTypes, (payload: any) => void][];
+	gateway_listeners: [keyof typeof GatewayEventTypes, (payload: any) => void][];
 	// deno-lint-ignore no-explicit-any
 	internal_listeners: [keyof InternalEventTypes, (payload: any) => void][];
 
@@ -73,9 +81,9 @@ export default class GatewayClient {
 	 * @param callback The callback function.
 	 * @returns This instance of client.
 	 */
-	listenGateway<E extends keyof GatewayEventTypes>(
+	listenGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
-		callback: (payload: GatewayEventTypes[E]) => void,
+		callback: (payload: GatewayEventPayloadType<E>) => void,
 	) {
 		this.gateway_listeners.push([event_name, callback]);
 		return this;
@@ -100,9 +108,9 @@ export default class GatewayClient {
 	 * @param event_name The event name.
 	 * @param payload The event payload.
 	 */
-	async emitGateway<E extends keyof GatewayEventTypes>(
+	async emitGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
-		payload: GatewayEventTypes[E],
+		payload: typeof GatewayEventTypes[E][1],
 	) {
 		const filtered = this.gateway_listeners.filter((v) => v[0] == event_name);
 		filtered.forEach((v) => v[1](payload));
@@ -151,6 +159,9 @@ export default class GatewayClient {
 		return presence;
 	}
 
+	requestHttp() {
+	}
+
 	/**
 	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.
 	 * @param data The data to send to the gateway.
@@ -194,8 +205,8 @@ export default class GatewayClient {
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
 				this.emitInternal('DISPATCH', { 'event_name': data.t! });
-				this.emitGateway(data.t as keyof GatewayEventTypes, data.d);
-				if (data.t as keyof GatewayEventTypes === 'READY') {
+				this.emitGateway(data.t as keyof typeof GatewayEventTypes, data.d);
+				if (data.t as keyof typeof GatewayEventTypes === 'READY') {
 					this.#session_id = data.d.session_id;
 				}
 				break;

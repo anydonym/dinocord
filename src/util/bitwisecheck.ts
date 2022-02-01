@@ -4,7 +4,7 @@
  * @param object The enum of bitwise values.
  * @returns The enum keys which their values when summed up are equal to `number`.
  */
-export default function (number: number, object: Record<string | number | symbol, unknown>) {
+export default function (number: number, object: Record<string | number, string | number>) {
 	const arr: [keyof typeof object | string, number][] = [];
 	let num: number = number;
 

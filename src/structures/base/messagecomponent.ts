@@ -1,5 +1,5 @@
 import Emoji from './emoji.ts';
-import SelectOption from './selectoption.ts';
+import SelectMenu from './selectmenu.ts';
 
 export default interface MessageComponent {
 	type: ComponentType;
@@ -9,7 +9,7 @@ export default interface MessageComponent {
 	label?: string;
 	emoji?: Partial<Emoji>;
 	url?: string;
-	options?: SelectOption[];
+	options?: SelectMenu[];
 	placeholder?: string;
 	min_values?: number;
 	max_values?: number;
