@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import WebhookPayload from '../base/webhook.ts';
 
@@ -16,7 +17,7 @@ export default class Webhook extends IdBase implements WebhookPayload {
 	// readonly source_channel;
 	url?;
 
-	constructor(payload: WebhookPayload) {
+	constructor(public client: GatewayClient, payload: WebhookPayload) {
 		super(payload.id);
 
 		this.type = payload.type;

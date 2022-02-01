@@ -1,5 +1,5 @@
 import * as Activity from '../structures/base/activity.ts';
-import * as PayloadStructures from './resources/gatewaystructures.ts';
+import * as PayloadStructures from './resources/payloadstructures.ts';
 import * as GatewayCodes from './resources/codes.ts';
 
 import GatewayOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts';
@@ -14,9 +14,9 @@ export default class GatewayClient {
 	ws!: WebSocket;
 	readonly options: GatewayOptions;
 	// deno-lint-ignore ban-types
-	gateway_listeners: [keyof GatewayEventTypes, Function][];
+	gateway_listeners: [keyof GatewayEventTypes, (payload: any) => void][];
 	// deno-lint-ignore ban-types
-	internal_listeners: [keyof InternalEventTypes, Function][];
+	internal_listeners: [keyof InternalEventTypes, (payload: any) => void][];
 
 	/**
 	 * Build a new Gateway Client.

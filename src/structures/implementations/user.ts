@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import UserPayload from '../base/user.ts';
 
@@ -23,7 +24,7 @@ export default class User extends IdBase implements UserPayload {
 	 * Constructs a new User instance.
 	 * @param payload The User payload.
 	 */
-	constructor(payload: UserPayload) {
+	constructor(public client: GatewayClient, payload: UserPayload) {
 		super(payload.id);
 
 		this.username = payload.username;

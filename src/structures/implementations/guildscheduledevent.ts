@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import GuildScheduledEventPayload from '../base/guildscheduledevent.ts';
 
@@ -18,7 +19,7 @@ export default class GuildScheduledEvent extends IdBase implements GuildSchedule
 	entity_metadata?;
 	user_count?;
 
-	constructor(payload: GuildScheduledEventPayload) {
+	constructor(public client: GatewayClient, payload: GuildScheduledEventPayload) {
 		super(payload.id);
 
 		this.guild_id = payload.guild_id;

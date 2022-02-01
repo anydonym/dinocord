@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { OptionalIdBase } from '../idbase.a.ts';
 import EmojiPayload from '../base/emoji.ts';
 
@@ -15,7 +16,7 @@ export default class Emoji extends OptionalIdBase implements EmojiPayload {
 	 * Constructs a new Emoji instance.
 	 * @param payload The Emoji payload.
 	 */
-	constructor(payload: EmojiPayload) {
+	constructor(public client: GatewayClient, payload: EmojiPayload) {
 		super(payload.id);
 
 		this.name = payload.name;

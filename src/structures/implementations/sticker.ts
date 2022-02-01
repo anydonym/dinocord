@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import StickerPayload from '../base/sticker.ts';
 
@@ -17,7 +18,7 @@ export default class Sticker extends IdBase implements StickerPayload {
 	/**
 	 * Constructs a new Sticker instance.
 	 */
-	constructor(payload: StickerPayload) {
+	constructor(public client: GatewayClient, payload: StickerPayload) {
 		super(payload.id);
 
 		this.pack_id = payload.pack_id;

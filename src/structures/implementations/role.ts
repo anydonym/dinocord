@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import RolePayload from '../base/role.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
@@ -20,7 +21,7 @@ export default class Role extends IdBase implements RolePayload {
 	 * Constructs a new Role instance.
 	 * @param payload The Role payload.
 	 */
-	constructor(payload: RolePayload) {
+	constructor(public client: GatewayClient, payload: RolePayload) {
 		super(payload.id);
 
 		this.name = payload.name;

@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import GuildMemberPayload from '../base/guildmember.ts';
 
 export default class GuildMember implements GuildMemberPayload {
@@ -17,7 +18,7 @@ export default class GuildMember implements GuildMemberPayload {
 	 * Constructs a new Guild Member instance.
 	 * @param payload The Guild Member payload.
 	 */
-	constructor(payload: GuildMemberPayload) {
+	constructor(public client: GatewayClient, payload: GuildMemberPayload) {
 		this.user = payload.user;
 		this.nick = payload.nick;
 		this.avatar = payload.avatar;

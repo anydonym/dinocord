@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import StageInstancePayload from '../base/stageinstance.ts';
 
@@ -9,7 +10,7 @@ export default class StageInstance extends IdBase implements StageInstancePayloa
 	privacy_level;
 	discoverable_disabled;
 
-	constructor(payload: StageInstancePayload) {
+	constructor(public client: GatewayClient, payload: StageInstancePayload) {
 		super(payload.id);
 
 		this.guild_id = payload.guild_id;

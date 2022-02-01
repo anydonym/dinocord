@@ -1,3 +1,4 @@
+import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import GuildPayload from '../base/guild.ts';
 
@@ -58,7 +59,7 @@ export default class Guild extends IdBase implements GuildPayload {
 	 * Constructs a new Guild instance.
 	 * @param payload The Guild payload.
 	 */
-	constructor(payload: GuildPayload) {
+	constructor(public client: GatewayClient, payload: GuildPayload) {
 		super(payload.id);
 
 		this.name = payload.name;
