@@ -318,12 +318,10 @@ export default class GatewayClient {
 			4014: 'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
 		};
 
-		const error = new Error(message_table[code]);
-		error.name = GatewayCodes.GatewayCloseEventCodes[code];
-
 		this.emitInternal('ERROR', {
-			'error_type': 'GatewayCloseEvent',
-			'error': error,
+			'name': GatewayCodes.GatewayCloseEventCodes[code],
+			'type': 'GatewayCloseEvent',
+			'message': message_table[code],
 		});
 
 		if (

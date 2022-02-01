@@ -52,8 +52,10 @@ export interface CREATE_MESSAGE {
 	// message_reference?: MessageReference;
 	components?: MessageComponent[];
 	sticker_ids?: string[];
-	// files: FileContent[];
-	// payload_json: string;
+	/** @deprecated Not supported yet */
+	file: string;
+	/** @deprecated Not supported yet */
+	payload_json: string;
 	attachments?: Partial<Attachment>[];
 	flags?: number;
 }

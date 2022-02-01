@@ -15,9 +15,10 @@ export * as Embed from './src/structures/embed.ts';
 export * as AIdBase from './src/structures/idbase.a.ts';
 export * as Permission from './src/structures/permission.ts';
 // src/structures/base
-export * as BaseAttachment from './src/structures/base/attachment.ts';
 export * as BaseActivity from './src/structures/base/activity.ts';
+export * as BaseAllowedMention from './src/structures/base/allowedmention.ts';
 export * as BaseApplication from './src/structures/base/application.ts';
+export * as BaseAttachment from './src/structures/base/attachment.ts';
 export * as BaseAuditLog from './src/structures/base/auditlog.ts';
 export * as BaseAuditLogEntry from './src/structures/base/auditlogentry.ts';
 export * as BaseChannel from './src/structures/base/channel.ts';
@@ -47,7 +48,7 @@ export * as BaseVoiceState from './src/structures/base/voicestate.ts';
 export * as BaseWebhook from './src/structures/base/webhook.ts';
 // src/structures/implementations
 export * as ImplApplication from './src/structures/implementations/application.ts';
-// export * as ImplChannel         from './src/structures/implementations/channel.ts';
+export * as ImplChannel from './src/structures/implementations/channel.ts';
 export * as ImplEmoji from './src/structures/implementations/emoji.ts';
 export * as ImplGuild from './src/structures/implementations/guild.ts';
 export * as ImplGuildMember from './src/structures/implementations/guildmember.ts';

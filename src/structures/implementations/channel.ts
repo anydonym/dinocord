@@ -68,5 +68,16 @@ export default class Channel extends IdBase implements ChannelPayload {
 
 	createMessage(messageOptions: RestStructures.CREATE_MESSAGE) {
 		messageOptions;
+		if (
+			messageOptions.content || messageOptions.embeds || messageOptions.sticker_ids ||
+			messageOptions.file
+		) {
+		} else {
+			this.client.emitInternal('ERROR', {
+				'name': 'EMPTY_MESSAGE',
+				'type': 'MessageCreateError',
+				'message': 'At least 1 field (content, embeds, sticker_ids, files) must be present.',
+			});
+		}
 	}
 }

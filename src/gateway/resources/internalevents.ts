@@ -12,8 +12,9 @@ export interface DebugEvent {
 }
 
 export interface ErrorEvent {
-	error_type: string;
-	error: Error;
+	name: string;
+	type: string;
+	message: string;
 }
 
 export interface DispatchEvent {
