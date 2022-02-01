@@ -1,5 +1,8 @@
 import User from './user.ts';
 
+/**
+ * The Team payload structure.
+ */
 export default interface Team {
 	/** The team icon hash. */
 	icon?: string;
@@ -13,6 +16,9 @@ export default interface Team {
 	owner_user_id: string;
 }
 
+/**
+ * The Team Member payload structure.
+ */
 export interface TeamMember {
 	/**
 	 * The membership state of a team member.
@@ -27,6 +33,9 @@ export interface TeamMember {
 	user: Partial<User>;
 }
 
+/**
+ * The state of membership of a team memberdeno info.
+ */
 export enum MembershipState {
 	INVITED = 1,
 	ACCEPTED = 2,

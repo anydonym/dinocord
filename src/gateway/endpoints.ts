@@ -120,3 +120,14 @@ export const Emoji = {
 		emoji_id: string,
 	) => ['delete', `/guilds/${guild_id}/emojis/${emoji_id}`],
 };
+
+export const Guild = {
+	CREATE_GUILD: () => ['post', `/guilds/`],
+	GET_GUILD: (guild_id: string) => ['get', `/guilds/${guild_id}`],
+	GET_GUILD_PREVIEW: (guild_id: string) => ['get', `/guilds/${guild_id}/preview`],
+	MODIFY_GUILD: (guild_id: string) => ['patch', `/guilds/${guild_id}`],
+	DELETE_GUILD: (guild_id: string) => ['delete', `/guilds/${guild_id}`],
+
+	GET_GUILD_CHANNELS: (guild_id: string) => ['get', `/guilds/${guild_id}/channels`],
+	CREATE_GUILD_CHANNEL: (guild_id: string) => ['post', `/guilds/${guild_id}/channels`],
+};

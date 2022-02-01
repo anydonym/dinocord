@@ -51,3 +51,16 @@ export interface MODIFY_GUILD_EMOJI {
 	name: string;
 	roles: string[] | null;
 }
+
+export interface CREATE_GUILD_CHANNEL {
+	name: string;
+	type: number;
+	topic: string;
+	bitrate: number;
+	user_limit: number;
+	rate_limit_per_user: number;
+	position: number;
+	permission_overwrites: PermissionOverwrite[];
+	parent_id: string;
+	nsfw: boolean;
+}

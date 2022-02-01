@@ -133,6 +133,11 @@ export default class GatewayClient {
 		});
 	}
 
+	/**
+	 * Parses the bot presence update activities and return the whole parsed presence update.
+	 * @param presenceupdate The presence update to parse.
+	 * @returns The parsed presence update.
+	 */
 	private parsePresence(presenceupdate: BotPresenceUpdate) {
 		const presence = presenceupdate;
 
@@ -146,7 +151,11 @@ export default class GatewayClient {
 		return presence;
 	}
 
-	private sendWs(
+	/**
+	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.
+	 * @param data The data to send to the gateway.
+	 */
+	sendWs(
 		data: {
 			'op': GatewayCodes.GatewayOpcodes;
 			// deno-lint-ignore ban-types
@@ -197,6 +206,9 @@ export default class GatewayClient {
 	#last_seq!: number;
 	#session_id!: number;
 
+	/**
+	 * The automated periodical heartbeater.
+	 */
 	async #heartbeater() {
 		((
 			cb = () => this.#heartbeat(),
@@ -220,6 +232,9 @@ export default class GatewayClient {
 		})();
 	}
 
+	/**
+	 * The method to send an `IDENTIFY` request to the gateway.
+	 */
 	async #identify() {
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.IDENTIFY,

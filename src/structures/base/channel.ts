@@ -1,5 +1,7 @@
 import PermissionOverwrite from './permissionoverwrite.ts';
 import User from './user.ts';
+import ThreadMetadata from './threadmetadata.ts';
+import ThreadMember from './threadmember.ts';
 
 export default interface Channel {
 	id: string;
@@ -24,8 +26,8 @@ export default interface Channel {
 	video_quality_mode?: number;
 	mesage_count?: number;
 	member_count?: number;
-	// thread_metadata: ThreadMetadata;
-	// member?: ThreadMember;
+	thread_metadata: ThreadMetadata;
+	member?: ThreadMember;
 	default_auto_archive_duration?: number;
 	permissions?: string;
 }

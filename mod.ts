@@ -33,9 +33,12 @@ export * as BaseMessageInteraction from './src/structures/base/messageinteractio
 export * as BaseMessageReference from './src/structures/base/messagereference.ts';
 export * as BasePresenceUpdate from './src/structures/base/presenceupdate.ts';
 export * as BaseRole from './src/structures/base/role.ts';
+export * as BaseSelectMenu from './src/structures/base/selectmenu.ts';
 export * as BaseStageInstance from './src/structures/base/stageinstance.ts';
 export * as BaseSticker from './src/structures/base/sticker.ts';
 export * as BaseTeam from './src/structures/base/team.ts';
+export * as BaseThreadMember from './src/structures/base/threadmember.ts';
+export * as BaseThreadMetadata from './src/structures/base/threadmetadata.ts';
 export * as BaseUnavailableGuild from './src/structures/base/unavailableguild.ts';
 export * as BaseUser from './src/structures/base/user.ts';
 export * as BaseVoiceRegion from './src/structures/base/voiceregion.ts';
