@@ -1,4 +1,7 @@
 import PermissionOverwrite from '../../structures/base/permissionoverwrite.ts';
+import Embed from '../../structures/embed.ts';
+import MessageComponent from '../../structures/base/messagecomponent.ts';
+import Attachment from '../../structures/base/attachment.ts';
 
 /**
  * @todo Set icon type to binary.
@@ -39,6 +42,20 @@ export interface GET_CHANNEL_MESSAGES {
 	before?: string;
 	after?: string;
 	limit?: number;
+}
+
+export interface CREATE_MESSAGE {
+	content?: string;
+	tts?: boolean;
+	embeds?: Embed[];
+	// allowed_mentions?: AllowedMention;
+	// message_reference?: MessageReference;
+	components?: MessageComponent[];
+	sticker_ids?: string[];
+	// files: FileContent[];
+	// payload_json: string;
+	attachments?: Partial<Attachment>[];
+	flags?: number;
 }
 
 export interface CREATE_GUILD_EMOJI {

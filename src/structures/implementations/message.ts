@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import MessagePayload, { MessageFlags } from '../base/message.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
+// import Channel from './channel.ts';
+import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 
 export default class Message extends IdBase implements MessagePayload {
 	declare readonly id;
@@ -75,5 +77,9 @@ export default class Message extends IdBase implements MessagePayload {
 
 	get messageFlags() {
 		return bitwiseCheck(this.flags ?? 0, MessageFlags);
+	}
+
+	reply(msg: MessageContent) {
+		msg;
 	}
 }

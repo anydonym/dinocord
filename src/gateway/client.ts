@@ -10,11 +10,6 @@ import { DISCORD_GATEWAY_WS } from '../constants.ts';
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
 
-export type GatewayEventPayloadType<E extends keyof typeof GatewayEventTypes> =
-	typeof GatewayEventTypes[E][0] extends Record<never, never> ? /// @ts-ignore It is not undefined
-	InstanceType<typeof GatewayEventTypes[E][1]>
-		: undefined;
-
 /**
  * The client class, the interface between the application and the gateway.
  */
@@ -83,7 +78,11 @@ export default class GatewayClient {
 	 */
 	listenGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
-		callback: (payload: GatewayEventPayloadType<E>) => void,
+		callback: (
+			payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
+				? InstanceType<typeof GatewayEventTypes[E][1]['default']>
+				: undefined,
+		) => void,
 	) {
 		this.gateway_listeners.push([event_name, callback]);
 		return this;

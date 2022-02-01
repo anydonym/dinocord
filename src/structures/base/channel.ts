@@ -24,7 +24,7 @@ export default interface Channel {
 	last_pin_timestamp?: string;
 	rtc_region?: string;
 	video_quality_mode?: number;
-	mesage_count?: number;
+	message_count?: number;
 	member_count?: number;
 	thread_metadata: ThreadMetadata;
 	member?: ThreadMember;
