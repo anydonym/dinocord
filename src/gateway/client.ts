@@ -5,24 +5,35 @@ import * as GatewayCodes from './resources/codes.ts';
 import GatewayOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts';
 import GatewayEventTypes from './resources/gatewayevents.ts';
 import InternalEventTypes from './resources/internalevents.ts';
-import { DISCORD_GATEWAY_WS } from '../constants.ts';
-// import RestEndpoints from './endpoints.ts';
+import {
+	DINOCORD_GITHUB_URL,
+	DINOCORD_VERSION,
+	DISCORD_GATEWAY_WS,
+	DISCORD_REST_BASEURL,
+} from '../constants.ts';
 
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
 
-// import { axiod } from '../d.ts';
+import { axiod } from '../d.ts';
 
 /**
  * The client class, the interface between the application and the gateway.
  */
 export default class GatewayClient {
+	/** The websocket. */
 	ws!: WebSocket;
+	/** The options used for connecting to the gateway. */
 	readonly options: GatewayOptions;
+	/** The listeners for gateway events. */
 	// deno-lint-ignore no-explicit-any
 	gateway_listeners: [keyof typeof GatewayEventTypes, (payload: any) => void][];
+	/** The listeners for internal events. */
 	// deno-lint-ignore no-explicit-any
 	internal_listeners: [keyof InternalEventTypes, (payload: any) => void][];
+
+	/** REST API default config. */
+	readonly config;
 
 	/**
 	 * Build a new Gateway Client.
@@ -32,6 +43,14 @@ export default class GatewayClient {
 		this.options = options;
 		this.gateway_listeners = [];
 		this.internal_listeners = [];
+
+		this.config = {
+			'headers': {
+				'Authorization': `Bot ${this.options.token}`,
+				'User-Agent': `DiscordBot (${DINOCORD_GITHUB_URL}, ${DINOCORD_VERSION})`,
+			},
+			'baseURL': DISCORD_REST_BASEURL,
+		};
 	}
 
 	/**
@@ -109,6 +128,7 @@ export default class GatewayClient {
 	 * Emits the event and calls all the listeners of the event emitted from the Discord gateway.
 	 * @param event_name The event name.
 	 * @param payload The event payload.
+	 * @returns Whether there is at least one listener of the event.
 	 */
 	async emitGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
@@ -125,6 +145,7 @@ export default class GatewayClient {
 	 * Emits the event and calls all the listeners of the internal event emitted.
 	 * @param event_name The event name.
 	 * @param payload The event payload.
+	 * @returns Whether there is at least one listener of the event.
 	 */
 	async emitInternal<E extends keyof InternalEventTypes>(
 		event_name: E,
@@ -163,9 +184,21 @@ export default class GatewayClient {
 		return presence;
 	}
 
-	// requestHttp<T extends keyof typeof RestEndpoints>(type: T, parameters: Parameters<typeof RestEndpoints[T]>, options?: Record<string, unknown>) {
-	// let [method, url] = RestEndpoints[type](...Object.values(parameters));
-	// }
+	async requestHttp(
+		method: 'get' | 'put' | 'post' | 'delete' | 'patch',
+		url: string,
+		data?: Record<never, never> | undefined,
+	) {
+		if (method) {
+			return axiod[method!](url, data, this.config).catch((reason) => {
+				this.emitInternal('ERROR', {
+					'name': 'REST_REQUEST_ERROR',
+					'type': 'RequestHttpError',
+					'message': reason,
+				});
+			});
+		}
+	}
 
 	/**
 	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.

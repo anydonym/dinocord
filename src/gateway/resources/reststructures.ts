@@ -2,6 +2,7 @@ import PermissionOverwrite from '../../structures/base/permissionoverwrite.ts';
 import Embed from '../../structures/embed.ts';
 import MessageComponent from '../../structures/base/messagecomponent.ts';
 import Attachment from '../../structures/base/attachment.ts';
+import MessageReference from '../../structures/base/messagereference.ts';
 
 /**
  * @todo Set icon type to binary.
@@ -49,13 +50,13 @@ export interface CREATE_MESSAGE {
 	tts?: boolean;
 	embeds?: Embed[];
 	// allowed_mentions?: AllowedMention;
-	// message_reference?: MessageReference;
+	message_reference?: MessageReference;
 	components?: MessageComponent[];
 	sticker_ids?: string[];
 	/** @deprecated Not supported yet */
-	file: string;
+	file?: string;
 	/** @deprecated Not supported yet */
-	payload_json: string;
+	payload_json?: string;
 	attachments?: Partial<Attachment>[];
 	flags?: number;
 }

@@ -1,6 +1,6 @@
-import PresenceUpdate from '../../structures/base/presenceupdate.ts';
-import { GatewayOpcodes } from './codes.ts';
 import GatewayEventTypes from './gatewayevents.ts';
+import { BotPresenceUpdate } from '../options.ts';
+import { GatewayOpcodes } from './codes.ts';
 
 /**
  * The Gateway payload structure, received for events.
@@ -37,7 +37,7 @@ export interface Identify {
 	/** The number of shards. */
 	shard?: number;
 	/** The presence for the bot user. */
-	presence?: PresenceUpdate;
+	presence?: BotPresenceUpdate;
 	/** The Gateway Intents. See @enum GatewayIntents for more. */
 	intents: number;
 }

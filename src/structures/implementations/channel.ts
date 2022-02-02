@@ -1,8 +1,8 @@
 import { IdBase } from '../idbase.a.ts';
 import ChannelPayload from '../base/channel.ts';
 import GatewayClient from '../../gateway/client.ts';
-// import { ChannelEndpoints, MessageEndpoints } from '../../gateway/endpoints.ts';
-import * as RestStructures from '../../gateway/resources/reststructures.ts';
+import RestEndpoints from '../../gateway/endpoints.ts';
+import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 
 export default class Channel extends IdBase implements ChannelPayload {
 	declare readonly id;
@@ -66,12 +66,15 @@ export default class Channel extends IdBase implements ChannelPayload {
 		this.permissions = payload.permissions;
 	}
 
-	createMessage(messageOptions: RestStructures.CREATE_MESSAGE) {
+	createMessage(messageOptions: MessageContent) {
 		if (
 			messageOptions.content || messageOptions.embeds || messageOptions.sticker_ids ||
 			messageOptions.file
 		) {
-			messageOptions;
+			const method = RestEndpoints.CREATE_MESSAGE[0];
+			const url = RestEndpoints.CREATE_MESSAGE[1](this.id);
+
+			this.client.requestHttp(method, url, messageOptions);
 		} else {
 			this.client.emitInternal('ERROR', {
 				'name': 'EMPTY_MESSAGE',
