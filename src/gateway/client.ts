@@ -24,7 +24,7 @@ import User from '../structures/implementations/user.ts';
  */
 export default class GatewayClient {
 	/** The websocket. */
-	ws!: WebSocket;
+	ws!: WebSocket & { ping?: number };
 	/** The options used for connecting to the gateway. */
 	readonly options: GatewayOptions;
 	/** The listeners for gateway events. */
@@ -83,6 +83,7 @@ export default class GatewayClient {
 		}
 
 		this.ws = new WebSocket(DISCORD_WS_BASEURL);
+		this.ws.ping = 0;
 		this.ws.addEventListener('message', (event) => this.#receive(event));
 		this.ws.addEventListener('close', (event) => this.#closed(event.code));
 	}
@@ -242,22 +243,24 @@ export default class GatewayClient {
 
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
 				this.emitInternal('HEARTBEAT_ACK', undefined);
+				this.ws.ping = Date.now() - this.#hb_sent;
 				this.#last_seq = data.d;
 				break;
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
 				this.emitInternal('DISPATCH', { 'event_name': data.t! });
 
-				if (data.t as keyof typeof GatewayEventTypes === 'READY') {
+				if (data.t === 'READY') {
 					this.user = new User(this, data.d.user);
 					this.#session_id = data.d.session_id;
 				}
 
 				this.emitGateway(
 					data.t!,
-					/// @ts-ignore If GatewayEventTypes[data.t!][1] is undefined, return undefined; otherwise return the correct instance.
-					GatewayEventTypes[data.t!][1] &&
-						new GatewayEventTypes[data.t!][1]!['default'](this, data.d!),
+					/// @ts-ignore If GatewayEventTypes[data.t!][1] is not undefined, so is the code below valid.
+					GatewayEventTypes[data.t!][1]
+						? new GatewayEventTypes[data.t!][1]!['default'](this, data.d!)
+						: undefined,
 				);
 
 				break;
@@ -267,6 +270,7 @@ export default class GatewayClient {
 	#heartbeat_interval!: number;
 	#last_seq!: number;
 	#session_id!: number;
+	#hb_sent!: number;
 
 	/**
 	 * The automated periodical heartbeater.
@@ -329,6 +333,8 @@ export default class GatewayClient {
 					'op': GatewayCodes.GatewayOpcodes.HEARTBEAT,
 				});
 			}
+
+			this.#hb_sent = Date.now();
 		} else {
 			this.#resume().then(() => this.#heartbeat());
 		}

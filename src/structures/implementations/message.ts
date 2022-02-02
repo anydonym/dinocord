@@ -6,7 +6,7 @@ import bitwiseCheck from '../../util/bitwisecheck.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
-import trace from "../../util/trace.ts";
+import trace from '../../util/trace.ts';
 
 export default class Message extends IdBase implements MessagePayload {
 	declare readonly id;

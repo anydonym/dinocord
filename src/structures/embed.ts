@@ -172,8 +172,8 @@ export default class Embed implements EmbedPayload {
 	validate() {
 		const title_len = (this.title ?? '').length,
 			description_len = (this.description ?? '').length,
-			author_name_len = Object.assign(this.author, { 'name': '' }).name.length,
-			footer_text_len = Object.assign(this.footer, { 'text': '' }).text.length,
+			author_name_len = (this.author ?? { 'name': '' }).name.length,
+			footer_text_len = (this.footer ?? { 'text': '' }).text.length,
 			fields_checkobjlen = (this.fields ?? []).length <= 25,
 			fields_values_checkcharlen =
 				(this.fields ?? []).flatMap((v) => v.name.length <= 256 && v.value.length <= 1024).filter((
