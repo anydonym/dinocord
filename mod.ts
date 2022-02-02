@@ -2,13 +2,13 @@
 export * as Constants from './src/constants.ts';
 // src/gateway
 export * as GatewayClient from './src/gateway/client.ts';
-export * as GatewayEndpoints from './src/gateway/endpoints.ts';
+export * as GatewayRestEndpoints from './src/gateway/restendpoints.ts';
 export * as GatewayOptions from './src/gateway/options.ts';
 // src/gateway/resources
 export * as GatewayCodes from './src/gateway/resources/codes.ts';
 export * as GatewayEvents from './src/gateway/resources/gatewayevents.ts';
 export * as GatewayInternalEvents from './src/gateway/resources/internalevents.ts';
-export * as GatewayRESTStructures from './src/gateway/resources/reststructures.ts';
+export * as GatewayRestStructures from './src/gateway/resources/reststructures.ts';
 export * as GatewayStructures from './src/gateway/resources/payloadstructures.ts';
 // src/structures
 export * as Embed from './src/structures/embed.ts';

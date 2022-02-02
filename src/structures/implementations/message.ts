@@ -4,8 +4,9 @@ import MessagePayload, { MessageFlags } from '../base/message.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
 // import Channel from './channel.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
-import RestEndpoints from '../../gateway/endpoints.ts';
+import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
+import trace from "../../util/trace.ts";
 
 export default class Message extends IdBase implements MessagePayload {
 	declare readonly id;
@@ -93,6 +94,16 @@ export default class Message extends IdBase implements MessagePayload {
 	}
 
 	reply(content: MessageContent) {
+		if (content.embeds?.filter((e) => !e.validate()).length != 0) {
+			this.client.emitInternal('ERROR', {
+				'name': 'EMBED_VALIDATION_ERROR',
+				'type': 'MessageCreation',
+				'message': 'Validation for the embeds of the specified content failed.',
+				'trace': trace(this.reply),
+			});
+			return false;
+		}
+
 		const method = RestEndpoints.CREATE_MESSAGE[0];
 		const url = RestEndpoints.CREATE_MESSAGE[1](this.channel_id);
 
@@ -104,6 +115,6 @@ export default class Message extends IdBase implements MessagePayload {
 			'fall_if_not_exists': true,
 		};
 
-		this.client.requestHttp(method, url, _content);
+		return this.client.requestHttp(method, url, _content).then(() => true, () => false);
 	}
 }

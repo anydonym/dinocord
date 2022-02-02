@@ -164,4 +164,27 @@ export default class Embed implements EmbedPayload {
 			})
 			: `[object ${this.constructor.name} "${this.title}"]`;
 	}
+
+	/**
+	 * Checks if the Embed is valid. If not, passing it through the gateway will result in a `Bad Request` response.
+	 * @returns Whether the Embed instance is valid.
+	 */
+	validate() {
+		const title_len = (this.title ?? '').length,
+			description_len = (this.description ?? '').length,
+			author_name_len = Object.assign(this.author, { 'name': '' }).name.length,
+			footer_text_len = Object.assign(this.footer, { 'text': '' }).text.length,
+			fields_checkobjlen = (this.fields ?? []).length <= 25,
+			fields_values_checkcharlen =
+				(this.fields ?? []).flatMap((v) => v.name.length <= 256 && v.value.length <= 1024).filter((
+					v,
+				) => !v).length == 0,
+			fields_values_charlen = (this.fields ?? []).flatMap((v) => v.name.length + v.value.length)
+				.reduce((p, v) => p + v, 0);
+
+		return title_len <= 256 && description_len <= 4096 && author_name_len <= 256 &&
+			footer_text_len <= 2048 && fields_checkobjlen && fields_values_checkcharlen &&
+			(title_len + description_len + author_name_len + footer_text_len + fields_values_charlen <=
+				6000);
+	}
 }

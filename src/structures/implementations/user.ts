@@ -1,6 +1,7 @@
 import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import UserPayload from '../base/user.ts';
+import CDNEndpoints, { DISCORD_CDN_BASEURL } from '../../gateway/cdnendpoints.ts';
 
 export default class User extends IdBase implements UserPayload {
 	/** The user's ID. */
@@ -41,5 +42,15 @@ export default class User extends IdBase implements UserPayload {
 		this.flags = payload.flags;
 		this.premium_type = payload.premium_type;
 		this.public_flags = payload.public_flags;
+	}
+
+	getDefaultAvatarURL(format?: Parameters<typeof CDNEndpoints.DEFAULT_USER_AVATAR>[1]) {
+		return DISCORD_CDN_BASEURL + CDNEndpoints.DEFAULT_USER_AVATAR(this.discriminator, format);
+	}
+
+	getAvatarURL(format?: Parameters<typeof CDNEndpoints.USER_AVATAR>[2]) {
+		if (this.avatar) {
+			return DISCORD_CDN_BASEURL + CDNEndpoints.USER_AVATAR(this.id, this.avatar, format);
+		} else return this.getDefaultAvatarURL('.png');
 	}
 }

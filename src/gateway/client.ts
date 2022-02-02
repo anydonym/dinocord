@@ -8,14 +8,16 @@ import InternalEventTypes from './resources/internalevents.ts';
 import {
 	DINOCORD_GITHUB_URL,
 	DINOCORD_VERSION,
-	DISCORD_GATEWAY_WS,
 	DISCORD_REST_BASEURL,
+	DISCORD_WS_BASEURL,
 } from '../constants.ts';
 
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
+import trace from '../util/trace.ts';
 
 import { axiod } from '../d.ts';
+import User from '../structures/implementations/user.ts';
 
 /**
  * The client class, the interface between the application and the gateway.
@@ -34,6 +36,7 @@ export default class GatewayClient {
 
 	/** REST API default config. */
 	readonly config;
+	user?: Readonly<User>;
 
 	/**
 	 * Build a new Gateway Client.
@@ -79,7 +82,7 @@ export default class GatewayClient {
 			}
 		}
 
-		this.ws = new WebSocket(DISCORD_GATEWAY_WS);
+		this.ws = new WebSocket(DISCORD_WS_BASEURL);
 		this.ws.addEventListener('message', (event) => this.#receive(event));
 		this.ws.addEventListener('close', (event) => this.#closed(event.code));
 	}
@@ -195,6 +198,7 @@ export default class GatewayClient {
 					'name': 'REST_REQUEST_ERROR',
 					'type': 'RequestHttpError',
 					'message': reason,
+					'trace': trace(this.requestHttp),
 				});
 			});
 		}
@@ -243,15 +247,19 @@ export default class GatewayClient {
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
 				this.emitInternal('DISPATCH', { 'event_name': data.t! });
+
+				if (data.t as keyof typeof GatewayEventTypes === 'READY') {
+					this.user = new User(this, data.d.user);
+					this.#session_id = data.d.session_id;
+				}
+
 				this.emitGateway(
 					data.t!,
 					/// @ts-ignore If GatewayEventTypes[data.t!][1] is undefined, return undefined; otherwise return the correct instance.
 					GatewayEventTypes[data.t!][1] &&
 						new GatewayEventTypes[data.t!][1]!['default'](this, data.d!),
 				);
-				if (data.t as keyof typeof GatewayEventTypes === 'READY') {
-					this.#session_id = data.d.session_id;
-				}
+
 				break;
 		}
 	}
@@ -327,7 +335,7 @@ export default class GatewayClient {
 	}
 
 	async #resume() {
-		this.ws = new WebSocket(DISCORD_GATEWAY_WS);
+		this.ws = new WebSocket(DISCORD_WS_BASEURL);
 
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.RESUME,
@@ -366,6 +374,7 @@ export default class GatewayClient {
 			'name': GatewayCodes.GatewayCloseEventCodes[code],
 			'type': 'GatewayCloseEvent',
 			'message': message_table[code],
+			'trace': trace(this.#closed),
 		});
 
 		if (

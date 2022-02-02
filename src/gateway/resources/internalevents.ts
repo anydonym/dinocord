@@ -15,6 +15,7 @@ export interface ErrorEvent {
 	name: string;
 	type: string;
 	message: string;
+	trace: string;
 }
 
 export interface DispatchEvent {
