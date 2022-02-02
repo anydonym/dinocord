@@ -1,10 +1,8 @@
-export const AuditLogEndpoints = {
+const x = {
 	GET_GUILD_AUDIT_LOG: (
 		guild_id: string,
 	) => ['get', `/guilds/${guild_id}/audit-logs`],
-};
 
-export const ChannelEndpoints = {
 	GET_CHANNEL: (channel_id: string) => ['get', `/channels/${channel_id}`],
 	MODIFY_CHANNEL: (channel_id: string) => ['patch', `/channels/${channel_id}`],
 	DELETE_CHANNEL: (channel_id: string) => ['delete', `/channels/${channel_id}`],
@@ -41,9 +39,7 @@ export const ChannelEndpoints = {
 		channel_id: string,
 		overwrite_id: string,
 	) => ['delete', `/channels/${channel_id}/permissions/${overwrite_id}`],
-};
 
-export const MessageEndpoints = {
 	CREATE_REACTION: (
 		channel_id: string,
 		message_id: string,
@@ -101,9 +97,7 @@ export const MessageEndpoints = {
 	BULK_DELETE_MESSAGES: (
 		channel_id: string,
 	) => ['post', `/channels/${channel_id}/messages/bulk-delete`],
-};
 
-export const EmojiEndpoints = {
 	LIST_GUILD_EMOJIS: (
 		guild_id: string,
 	) => ['get', `/guilds/${guild_id}/emojis`],
@@ -119,9 +113,7 @@ export const EmojiEndpoints = {
 		guild_id: string,
 		emoji_id: string,
 	) => ['delete', `/guilds/${guild_id}/emojis/${emoji_id}`],
-};
 
-export const GuildEndpoints = {
 	CREATE_GUILD: () => ['post', `/guilds/`],
 	GET_GUILD: (guild_id: string) => ['get', `/guilds/${guild_id}`],
 	GET_GUILD_PREVIEW: (guild_id: string) => ['get', `/guilds/${guild_id}/preview`],
@@ -149,4 +141,6 @@ export const GuildEndpoints = {
 		guild_id: string,
 		user_id: string,
 	) => ['patch', `/guilds/${guild_id}/members/${user_id}`],
-};
+} as const;
+
+export default x;

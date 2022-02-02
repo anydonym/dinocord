@@ -6,9 +6,12 @@ import GatewayOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts'
 import GatewayEventTypes from './resources/gatewayevents.ts';
 import InternalEventTypes from './resources/internalevents.ts';
 import { DISCORD_GATEWAY_WS } from '../constants.ts';
+// import RestEndpoints from './endpoints.ts';
 
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
+
+// import { axiod } from '../d.ts';
 
 /**
  * The client class, the interface between the application and the gateway.
@@ -109,7 +112,9 @@ export default class GatewayClient {
 	 */
 	async emitGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
-		payload: typeof GatewayEventTypes[E][1],
+		payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
+			? InstanceType<typeof GatewayEventTypes[E][1]['default']>
+			: undefined,
 	) {
 		const filtered = this.gateway_listeners.filter((v) => v[0] == event_name);
 		filtered.forEach((v) => v[1](payload));
@@ -158,8 +163,9 @@ export default class GatewayClient {
 		return presence;
 	}
 
-	requestHttp() {
-	}
+	// requestHttp<T extends keyof typeof RestEndpoints>(type: T, parameters: Parameters<typeof RestEndpoints[T]>, options?: Record<string, unknown>) {
+	// let [method, url] = RestEndpoints[type](...Object.values(parameters));
+	// }
 
 	/**
 	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.
@@ -204,7 +210,12 @@ export default class GatewayClient {
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
 				this.emitInternal('DISPATCH', { 'event_name': data.t! });
-				this.emitGateway(data.t as keyof typeof GatewayEventTypes, data.d);
+				this.emitGateway(
+					data.t!,
+					/// @ts-ignore If GatewayEventTypes[data.t!][1] is undefined, return undefined; otherwise return the correct instance.
+					GatewayEventTypes[data.t!][1] &&
+						new GatewayEventTypes[data.t!][1]!['default'](this, data.d!),
+				);
 				if (data.t as keyof typeof GatewayEventTypes === 'READY') {
 					this.#session_id = data.d.session_id;
 				}

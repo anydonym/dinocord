@@ -1,5 +1,6 @@
 import PresenceUpdate from '../../structures/base/presenceupdate.ts';
 import { GatewayOpcodes } from './codes.ts';
+import GatewayEventTypes from './gatewayevents.ts';
 
 /**
  * The Gateway payload structure, received for events.
@@ -13,7 +14,7 @@ export interface GatewayPayload {
 	/** Sequence number, used for resuming and heartbeats. */
 	s?: number;
 	/** Payload event name. */
-	t?: string;
+	t?: keyof typeof GatewayEventTypes & string;
 }
 
 /**

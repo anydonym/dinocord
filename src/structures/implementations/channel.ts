@@ -67,11 +67,11 @@ export default class Channel extends IdBase implements ChannelPayload {
 	}
 
 	createMessage(messageOptions: RestStructures.CREATE_MESSAGE) {
-		messageOptions;
 		if (
 			messageOptions.content || messageOptions.embeds || messageOptions.sticker_ids ||
 			messageOptions.file
 		) {
+			messageOptions;
 		} else {
 			this.client.emitInternal('ERROR', {
 				'name': 'EMPTY_MESSAGE',

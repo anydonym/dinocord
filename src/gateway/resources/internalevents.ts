@@ -18,5 +18,5 @@ export interface ErrorEvent {
 }
 
 export interface DispatchEvent {
-	event_name: string;
+	event_name: string | number | symbol;
 }
