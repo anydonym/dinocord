@@ -5,12 +5,19 @@ import PermissionOverwrite from './permissionoverwrite.ts';
  * The Audit Log Entry payload structure.
  */
 export default interface AuditLogEntry {
+	/** The affected entity ID. */
 	target_id?: string;
+	/** The changes made to the targetted entity. */
 	changes?: AuditLogChange[];
+	/** The ID of the user who made the changes.*/
 	user_id?: string | undefined;
+	/** The entry ID. */
 	id: string;
+	/** The action type. */
 	action_type: AuditLogEvent;
+	/** The additional info. Available for certain action types. */
 	options?: OptionalAuditEntryInfo;
+	/** The reason for the change. */
 	reason?: string;
 }
 
@@ -81,10 +88,17 @@ export enum AuditLogEvent {
 	THREAD_DELETE = 112,
 }
 
+/**
+ * The Optional Audit Entry information payload structure.
+ */
 export interface OptionalAuditEntryInfo {
+	/** Channel in which the entities were targeted. */
 	channel_id?: string;
+	/** The number of entities that were targeted. */
 	count?: string;
+	/** The number of days which inactive members are pruned. */
 	delete_member_days?: string;
+	/** The ID of the overwritten entity. */
 	id?: string;
 	members_removed?: string;
 	message_id?: string;

@@ -89,21 +89,28 @@ export default class Message extends IdBase implements MessagePayload {
 		const url = RestEndpoints.GET_CHANNEL[1](this.channel_id);
 
 		return this.client.requestHttp(method, url, undefined).then((response) => {
-			if (response!.data) {
-				return new Channel(this.client, response!.data);
-			}
+			if (response) return response.json().then((payload) => new Channel(this.client, payload));
+		}).catch((err) => {
+			this.client.emitInternal('ERROR', {
+				'name': 'CHANNEL_FETCH_ERROR',
+				'type': 'GetMessageChannel',
+				'message': `Cannot get the channel ${this.channel_id}. ${err}`,
+				'trace': trace(this.messageChannel),
+			});
+
+			return;
 		});
 	}
 
 	async reply(content: Omit<MessageContent, 'reference'>) {
-		if (content.embeds?.filter((e) => !e.validate()).length != 0) {
+		if ((content.embeds ?? []).filter((e) => !e.validate()).length != 0) {
 			this.client.emitInternal('ERROR', {
 				'name': 'EMBED_VALIDATION_ERROR',
-				'type': 'MessageCreation',
+				'type': 'MessageReplyCreation',
 				'message': 'Validation for the embeds of the specified content failed.',
 				'trace': trace(this.reply),
 			});
-			return false;
+			return;
 		}
 
 		const method = RestEndpoints.CREATE_MESSAGE[0];
@@ -117,6 +124,6 @@ export default class Message extends IdBase implements MessagePayload {
 			'fall_if_not_exists': true,
 		};
 
-		return this.client.requestHttp(method, url, _content).then(() => true, () => false);
+		return this.client.requestHttp(method, url, _content);
 	}
 }

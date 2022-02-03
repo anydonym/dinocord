@@ -47,7 +47,8 @@ export default class User extends IdBase implements UserPayload {
 	}
 
 	getDefaultAvatarURL(format?: Parameters<typeof CDNEndpoints.DEFAULT_USER_AVATAR>[1]) {
-		return DISCORD_CDN_BASEURL + CDNEndpoints.DEFAULT_USER_AVATAR(this.discriminator, format);
+		return DISCORD_CDN_BASEURL +
+			CDNEndpoints.DEFAULT_USER_AVATAR((parseInt(this.discriminator) % 5).toString(), format);
 	}
 
 	getAvatarURL(format?: Parameters<typeof CDNEndpoints.USER_AVATAR>[2]) {

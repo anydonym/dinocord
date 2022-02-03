@@ -12,8 +12,6 @@ import {
 	DISCORD_WS_BASEURL,
 } from '../constants.ts';
 
-import { axiod } from '../d.ts';
-
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
 import trace from '../util/trace.ts';
@@ -52,8 +50,8 @@ export default class GatewayClient {
 			'headers': {
 				'Authorization': `Bot ${this.options.token}`,
 				'User-Agent': `DiscordBot (${DINOCORD_GITHUB_URL}, ${DINOCORD_VERSION})`,
+				'Content-Type': 'application/json'
 			},
-			'baseURL': DISCORD_REST_BASEURL,
 		};
 	}
 
@@ -193,16 +191,25 @@ export default class GatewayClient {
 		method: 'get' | 'put' | 'post' | 'delete' | 'patch',
 		url: string,
 		data?: Record<never, never> | undefined,
+		baseUrl: string = DISCORD_REST_BASEURL,
 	) {
 		if (method) {
-			return axiod[method!](url, data, this.config).catch((reason) => {
+			const promise = fetch(baseUrl + url, {
+				'body': JSON.stringify(data),
+				'headers': this.config.headers,
+				'method': method.toUpperCase()
+			});
+
+			promise.catch((reason) => {
 				this.emitInternal('ERROR', {
 					'name': 'REST_REQUEST_ERROR',
 					'type': 'RequestHttpError',
-					'message': reason,
+					'message': JSON.stringify(reason),
 					'trace': trace(this.requestHttp),
 				});
 			});
+
+			return promise;
 		}
 	}
 
