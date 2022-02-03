@@ -24,5 +24,5 @@ export default function (number: number, object: Record<string | number, string 
 		})
 		.filter((v) => v);
 
-	return (num == 0) ? has : undefined;
+	return (num == 0) ? has as (string | number)[] : undefined;
 }

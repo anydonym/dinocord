@@ -67,5 +67,5 @@ export interface EmbedAuthor {
 export interface EmbedField {
 	name: string;
 	value: string;
-	inline?: string;
+	inline?: boolean;
 }
