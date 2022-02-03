@@ -141,6 +141,30 @@ const Endpoints = {
 		guild_id: string,
 		user_id: string,
 	) => `/guilds/${guild_id}/members/${user_id}`],
+	MODIFY_CURRENT_MEMBER: ['patch', (guild_id: string) => `/guilds/${guild_id}/members/@me`],
+
+	CREATE_WEBHOOK: ['post', (channel_id: string) => `/channels/${channel_id}/webhooks`],
+	GET_CHANNEL_WEBHOOKS: ['get', (channel_id: string) => `/channels/${channel_id}/webhooks`],
+	GET_GUILD_WEBHOOKS: ['get', (guild_id: string) => `/guilds/${guild_id}/webhooks`],
+	GET_WEBHOOK: ['get', (webhook_id: string) => `/webhooks/${webhook_id}`],
+	GET_WEBHOOK_WITH_TOKEN: [
+		'get',
+		(webhook_id: string, webhook_token: string) => `/webhooks/${webhook_id}/${webhook_token}`,
+	],
+	MODIFY_WEBHOOK: ['patch', (webhook_id: string) => `/webhooks/${webhook_id}`],
+	MODIFY_WEBHOOK_WITH_TOKEN: [
+		'patch',
+		(webhook_id: string, webhook_token: string) => `/webhooks/${webhook_id}/${webhook_token}`,
+	],
+	DELETE_WEBHOOK: ['delete', (webhook_id: string) => `/webhooks/${webhook_id}`],
+	DELETE_WEBHOOK_WITH_TOKEN: [
+		'delete',
+		(webhook_id: string, webhook_token: string) => `/webhooks/${webhook_id}/${webhook_token}`,
+	],
+	EXECUTE_WEBHOOK: [
+		'post',
+		(webhook_id: string, webhook_token: string) => `/webhooks/${webhook_id}/${webhook_token}`,
+	],
 } as const;
 
 export default Endpoints;

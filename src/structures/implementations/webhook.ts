@@ -1,6 +1,11 @@
 import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import WebhookPayload from '../base/webhook.ts';
+import { EXECUTE_WEBHOOK } from '../../gateway/resources/reststructures.ts';
+import trace from '../../util/trace.ts';
+import RestEndpoints from '../../gateway/restendpoints.ts';
+import error from '../../util/error.ts';
+import Embed from '../embed.ts';
 
 export * as Base from '../base/webhook.ts';
 
@@ -33,5 +38,34 @@ export default class Webhook extends IdBase implements WebhookPayload {
 		this.source_guild = payload.source_guild;
 		// this.source_channel = payload.source_channel;
 		this.url = payload.url;
+	}
+
+	executeWebhook(content: EXECUTE_WEBHOOK) {
+		if (this.token) {
+			if (content.content || content.file || content.embeds) {
+				if (
+					(content.embeds ?? []).length > 10 ||
+					(content.embeds ?? []).filter((e) =>
+							e instanceof Embed ? !e.validate() : !new Embed(e).validate()
+						).length != 0
+				) {
+					this.client.emitInternal(
+						'ERROR',
+						error('EMBED_VALIDATION_ERROR', trace(this.executeWebhook)),
+					);
+					return;
+				}
+
+				const method = RestEndpoints.EXECUTE_WEBHOOK[0];
+				const url = RestEndpoints.EXECUTE_WEBHOOK[1](this.id, this.token);
+
+				return this.client.requestHttp(method, url, content);
+			} else {
+				this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.executeWebhook)));
+				return;
+			}
+		} else {
+			this.client.emitInternal('ERROR', error('WEBHOOK_TOKEN_MISSING', trace(this.executeWebhook)));
+		}
 	}
 }

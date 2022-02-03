@@ -8,6 +8,8 @@ import EmbedPayload, {
 	EmbedVideo,
 } from './base/embed.ts';
 
+export * as Base from './base/embed.ts';
+
 export default class Embed implements EmbedPayload {
 	title?: string | undefined;
 	description?: string | undefined;

@@ -13,7 +13,6 @@ export interface DebugEvent {
 
 export interface ErrorEvent {
 	name: string;
-	type: string;
 	message: string;
 	trace: string;
 }

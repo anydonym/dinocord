@@ -1,15 +1,13 @@
 import { IdBase } from '../idbase.a.ts';
-import ChannelPayload, {
-	ChannelType,
-	GuildChannel,
-	GuildVoiceChannel,
-	TextChannel,
-} from '../base/channel.ts';
+import ChannelPayload, { ChannelType } from '../base/channel.ts';
+import * as Base from '../base/channel.ts';
 import GatewayClient from '../../gateway/client.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 import trace from '../../util/trace.ts';
 import StageInstance from '../base/stageinstance.ts';
+import error from '../../util/error.ts';
+import Embed from '../embed.ts';
 
 export * as Base from '../base/channel.ts';
 
@@ -85,13 +83,15 @@ export default class Channel extends IdBase implements ChannelPayload {
 				content.content || content.embeds || content.sticker_ids ||
 				content.file
 			) {
-				if ((content.embeds ?? []).filter((e) => !e.validate()).length != 0) {
-					this.client.emitInternal('ERROR', {
-						'name': 'EMBED_VALIDATION_ERROR',
-						'type': 'ChannelMessageCreation',
-						'message': 'Validation for the embeds of the specified content failed.',
-						'trace': trace(this.createMessage),
-					});
+				if (
+					(content.embeds ?? []).filter((e) =>
+						e instanceof Embed ? !e.validate() : !new Embed(e).validate()
+					).length != 0
+				) {
+					this.client.emitInternal(
+						'ERROR',
+						error('EMBED_VALIDATION_ERROR', trace(this.createMessage)),
+					);
 					return;
 				}
 
@@ -100,26 +100,21 @@ export default class Channel extends IdBase implements ChannelPayload {
 
 				return this.client.requestHttp(method, url, content);
 			} else {
-				this.client.emitInternal('ERROR', {
-					'name': 'EMPTY_MESSAGE',
-					'type': 'ChannelMessageCreation',
-					'message': 'At least 1 field (content, embeds, sticker_ids, files) must be present.',
-					'trace': trace(this.createMessage),
-				});
+				this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.createMessage)));
 				return;
 			}
 		} else {
-			this.client.emitInternal('ERROR', {
-				'name': 'INVALID_CHANNEL_TYPE',
-				'type': 'ChannelMessageCreation',
-				'message': 'Cannot create a message in a non-text channel!',
-				'trace': trace(this.createMessage),
-			});
+			this.client.emitInternal('ERROR', error('INVALID_CHANNEL_TYPE', trace(this.createMessage)));
 			return;
 		}
 	}
 
-	isText(): this is TextChannel {
+	// createWebhook() {
+	// 	if (this.isText()) {
+	// 	}
+	// }
+
+	isText(): this is Base.TextChannel {
 		return [
 			ChannelType.DM,
 			ChannelType.GROUP_DM,
@@ -131,7 +126,7 @@ export default class Channel extends IdBase implements ChannelPayload {
 		].includes(this.type);
 	}
 
-	isVoice(): this is GuildVoiceChannel {
+	isVoice(): this is Base.GuildVoiceChannel {
 		return [ChannelType.GUILD_VOICE].includes(this.type);
 	}
 
@@ -139,7 +134,7 @@ export default class Channel extends IdBase implements ChannelPayload {
 		return [ChannelType.GUILD_STAGE_VOICE].includes(this.type);
 	}
 
-	isGuild(): this is GuildChannel {
+	isGuild(): this is Base.GuildChannel {
 		return this.guild_id !== undefined;
 	}
 }

@@ -4,9 +4,7 @@ import ThreadMetadata from './threadmetadata.ts';
 import ThreadMember from './threadmember.ts';
 import { StagePrivacyLevel } from './stageinstance.ts';
 
-export default interface Channel {
-	id: string;
-	type: ChannelType;
+export default interface Channel extends BaseChannel {
 	guild_id?: string;
 	position?: number;
 	permission_overwrites?: PermissionOverwrite[];

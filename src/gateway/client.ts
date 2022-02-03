@@ -23,7 +23,7 @@ import User from '../structures/implementations/user.ts';
  */
 export default class GatewayClient {
 	/** The websocket. */
-	ws!: WebSocket & { ping?: number };
+	ws!: WebSocket & { latency?: number };
 	/** The options used for connecting to the gateway. */
 	readonly options: GatewayOptions;
 	/** The listeners for gateway events. */
@@ -82,7 +82,7 @@ export default class GatewayClient {
 		}
 
 		this.ws = new WebSocket(DISCORD_WS_BASEURL);
-		this.ws.ping = 0;
+		this.ws.latency = 0;
 		this.ws.addEventListener('message', (event) => this.#receive(event));
 		this.ws.addEventListener('close', (event) => this.#closed(event.code));
 	}
@@ -203,7 +203,6 @@ export default class GatewayClient {
 			promise.catch((reason) => {
 				this.emitInternal('ERROR', {
 					'name': 'REST_REQUEST_ERROR',
-					'type': 'RequestHttpError',
 					'message': JSON.stringify(reason),
 					'trace': trace(this.requestHttp),
 				});
@@ -251,7 +250,7 @@ export default class GatewayClient {
 
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
 				this.emitInternal('HEARTBEAT_ACK', undefined);
-				this.ws.ping = Date.now() - this.#hb_sent;
+				this.ws.latency = Date.now() - this.#hb_sent;
 				this.#last_seq = data.d;
 				break;
 
@@ -386,7 +385,6 @@ export default class GatewayClient {
 
 		this.emitInternal('ERROR', {
 			'name': GatewayCodes.GatewayCloseEventCodes[code],
-			'type': 'GatewayCloseEvent',
 			'message': message_table[code],
 			'trace': trace(this.#closed),
 		});

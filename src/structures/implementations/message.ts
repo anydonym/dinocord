@@ -2,11 +2,12 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import MessagePayload, { MessageFlags } from '../base/message.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
-// import Channel from './channel.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
 import trace from '../../util/trace.ts';
+import error from '../../util/error.ts';
+import Embed from '../embed.ts';
 
 export * as Base from '../base/message.ts';
 
@@ -93,7 +94,6 @@ export default class Message extends IdBase implements MessagePayload {
 		}).catch((err) => {
 			this.client.emitInternal('ERROR', {
 				'name': 'CHANNEL_FETCH_ERROR',
-				'type': 'GetMessageChannel',
 				'message': `Cannot get the channel ${this.channel_id}. ${err}`,
 				'trace': trace(this.messageChannel),
 			});
@@ -103,27 +103,31 @@ export default class Message extends IdBase implements MessagePayload {
 	}
 
 	async reply(content: Omit<MessageContent, 'reference'>) {
-		if ((content.embeds ?? []).filter((e) => !e.validate()).length != 0) {
-			this.client.emitInternal('ERROR', {
-				'name': 'EMBED_VALIDATION_ERROR',
-				'type': 'MessageReplyCreation',
-				'message': 'Validation for the embeds of the specified content failed.',
-				'trace': trace(this.reply),
-			});
+		if (content.content || content.file || content.embeds) {
+			if (
+				(content.embeds ?? []).filter((e) =>
+					e instanceof Embed ? !e.validate() : !new Embed(e).validate()
+				).length != 0
+			) {
+				this.client.emitInternal('ERROR', error('EMBED_VALIDATION_ERROR', trace(this.reply)));
+				return;
+			}
+
+			const method = RestEndpoints.CREATE_MESSAGE[0];
+			const url = RestEndpoints.CREATE_MESSAGE[1](this.channel_id);
+
+			const _content = content;
+			_content['message_reference'] = {
+				'message_id': this.id,
+				'channel_id': this.channel_id,
+				'guild_id': this.guild_id,
+				'fall_if_not_exists': true,
+			};
+
+			return this.client.requestHttp(method, url, _content);
+		} else {
+			this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.reply)));
 			return;
 		}
-
-		const method = RestEndpoints.CREATE_MESSAGE[0];
-		const url = RestEndpoints.CREATE_MESSAGE[1](this.channel_id);
-
-		const _content = content;
-		_content['message_reference'] = {
-			'message_id': this.id,
-			'channel_id': this.channel_id,
-			'guild_id': this.guild_id,
-			'fall_if_not_exists': true,
-		};
-
-		return this.client.requestHttp(method, url, _content);
 	}
 }

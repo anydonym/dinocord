@@ -4,9 +4,9 @@ import * as mod from '../../../mod.ts';
 const GatewayEventTypes = {
 	HELLO: [undefined, undefined],
 	READY: [undefined, undefined],
-	CHANNEL_CREATE: [undefined, undefined],
-	CHANNEL_UPDATE: [undefined, undefined],
-	CHANNEL_DELETE: [undefined, undefined],
+	CHANNEL_CREATE: [mod.Channel.Base, mod.Channel],
+	CHANNEL_UPDATE: [mod.Channel.Base, mod.Channel],
+	CHANNEL_DELETE: [mod.Channel.Base, mod.Channel],
 	RESUMED: [undefined, undefined],
 	RECONNECT: [undefined, undefined],
 	INVALID_SESSION: [undefined, undefined],
