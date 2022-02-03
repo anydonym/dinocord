@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import StageInstancePayload from '../base/stageinstance.ts';
 
+export * as Base from '../base/stageinstance.ts';
+
 export default class StageInstance extends IdBase implements StageInstancePayload {
 	declare readonly id;
 	readonly guild_id;

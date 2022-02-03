@@ -8,6 +8,8 @@ import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
 import trace from '../../util/trace.ts';
 
+export * as Base from '../base/message.ts';
+
 export default class Message extends IdBase implements MessagePayload {
 	declare readonly id;
 	channel_id;
@@ -93,7 +95,7 @@ export default class Message extends IdBase implements MessagePayload {
 		});
 	}
 
-	reply(content: MessageContent) {
+	async reply(content: Omit<MessageContent, 'reference'>) {
 		if (content.embeds?.filter((e) => !e.validate()).length != 0) {
 			this.client.emitInternal('ERROR', {
 				'name': 'EMBED_VALIDATION_ERROR',

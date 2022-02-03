@@ -3,6 +3,8 @@ import { IdBase } from '../idbase.a.ts';
 import UserPayload from '../base/user.ts';
 import CDNEndpoints, { DISCORD_CDN_BASEURL } from '../../gateway/cdnendpoints.ts';
 
+export * as Base from '../base/user.ts';
+
 export default class User extends IdBase implements UserPayload {
 	/** The user's ID. */
 	declare readonly id;

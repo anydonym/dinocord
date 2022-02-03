@@ -3,6 +3,8 @@ import Embed from '../../structures/embed.ts';
 import MessageComponent from '../../structures/base/messagecomponent.ts';
 import Attachment from '../../structures/base/attachment.ts';
 import MessageReference from '../../structures/base/messagereference.ts';
+import Role from '../../structures/base/role.ts';
+import Channel from '../../structures/base/channel.ts';
 
 /**
  * @todo Set icon type to binary.
@@ -83,4 +85,19 @@ export interface CREATE_GUILD_CHANNEL {
 	permission_overwrites: PermissionOverwrite[];
 	parent_id: string;
 	nsfw: boolean;
+}
+
+export interface CREATE_GUILD {
+	name: string;
+	region?: string;
+	icon?: string;
+	verification_level?: number;
+	default_message_notifcations?: number;
+	explicit_content_filter?: number;
+	roles?: Role[];
+	channels?: Partial<Channel>[];
+	afk_channel_id?: string;
+	afk_timeout?: number;
+	system_channel_id?: string;
+	system_channel_flags?: number;
 }

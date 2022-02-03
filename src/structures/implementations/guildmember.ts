@@ -1,6 +1,8 @@
 import GatewayClient from '../../gateway/client.ts';
 import GuildMemberPayload from '../base/guildmember.ts';
 
+export * as Base from '../base/guildmember.ts';
+
 export default class GuildMember implements GuildMemberPayload {
 	readonly user?;
 	nick?;

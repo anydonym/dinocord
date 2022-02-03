@@ -5,6 +5,8 @@ import RestEndpoints from '../../gateway/restendpoints.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 import trace from '../../util/trace.ts';
 
+export * as Base from '../base/channel.ts';
+
 export default class Channel extends IdBase implements ChannelPayload {
 	declare readonly id;
 	type;

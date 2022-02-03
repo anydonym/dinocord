@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import GuildScheduledEventPayload from '../base/guildscheduledevent.ts';
 
+export * as Base from '../base/guildscheduledevent.ts';
+
 export default class GuildScheduledEvent extends IdBase implements GuildScheduledEventPayload {
 	declare readonly id;
 	readonly guild_id;

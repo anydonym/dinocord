@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import StickerPayload from '../base/sticker.ts';
 
+export * as Base from '../base/sticker.ts';
+
 export default class Sticker extends IdBase implements StickerPayload {
 	declare readonly id;
 	readonly pack_id?;

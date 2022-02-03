@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import GuildPayload from '../base/guild.ts';
 
+export * as Base from '../base/guild.ts';
+
 export default class Guild extends IdBase implements GuildPayload {
 	declare readonly id;
 	name;
@@ -112,5 +114,8 @@ export default class Guild extends IdBase implements GuildPayload {
 		this.stickers = payload.stickers;
 		this.guild_scheduled_events = payload.guild_scheduled_events;
 		this.premium_progress_bar_enabled = payload.premium_progress_bar_enabled;
+	}
+
+	static create() {
 	}
 }

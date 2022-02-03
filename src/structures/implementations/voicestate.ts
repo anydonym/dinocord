@@ -1,6 +1,8 @@
 import GatewayClient from '../../gateway/client.ts';
 import VoiceStatePayload from '../base/voicestate.ts';
 
+export * as Base from '../base/voicestate.ts';
+
 export default class VoiceState implements VoiceStatePayload {
 	guild_id?;
 	channel_id;

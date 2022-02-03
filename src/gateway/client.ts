@@ -106,7 +106,7 @@ export default class GatewayClient {
 		event_name: E,
 		callback: (
 			payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
-				? InstanceType<typeof GatewayEventTypes[E][1]['default']>
+				? InstanceType<typeof GatewayEventTypes[E][1]>
 				: undefined,
 		) => void,
 	) {
@@ -137,7 +137,7 @@ export default class GatewayClient {
 	async emitGateway<E extends keyof typeof GatewayEventTypes>(
 		event_name: E,
 		payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
-			? InstanceType<typeof GatewayEventTypes[E][1]['default']>
+			? InstanceType<typeof GatewayEventTypes[E][1]>
 			: undefined,
 	) {
 		const filtered = this.gateway_listeners.filter((v) => v[0] == event_name);
@@ -259,7 +259,7 @@ export default class GatewayClient {
 					data.t!,
 					/// @ts-ignore If GatewayEventTypes[data.t!][1] is not undefined, so is the code below valid.
 					GatewayEventTypes[data.t!][1]
-						? new GatewayEventTypes[data.t!][1]!['default'](this, data.d!)
+						? new GatewayEventTypes[data.t!][1]!(this, data.d!)
 						: undefined,
 				);
 

@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import IntegrationPayload from '../base/integration.ts';
 
+export * as Base from '../base/integration.ts';
+
 export default class Integration extends IdBase implements IntegrationPayload {
 	declare readonly id;
 	name;

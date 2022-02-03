@@ -4,6 +4,8 @@ import RolePayload from '../base/role.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
 import { Permission } from '../permission.ts';
 
+export * as Base from '../base/role.ts';
+
 export default class Role extends IdBase implements RolePayload {
 	declare readonly id: string;
 	name;

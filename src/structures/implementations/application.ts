@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import ApplicationPayload from '../base/application.ts';
 
+export * as Base from '../base/application.ts';
+
 export default class Application extends IdBase implements ApplicationPayload {
 	/** The application ID. */
 	declare readonly id;

@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { OptionalIdBase } from '../idbase.a.ts';
 import EmojiPayload from '../base/emoji.ts';
 
+export * as Base from '../base/emoji.ts';
+
 export default class Emoji extends OptionalIdBase implements EmojiPayload {
 	declare readonly id?;
 	name;

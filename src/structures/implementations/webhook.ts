@@ -2,6 +2,8 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import WebhookPayload from '../base/webhook.ts';
 
+export * as Base from '../base/webhook.ts';
+
 export default class Webhook extends IdBase implements WebhookPayload {
 	/** The webhook ID. */
 	declare readonly id;
