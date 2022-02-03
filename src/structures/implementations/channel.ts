@@ -106,7 +106,7 @@ export default class Channel extends IdBase implements ChannelPayload {
 					'message': 'At least 1 field (content, embeds, sticker_ids, files) must be present.',
 					'trace': trace(this.createMessage),
 				});
-				return ;
+				return;
 			}
 		} else {
 			this.client.emitInternal('ERROR', {

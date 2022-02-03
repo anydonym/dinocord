@@ -50,7 +50,7 @@ export default class GatewayClient {
 			'headers': {
 				'Authorization': `Bot ${this.options.token}`,
 				'User-Agent': `DiscordBot (${DINOCORD_GITHUB_URL}, ${DINOCORD_VERSION})`,
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
 			},
 		};
 	}
@@ -197,7 +197,7 @@ export default class GatewayClient {
 			const promise = fetch(baseUrl + url, {
 				'body': JSON.stringify(data),
 				'headers': this.config.headers,
-				'method': method.toUpperCase()
+				'method': method.toUpperCase(),
 			});
 
 			promise.catch((reason) => {
