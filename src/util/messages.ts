@@ -10,7 +10,8 @@ export const Errors = {
 	'INVALID_CHANNEL_TYPE':
 		'The action executed requires channel type other than the current channel type (#{0}).',
 	'FETCH_ERROR': 'Cannot fetch the desired #{0}; ${1}',
-	'WEBSOCKET_ERROR': 'An unknown error occured. Websocket connection terminated unexpectedly.',
+	'WEBSOCKET_ERROR':
+		'An unknown error occured. Websocket connection terminated unexpectedly (#{0}).',
 };
 
 export function error<E extends keyof typeof Errors>(

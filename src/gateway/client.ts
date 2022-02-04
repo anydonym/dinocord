@@ -83,8 +83,11 @@ export default class GatewayClient {
 		}
 
 		this.ws = new WebSocket(DISCORD_WS_BASEURL);
+		this.ws.latency = 0;
+
 		this.ws.addEventListener('message', (event) => this.#receive(event));
-		this.ws.addEventListener('error', (event) => console.log('error', event));
+		this.ws.addEventListener('error', () => this.#error());
+		this.ws.addEventListener('close', (event) => this.#error(event.code));
 		this.ws.addEventListener(
 			'close',
 			(event) => console.log(event.code),
@@ -230,7 +233,7 @@ export default class GatewayClient {
 					this.#session_id = json.session_id;
 					this.#last_seq = json.last_seq;
 				} else {
-					this.connect(true);
+					this.connect();
 				}
 			} catch {
 				Deno.writeFileSync(
@@ -307,6 +310,8 @@ export default class GatewayClient {
 				if (data.t === 'READY') {
 					this.user = new User(this, data.d.user);
 					this.#session_id = data.d.session_id;
+
+					// this.#resume();
 				}
 
 				if (GatewayEventTypes[data.t!]) {
@@ -394,8 +399,6 @@ export default class GatewayClient {
 			}
 
 			this.#hb_sent = Date.now();
-		} else {
-			this.#resume().then(() => this.#heartbeat());
 		}
 	}
 
@@ -415,7 +418,7 @@ export default class GatewayClient {
 	 * Handles the gateway close event.
 	 * @param code The close code.
 	 */
-	async #error(code?: GatewayCodes.GatewayCloseEventCodes & number) {
+	async #error(code?: number) {
 		if (code) {
 			const message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
 				4000: 'An unknown error occured. Try reconnecting?',
@@ -436,30 +439,37 @@ export default class GatewayClient {
 					'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
 			};
 
-			this.emitInternal('ERROR', {
-				'name': GatewayCodes.GatewayCloseEventCodes[code],
-				'message': message_table[code],
-				'trace': trace(this.#error),
-			});
+			if (message_table[code as keyof typeof message_table]) {
+				this.emitInternal('ERROR', {
+					'name': GatewayCodes.GatewayCloseEventCodes[code],
+					'message': message_table[code as keyof typeof message_table],
+					'trace': trace(this.#error),
+				});
 
-			if (
-				[
-					GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
-					GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
-					GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
-					GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
-					GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
-					GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
-					GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT,
-					GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
-				].includes(code)
-			) {
-				this.#identify().then(() => this.#resume());
+				if (
+					[
+						GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
+						GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
+						GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
+						GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
+						GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
+						GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
+						GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT,
+						GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
+					].includes(code)
+				) {
+					this.#identify();
+				} else {
+					this.emitInternal('ERROR', error('WEBSOCKET_ERROR', trace(this.#error), code.toString()));
+					this.#identify();
+				}
 			}
 		} else {
-			this.emitInternal('ERROR', error('WEBSOCKET_ERROR', trace(this.#error)));
+			this.emitInternal(
+				'ERROR',
+				error('WEBSOCKET_ERROR', trace(this.#error), 'unknown error code'),
+			);
 			this.#identify();
-			this.#resume();
 		}
 	}
 }
