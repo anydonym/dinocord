@@ -8,36 +8,45 @@ import GuildScheduledEvent from './guildscheduledevent.ts';
 import StageInstance from './stageinstance.ts';
 import Sticker from './sticker.ts';
 
-/**
- * The Guild payload structure.
- */
-export default interface Guild {
+export interface BaseGuild {
 	/** The guild ID. */
 	id: string;
 	/** The guild name. */
 	name: string;
 	/** The icon hash of the guild. */
-	icon?: string | undefined;
-	/** The icon hash of the guild, returned when in the template object. */
-	icon_hash?: string | undefined;
+	icon?: string;
 	/** The splash hash. */
-	splash?: string | undefined;
+	splash?: string;
 	/** The discovery splash for the guild. Available if the guild is discoverable. */
-	discovery_splash?: string | undefined;
+	discovery_splash?: string;
+	/** The custom guild emojis. */
+	emojis: Emoji[];
+	/** The guild features. */
+	features: GuildFeatures[];
+	/** The guild description. */
+	description?: string;
+}
+
+/**
+ * The Guild payload structure.
+ */
+export default interface Guild extends BaseGuild {
+	/** The icon hash of the guild, returned when in the template object. */
+	icon_hash?: string;
 	/** Whether the user is the owner of the guild. */
 	owner?: boolean;
 	/** The ID of the owner of the guild. */
 	owner_id: string;
 	/** The permissions for the user in the guild. */
-	permissions?: string | undefined;
+	permissions?: string;
 	/** ID of the AFK channel, if set. */
-	afk_channel_id?: string | undefined;
+	afk_channel_id?: string;
 	/** The AFK timeout, if set. */
 	afk_timeout: number;
 	/** Whether the server widget is enabled. */
 	widget_enabled?: boolean;
 	/** The channel ID which the server widget leads to, if set. */
-	widget_channel_id?: string | undefined;
+	widget_channel_id?: string;
 	/**
 	 * The verification level required for the guild.
 	 * Use the @enum GuildVerificationLevel for possible values.
@@ -55,17 +64,13 @@ export default interface Guild {
 	explicit_content_filter: 0 | 1 | 2;
 	/** The roles in the guild. */
 	roles: Role[];
-	/** The custom guild emojis. */
-	emojis: Emoji[];
-	/** The guild features. */
-	features: GuildFeatures[];
 	/**
 	 * The guild MFA requirement.
 	 * 0 indicates that the guild has no MFA requirement for moderation permissions, while 1 means the otherwise.
 	 */
 	mfa_level: 0 | 1;
-	application_id?: string | undefined;
-	system_channel_id?: string | undefined;
+	application_id?: string;
+	system_channel_id?: string;
 	system_channel_flags: number;
 	rules_channel_id?: string;
 	joined_at?: string; // ISO8601
@@ -80,7 +85,6 @@ export default interface Guild {
 	max_presences?: number;
 	max_members?: number;
 	vanity_url_code?: string;
-	description?: string;
 	banner?: string;
 	premium_tier: number;
 	premium_subscription_count?: number;
@@ -95,6 +99,15 @@ export default interface Guild {
 	stickers?: Sticker[];
 	guild_scheduled_events?: GuildScheduledEvent[];
 	premium_progress_bar_enabled: boolean;
+}
+
+/**
+ * The guild preview structure.
+ */
+export interface GuildPreview extends BaseGuild {
+	approximate_member_count: number;
+	approximate_presence_count: number;
+	stickers: Sticker[];
 }
 
 export enum GuildVerificationLevel {

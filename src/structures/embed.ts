@@ -11,18 +11,18 @@ import EmbedPayload, {
 export * as Base from './base/embed.ts';
 
 export default class Embed implements EmbedPayload {
-	title?: string | undefined;
-	description?: string | undefined;
-	url?: string | undefined;
-	timestamp?: string | undefined;
-	color?: number | undefined;
-	footer?: EmbedFooter | undefined;
-	image?: EmbedImage | undefined;
-	thumbnail?: EmbedThumbnail | undefined;
-	video?: EmbedVideo | undefined;
-	provider?: EmbedProvider | undefined;
-	author?: EmbedAuthor | undefined;
-	fields?: EmbedField[] | undefined;
+	title?: string;
+	description?: string;
+	url?: string;
+	timestamp?: string;
+	color?: number;
+	footer?: EmbedFooter;
+	image?: EmbedImage;
+	thumbnail?: EmbedThumbnail;
+	video?: EmbedVideo;
+	provider?: EmbedProvider;
+	author?: EmbedAuthor;
+	fields?: EmbedField[];
 
 	/**
 	 * Constructs a new Embed instance.

@@ -4,7 +4,7 @@ import WebhookPayload from '../base/webhook.ts';
 import { EXECUTE_WEBHOOK } from '../../gateway/resources/reststructures.ts';
 import trace from '../../util/trace.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
-import error from '../../util/error.ts';
+import { error } from '../../util/messages.ts';
 import Embed from '../embed.ts';
 
 export * as Base from '../base/webhook.ts';
@@ -56,10 +56,11 @@ export default class Webhook extends IdBase implements WebhookPayload {
 					return;
 				}
 
-				const method = RestEndpoints.EXECUTE_WEBHOOK[0];
-				const url = RestEndpoints.EXECUTE_WEBHOOK[1](this.id, this.token);
-
-				return this.client.requestHttp(method, url, content);
+				return this.client.requestHttp(
+					RestEndpoints.EXECUTE_WEBHOOK[0],
+					RestEndpoints.EXECUTE_WEBHOOK[1](this.id, this.token),
+					content,
+				);
 			} else {
 				this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.executeWebhook)));
 				return;
@@ -67,5 +68,27 @@ export default class Webhook extends IdBase implements WebhookPayload {
 		} else {
 			this.client.emitInternal('ERROR', error('WEBHOOK_TOKEN_MISSING', trace(this.executeWebhook)));
 		}
+	}
+
+	static async get(
+		client: GatewayClient,
+		webhook_id: string,
+		webhook_token?: string,
+	): Promise<Webhook | void> {
+		let method, url;
+
+		if (webhook_token) {
+			method = RestEndpoints.GET_WEBHOOK_WITH_TOKEN[0];
+			url = RestEndpoints.GET_WEBHOOK_WITH_TOKEN[1](webhook_id, webhook_token);
+		} else {
+			method = RestEndpoints.GET_WEBHOOK[0];
+			url = RestEndpoints.GET_WEBHOOK[1](webhook_id);
+		}
+
+		return client.requestHttp(method, url).then((response) => {
+			if (response) return response.json().then((payload) => new Webhook(client, payload));
+		}).catch((err) => {
+			client.emitInternal('ERROR', error('FETCH_ERROR', trace(Webhook.get), 'Webhook', err));
+		});
 	}
 }

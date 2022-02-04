@@ -6,7 +6,7 @@ import RestEndpoints from '../../gateway/restendpoints.ts';
 import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
 import trace from '../../util/trace.ts';
 import StageInstance from '../base/stageinstance.ts';
-import error from '../../util/error.ts';
+import { error } from '../../util/messages.ts';
 import Embed from '../embed.ts';
 
 export * as Base from '../base/channel.ts';
@@ -95,24 +95,29 @@ export default class Channel extends IdBase implements ChannelPayload {
 					return;
 				}
 
-				const method = RestEndpoints.CREATE_MESSAGE[0];
-				const url = RestEndpoints.CREATE_MESSAGE[1](this.id);
-
-				return this.client.requestHttp(method, url, content);
+				return this.client.requestHttp(
+					RestEndpoints.CREATE_MESSAGE[0],
+					RestEndpoints.CREATE_MESSAGE[1](this.id),
+					content,
+				);
 			} else {
 				this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.createMessage)));
 				return;
 			}
 		} else {
-			this.client.emitInternal('ERROR', error('INVALID_CHANNEL_TYPE', trace(this.createMessage)));
+			this.client.emitInternal(
+				'ERROR',
+				error('INVALID_CHANNEL_TYPE', trace(this.createMessage), this.type.toString()),
+			);
 			return;
 		}
 	}
 
-	// createWebhook() {
-	// 	if (this.isText()) {
-	// 	}
-	// }
+	createWebhook() {
+		if (this.isText()) {
+			RestEndpoints;
+		}
+	}
 
 	isText(): this is Base.TextChannel {
 		return [
@@ -136,5 +141,16 @@ export default class Channel extends IdBase implements ChannelPayload {
 
 	isGuild(): this is Base.GuildChannel {
 		return this.guild_id !== undefined;
+	}
+
+	static async get(client: GatewayClient, channel_id: string): Promise<Channel | void> {
+		return client.requestHttp(
+			RestEndpoints.GET_CHANNEL[0],
+			RestEndpoints.GET_CHANNEL[1](channel_id),
+		).then((response) => {
+			if (response) return response.json().then((payload) => new Channel(client, payload));
+		}).catch((err) => {
+			client.emitInternal('ERROR', error('FETCH_ERROR', trace(Channel.get), 'Channel', err));
+		});
 	}
 }

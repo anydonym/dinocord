@@ -11,9 +11,9 @@ export default interface Role {
 	/** Whether this role is displayed separately from other roles. */
 	hoist?: boolean;
 	/** The role icon hash. */
-	icon?: string | undefined;
+	icon?: string;
 	/** The role Unicode emoji. */
-	unicode_emoji?: string | undefined;
+	unicode_emoji?: string;
 	/** The role position in the hierarchy. */
 	position: number;
 	/** The role permission bit set. */

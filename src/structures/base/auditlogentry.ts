@@ -10,7 +10,7 @@ export default interface AuditLogEntry {
 	/** The changes made to the targetted entity. */
 	changes?: AuditLogChange[];
 	/** The ID of the user who made the changes.*/
-	user_id?: string | undefined;
+	user_id?: string;
 	/** The entry ID. */
 	id: string;
 	/** The action type. */

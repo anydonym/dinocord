@@ -1,6 +1,9 @@
 import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import GuildPayload from '../base/guild.ts';
+import RestEndpoints from '../../gateway/restendpoints.ts';
+import { error } from '../../util/messages.ts';
+import trace from '../../util/trace.ts';
 
 export * as Base from '../base/guild.ts';
 
@@ -116,6 +119,17 @@ export default class Guild extends IdBase implements GuildPayload {
 		this.premium_progress_bar_enabled = payload.premium_progress_bar_enabled;
 	}
 
-	static create() {
+	static async get(client: GatewayClient, guild_id: string): Promise<Guild | void> {
+		return client.requestHttp(
+			RestEndpoints.GET_GUILD[0],
+			RestEndpoints.GET_GUILD[1](guild_id),
+		).then((response) => {
+			if (response) return response.json().then((payload) => new Guild(client, payload));
+		}).catch((err) => {
+			client.emitInternal(
+				'ERROR',
+				error('FETCH_ERROR', trace(Guild.get), 'Guild', err),
+			);
+		});
 	}
 }

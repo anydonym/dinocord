@@ -2,7 +2,7 @@ import * as Activity from '../structures/base/activity.ts';
 import * as PayloadStructures from './resources/payloadstructures.ts';
 import * as GatewayCodes from './resources/codes.ts';
 
-import GatewayOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts';
+import GatewayClientOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts';
 import GatewayEventTypes from './resources/gatewayevents.ts';
 import InternalEventTypes from './resources/internalevents.ts';
 import {
@@ -17,6 +17,7 @@ import json from '../util/json.ts';
 import trace from '../util/trace.ts';
 
 import User from '../structures/implementations/user.ts';
+import { debug, error } from '../util/messages.ts';
 
 /**
  * The client class, the interface between the application and the gateway.
@@ -25,7 +26,7 @@ export default class GatewayClient {
 	/** The websocket. */
 	ws!: WebSocket & { latency?: number };
 	/** The options used for connecting to the gateway. */
-	readonly options: GatewayOptions;
+	readonly options: GatewayClientOptions;
 	/** The listeners for gateway events. */
 	// deno-lint-ignore no-explicit-any
 	gateway_listeners: [keyof typeof GatewayEventTypes, (payload: any) => void][];
@@ -41,7 +42,7 @@ export default class GatewayClient {
 	 * Build a new Gateway Client.
 	 * @param options The options to use for the gateway.
 	 */
-	constructor(options: GatewayOptions) {
+	constructor(options: GatewayClientOptions) {
 		this.options = options;
 		this.gateway_listeners = [];
 		this.internal_listeners = [];
@@ -58,33 +59,53 @@ export default class GatewayClient {
 	/**
 	 * Facilitate a connection to the Discord gateway.
 	 */
-	async connect() {
-		if (typeof this.options.intents != 'number') {
-			this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
-				.reduce(
-					(pv, nv) =>
-						(typeof pv == 'string' ? GatewayIntents[pv as keyof typeof GatewayIntents] : pv) +
-						(typeof nv == 'string' ? GatewayIntents[nv as keyof typeof GatewayIntents] : nv),
-					0,
-				);
+	async connect(forceNew = true) {
+		let connected = false;
+
+		if (forceNew == false) {
+			this.ws = new WebSocket(DISCORD_WS_BASEURL);
+
+			await this.#readTemp();
+			await this.ws !== undefined;
+
+			this.ws.latency = 0;
+			this.ws.addEventListener('message', (event) => {
+				connected = event.data.op !== GatewayCodes.GatewayOpcodes.INVALID_SESSION;
+			});
 		}
 
-		if (!bitwiseCheck(this.options.intents, GatewayIntents)) {
-			throw new Error(
-				`Invalid Intents: Intents must be a bitfield value. Got '${this.options.intents}'.`,
-			);
-		}
-
-		if (this.options.presence) {
-			if (this.options.presence.activities) {
-				this.options.presence = this.parsePresence(this.options.presence);
+		if (connected == false) {
+			if (typeof this.options.intents != 'number') {
+				this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
+					.reduce(
+						(pv, nv) =>
+							(typeof pv == 'string' ? GatewayIntents[pv as keyof typeof GatewayIntents] : pv) +
+							(typeof nv == 'string' ? GatewayIntents[nv as keyof typeof GatewayIntents] : nv),
+						0,
+					);
 			}
+
+			if (!bitwiseCheck(this.options.intents, GatewayIntents)) {
+				throw new Error(
+					`Invalid Intents: Intents must be a bitfield value. Got '${this.options.intents}'.`,
+				);
+			}
+
+			if (this.options.presence) {
+				if (this.options.presence.activities) {
+					this.options.presence = this.parsePresence(this.options.presence);
+				}
+			}
+
+			this.ws = new WebSocket(DISCORD_WS_BASEURL);
 		}
 
-		this.ws = new WebSocket(DISCORD_WS_BASEURL);
-		this.ws.latency = 0;
 		this.ws.addEventListener('message', (event) => this.#receive(event));
-		this.ws.addEventListener('close', (event) => this.#closed(event.code));
+		this.ws.addEventListener('error', (event) => console.log('error', event))
+		this.ws.addEventListener(
+			'close',
+			(event) => console.log(event.code),
+		);
 	}
 
 	/**
@@ -212,6 +233,47 @@ export default class GatewayClient {
 		}
 	}
 
+	async #readTemp() {
+		if (this.options.temporary_file?.use) {
+			try {
+				const filedata = new TextDecoder().decode(
+						Deno.readFileSync(this.options.temporary_file.path!),
+					),
+					json = JSON.parse(filedata) as {
+						last_date: number | null;
+						last_seq: number | null;
+						session_id: number | null;
+					};
+
+				if (json.session_id) {
+					this.#session_id = json.session_id;
+					this.#last_seq = json.last_seq;
+				} else {
+					this.connect(true);
+				}
+
+				await this.#resume();
+			} catch {
+				Deno.writeFileSync(
+					this.options.temporary_file.path!,
+					new TextEncoder().encode(
+						JSON.stringify({ 'last_date': null, 'last_seq': null, 'session_id': null }),
+					),
+				);
+			}
+		}
+	}
+
+	async #processAck(last_seq: number | null) {
+		this.#last_seq = last_seq;
+
+		if (this.options.temporary_file?.use) {
+			new TextEncoder().encode(
+				JSON.stringify({ last_date: Date.now(), last_seq: last_seq, session_id: this.#session_id }),
+			);
+		}
+	}
+
 	/**
 	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.
 	 * @param data The data to send to the gateway.
@@ -228,13 +290,8 @@ export default class GatewayClient {
 		}
 	}
 
-	#receive(event: MessageEvent) {
+	async #receive(event: MessageEvent) {
 		const data = <PayloadStructures.GatewayPayload> JSON.parse(event.data);
-
-		this.emitInternal('DEBUG', {
-			'event_type': 'Gateway->MessageEvent',
-			'message': `Message received from the Gateway (${data.op}).`,
-		});
 
 		switch (data.op) {
 			case GatewayCodes.GatewayOpcodes.HELLO:
@@ -244,14 +301,17 @@ export default class GatewayClient {
 				break;
 
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT:
-				this.emitInternal('HEARTBEAT', undefined);
+				this.emitInternal('WEBSOCKET_DEBUG', {
+					'name': 'SEND_HEARTBEAT',
+					'message': 'Sending heartbeat to the gateway...',
+				});
 				this.#heartbeat();
 				break;
 
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
-				this.emitInternal('HEARTBEAT_ACK', undefined);
+				this.emitInternal('WEBSOCKET_DEBUG', debug('RECEIVE_HEARTBEAT_ACK'));
 				this.ws.latency = Date.now() - this.#hb_sent;
-				this.#last_seq = data.d;
+				this.#processAck(data.d);
 				break;
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
@@ -272,10 +332,12 @@ export default class GatewayClient {
 
 				break;
 		}
+
+		return GatewayCodes.GatewayOpcodes[data.op];
 	}
 
 	#heartbeat_interval!: number;
-	#last_seq!: number;
+	#last_seq!: number | null;
 	#session_id!: number;
 	#hb_sent!: number;
 
@@ -308,7 +370,8 @@ export default class GatewayClient {
 	/**
 	 * The method to send an `IDENTIFY` request to the gateway.
 	 */
-	async #identify() {
+	async #identify() {	
+		this.emitInternal('WEBSOCKET_DEBUG', debug('SEND_IDENTIFY'));
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.IDENTIFY,
 			'd': {
@@ -327,7 +390,7 @@ export default class GatewayClient {
 	}
 
 	async #heartbeat() {
-		this.emitInternal('HEARTBEAT', undefined);
+		this.emitInternal('WEBSOCKET_DEBUG', debug('SEND_HEARTBEAT'));
 
 		if (this.ws.readyState == this.ws.OPEN) {
 			if (this.#last_seq) {
@@ -348,8 +411,7 @@ export default class GatewayClient {
 	}
 
 	async #resume() {
-		this.ws = new WebSocket(DISCORD_WS_BASEURL);
-
+		this.emitInternal('WEBSOCKET_DEBUG', debug('SEND_RESUME'));
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.RESUME,
 			'd': {
@@ -364,49 +426,55 @@ export default class GatewayClient {
 	 * Handles the gateway close event.
 	 * @param code The close code.
 	 */
-	async #closed(code: GatewayCodes.GatewayCloseEventCodes & number) {
-		const message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
-			4000: 'An unknown error occured. Try reconnecting?',
-			4001: 'An invalid Gateway opcode or payload was sent.',
-			4002: 'An invalid payload was sent.',
-			4003: 'A payload was sent before authentication.',
-			4004: 'An invalid token was specified. Authentication failed.',
-			4005: 'An IDENTIFY payload was sent after authentication.',
-			4007: 'An invalid sequence ID was provided while resuming. Try reconnecting?',
-			4008: 'Too much payloads have been sent quickly!',
-			4009: 'The session timed out. Try reconnecting?',
-			4010: 'An invalid shard was sent while IDENTIFYing.',
-			4011: 'Sharding required to connect.',
-			4012: 'Invalid API version.',
-			4013:
-				'Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.',
-			4014: 'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
-		};
+	async #error(code?: GatewayCodes.GatewayCloseEventCodes & number) {
+		if (code) {
+			const message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
+				4000: 'An unknown error occured. Try reconnecting?',
+				4001: 'An invalid Gateway opcode or payload was sent.',
+				4002: 'An invalid payload was sent.',
+				4003: 'A payload was sent before authentication.',
+				4004: 'An invalid token was specified. Authentication failed.',
+				4005: 'An IDENTIFY payload was sent after authentication.',
+				4007: 'An invalid sequence ID was provided while resuming. Try reconnecting?',
+				4008: 'Too much payloads have been sent quickly!',
+				4009: 'The session timed out. Try reconnecting?',
+				4010: 'An invalid shard was sent in the IDENTIFY payload.',
+				4011: 'Sharding required to connect.',
+				4012: 'Invalid API version.',
+				4013:
+					'Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.',
+				4014:
+					'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
+			};
 
-		this.emitInternal('ERROR', {
-			'name': GatewayCodes.GatewayCloseEventCodes[code],
-			'message': message_table[code],
-			'trace': trace(this.#closed),
-		});
+			this.emitInternal('ERROR', {
+				'name': GatewayCodes.GatewayCloseEventCodes[code],
+				'message': message_table[code],
+				'trace': trace(this.#error),
+			});
 
-		if (
-			[
-				GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
-				GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
-				GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
-				GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
-			].includes(code)
-		) {
+			if (
+				[
+					GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
+					GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
+					GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
+					GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
+				].includes(code)
+			) {
+				this.#resume();
+			} else if (
+				[
+					GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
+					GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
+					GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT,
+					GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
+				].includes(code)
+			) {
+				this.#identify();
+			}
+		} else {
+			this.emitInternal('ERROR', error('WEBSOCKET_ERROR', trace(this.#error)));
 			this.#resume();
-		} else if (
-			[
-				GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
-				GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
-				GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
-				GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT,
-			].includes(code)
-		) {
-			this.#identify();
 		}
 	}
 }

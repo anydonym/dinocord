@@ -4,13 +4,23 @@ import * as PresenceUpdate from '../structures/base/presenceupdate.ts';
 /**
  * The Gateway options, used to connect and facilitate events between the gateway client and Discord gateway.
  */
-export default interface GatewayOptions {
+export default interface GatewayClientOptions {
 	/** The bot token. */
 	token: string;
 	/** The intents to use. */
 	intents: Array<GatewayIntents | keyof typeof GatewayIntents> | number;
 	/** The presence to use. */
 	presence?: BotPresenceUpdate;
+	/** The path to temporary file. Not necessary, but advisable. */
+	temporary_file?: {
+		/**
+		 * Whether to store temporary useful file.
+		 * @requires `--allow-read` and `--allow-write` permissions, if enabled.
+		 */
+		use?: boolean;
+		/** The path to store temporary file. */
+		path?: string;
+	};
 }
 
 /**

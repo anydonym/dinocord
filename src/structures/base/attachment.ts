@@ -17,9 +17,9 @@ export default interface Attachment {
 	/* The proxied URL of the attachment. */
 	proxy_url: string;
 	/** The attachment height, if the attachment is an image. */
-	height?: number | undefined;
+	height?: number;
 	/** The attachment width, if the attachment is an image. */
-	width?: number | undefined;
+	width?: number;
 	/** Whether this attachment is ephemeral. */
 	ephemeral?: boolean;
 }

@@ -104,5 +104,5 @@ export interface CREATE_GUILD {
 }
 
 export interface EXECUTE_WEBHOOK extends Omit<CREATE_MESSAGE, 'message_reference' | 'sticker_ids'> {
-	avatar_url: string;
+	avatar_url?: string;
 }

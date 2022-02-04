@@ -6,8 +6,9 @@ import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/restst
 import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
 import trace from '../../util/trace.ts';
-import error from '../../util/error.ts';
+import { error } from '../../util/messages.ts';
 import Embed from '../embed.ts';
+import User from './user.ts';
 
 export * as Base from '../base/message.ts';
 
@@ -85,21 +86,25 @@ export default class Message extends IdBase implements MessagePayload {
 		return bitwiseCheck(this.flags ?? 0, MessageFlags);
 	}
 
-	async messageChannel() {
-		const method = RestEndpoints.GET_CHANNEL[0];
-		const url = RestEndpoints.GET_CHANNEL[1](this.channel_id);
-
-		return this.client.requestHttp(method, url, undefined).then((response) => {
+	async getChannel() {
+		return this.client.requestHttp(
+			RestEndpoints.GET_CHANNEL[0],
+			RestEndpoints.GET_CHANNEL[1](this.channel_id),
+			undefined,
+		).then((response) => {
 			if (response) return response.json().then((payload) => new Channel(this.client, payload));
 		}).catch((err) => {
-			this.client.emitInternal('ERROR', {
-				'name': 'CHANNEL_FETCH_ERROR',
-				'message': `Cannot get the channel ${this.channel_id}. ${err}`,
-				'trace': trace(this.messageChannel),
-			});
+			this.client.emitInternal(
+				'ERROR',
+				error('FETCH_ERROR', trace(this.getChannel), 'channel', err),
+			);
 
 			return;
 		});
+	}
+
+	async getAuthor() {
+		return new User(this.client, this.author);
 	}
 
 	async reply(content: Omit<MessageContent, 'reference'>) {
@@ -113,9 +118,6 @@ export default class Message extends IdBase implements MessagePayload {
 				return;
 			}
 
-			const method = RestEndpoints.CREATE_MESSAGE[0];
-			const url = RestEndpoints.CREATE_MESSAGE[1](this.channel_id);
-
 			const _content = content;
 			_content['message_reference'] = {
 				'message_id': this.id,
@@ -124,7 +126,11 @@ export default class Message extends IdBase implements MessagePayload {
 				'fall_if_not_exists': true,
 			};
 
-			return this.client.requestHttp(method, url, _content);
+			return this.client.requestHttp(
+				RestEndpoints.CREATE_MESSAGE[0],
+				RestEndpoints.CREATE_MESSAGE[1](this.channel_id),
+				_content,
+			);
 		} else {
 			this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.reply)));
 			return;

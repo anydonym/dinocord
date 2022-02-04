@@ -1,13 +1,12 @@
 export default interface InternalEvents {
-	DEBUG: DebugEvent;
 	ERROR: ErrorEvent;
-	HEARTBEAT: void;
-	HEARTBEAT_ACK: void;
+	GATEWAY_EVENT: GatewayEvent;
+	WEBSOCKET_DEBUG: GatewayEvent;
 	DISPATCH: DispatchEvent;
 }
 
-export interface DebugEvent {
-	event_type: string;
+export interface GatewayEvent {
+	name: string;
 	message: string;
 }
 
