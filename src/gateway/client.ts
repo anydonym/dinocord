@@ -59,49 +59,32 @@ export default class GatewayClient {
 	/**
 	 * Facilitate a connection to the Discord gateway.
 	 */
-	async connect(forceNew = true) {
-		let connected = false;
-
-		if (forceNew == false) {
-			this.ws = new WebSocket(DISCORD_WS_BASEURL);
-
-			await this.#readTemp();
-			await this.ws !== undefined;
-
-			this.ws.latency = 0;
-			this.ws.addEventListener('message', (event) => {
-				connected = event.data.op !== GatewayCodes.GatewayOpcodes.INVALID_SESSION;
-			});
-		}
-
-		if (connected == false) {
-			if (typeof this.options.intents != 'number') {
-				this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
-					.reduce(
-						(pv, nv) =>
-							(typeof pv == 'string' ? GatewayIntents[pv as keyof typeof GatewayIntents] : pv) +
-							(typeof nv == 'string' ? GatewayIntents[nv as keyof typeof GatewayIntents] : nv),
-						0,
-					);
-			}
-
-			if (!bitwiseCheck(this.options.intents, GatewayIntents)) {
-				throw new Error(
-					`Invalid Intents: Intents must be a bitfield value. Got '${this.options.intents}'.`,
+	async connect() {
+		if (typeof this.options.intents != 'number') {
+			this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
+				.reduce(
+					(pv, nv) =>
+						(typeof pv == 'string' ? GatewayIntents[pv as keyof typeof GatewayIntents] : pv) +
+						(typeof nv == 'string' ? GatewayIntents[nv as keyof typeof GatewayIntents] : nv),
+					0,
 				);
-			}
-
-			if (this.options.presence) {
-				if (this.options.presence.activities) {
-					this.options.presence = this.parsePresence(this.options.presence);
-				}
-			}
-
-			this.ws = new WebSocket(DISCORD_WS_BASEURL);
 		}
 
+		if (!bitwiseCheck(this.options.intents, GatewayIntents)) {
+			throw new Error(
+				`Invalid Intents: Intents must be a bitfield value. Got '${this.options.intents}'.`,
+			);
+		}
+
+		if (this.options.presence) {
+			if (this.options.presence.activities) {
+				this.options.presence = this.parsePresence(this.options.presence);
+			}
+		}
+
+		this.ws = new WebSocket(DISCORD_WS_BASEURL);
 		this.ws.addEventListener('message', (event) => this.#receive(event));
-		this.ws.addEventListener('error', (event) => console.log('error', event))
+		this.ws.addEventListener('error', (event) => console.log('error', event));
 		this.ws.addEventListener(
 			'close',
 			(event) => console.log(event.code),
@@ -160,9 +143,8 @@ export default class GatewayClient {
 			? InstanceType<typeof GatewayEventTypes[E][1]['default']>
 			: undefined,
 	) {
-		const filtered = this.gateway_listeners.filter((v) => v[0] == event_name);
-		filtered.forEach((v) => v[1](payload));
-		return filtered.length > 0;
+		return this.gateway_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
+			.length > 0;
 	}
 
 	/**
@@ -175,9 +157,8 @@ export default class GatewayClient {
 		event_name: E,
 		payload: InternalEventTypes[E],
 	) {
-		const filtered = this.internal_listeners.filter((v) => v[0] == event_name);
-		filtered.forEach((v) => v[1](payload));
-		return filtered.length > 0;
+		return this.internal_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
+			.length > 0;
 	}
 
 	/**
@@ -251,8 +232,6 @@ export default class GatewayClient {
 				} else {
 					this.connect(true);
 				}
-
-				await this.#resume();
 			} catch {
 				Deno.writeFileSync(
 					this.options.temporary_file.path!,
@@ -268,8 +247,15 @@ export default class GatewayClient {
 		this.#last_seq = last_seq;
 
 		if (this.options.temporary_file?.use) {
-			new TextEncoder().encode(
-				JSON.stringify({ last_date: Date.now(), last_seq: last_seq, session_id: this.#session_id }),
+			Deno.writeFileSync(
+				this.options.temporary_file.path!,
+				new TextEncoder().encode(
+					JSON.stringify({
+						last_date: Date.now(),
+						last_seq: last_seq,
+						session_id: this.#session_id,
+					}),
+				),
 			);
 		}
 	}
@@ -311,24 +297,27 @@ export default class GatewayClient {
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
 				this.emitInternal('WEBSOCKET_DEBUG', debug('RECEIVE_HEARTBEAT_ACK'));
 				this.ws.latency = Date.now() - this.#hb_sent;
-				this.#processAck(data.d);
 				break;
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
 				this.emitInternal('DISPATCH', { 'event_name': data.t! });
+
+				this.#processAck(data.s ?? null);
 
 				if (data.t === 'READY') {
 					this.user = new User(this, data.d.user);
 					this.#session_id = data.d.session_id;
 				}
 
-				this.emitGateway(
-					data.t!,
-					/// @ts-ignore If GatewayEventTypes[data.t!][1] is not undefined, so is the code below valid.
-					GatewayEventTypes[data.t!][1]
-						? new GatewayEventTypes[data.t!][1]!['default'](this, data.d!)
-						: undefined,
-				);
+				if (GatewayEventTypes[data.t!]) {
+					this.emitGateway(
+						data.t!,
+						/// @ts-ignore If GatewayEventTypes[data.t!][1] is not undefined, so is the code below valid.
+						GatewayEventTypes[data.t!][1]
+							? new GatewayEventTypes[data.t!][1]!['default'](this, data.d!)
+							: undefined,
+					);
+				}
 
 				break;
 		}
@@ -370,7 +359,7 @@ export default class GatewayClient {
 	/**
 	 * The method to send an `IDENTIFY` request to the gateway.
 	 */
-	async #identify() {	
+	async #identify() {
 		this.emitInternal('WEBSOCKET_DEBUG', debug('SEND_IDENTIFY'));
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.IDENTIFY,
@@ -459,21 +448,17 @@ export default class GatewayClient {
 					GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,
 					GatewayCodes.GatewayCloseEventCodes.NOT_AUTHENTICATED,
 					GatewayCodes.GatewayCloseEventCodes.ALREADY_AUTHENTICATED,
-				].includes(code)
-			) {
-				this.#resume();
-			} else if (
-				[
 					GatewayCodes.GatewayCloseEventCodes.UNKNOWN_ERROR,
 					GatewayCodes.GatewayCloseEventCodes.RATE_LIMITED,
 					GatewayCodes.GatewayCloseEventCodes.SESSION_TIMED_OUT,
 					GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
 				].includes(code)
 			) {
-				this.#identify();
+				this.#identify().then(() => this.#resume());
 			}
 		} else {
 			this.emitInternal('ERROR', error('WEBSOCKET_ERROR', trace(this.#error)));
+			this.#identify();
 			this.#resume();
 		}
 	}
