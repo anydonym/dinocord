@@ -1,6 +1,7 @@
 // src
 export * as Constants from './src/constants.ts';
 // src/gateway
+export * as GatewayCDNEndpoints from './src/gateway/cdnendpoints.ts';
 export * as GatewayClient from './src/gateway/client.ts';
 export * as GatewayRestEndpoints from './src/gateway/restendpoints.ts';
 export * as GatewayOptions from './src/gateway/options.ts';

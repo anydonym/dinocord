@@ -217,35 +217,6 @@ export default class GatewayClient {
 		}
 	}
 
-	async #readTemp() {
-		if (this.options.temporary_file?.use) {
-			try {
-				const filedata = new TextDecoder().decode(
-						Deno.readFileSync(this.options.temporary_file.path!),
-					),
-					json = JSON.parse(filedata) as {
-						last_date: number | null;
-						last_seq: number | null;
-						session_id: number | null;
-					};
-
-				if (json.session_id) {
-					this.#session_id = json.session_id;
-					this.#last_seq = json.last_seq;
-				} else {
-					this.connect();
-				}
-			} catch {
-				Deno.writeFileSync(
-					this.options.temporary_file.path!,
-					new TextEncoder().encode(
-						JSON.stringify({ 'last_date': null, 'last_seq': null, 'session_id': null }),
-					),
-				);
-			}
-		}
-	}
-
 	async #processAck(last_seq: number | null) {
 		this.#last_seq = last_seq;
 

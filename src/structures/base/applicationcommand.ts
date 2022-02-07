@@ -17,3 +17,27 @@ export enum ApplicationCommandType {
 	USER = 2,
 	MESSAGE = 3,
 }
+
+/**
+ * The Guild Application Command Permissions structure. Returned when fetching the permissions for a command in guild.
+ */
+export interface GuildApplicationCommandPermissions {
+	id: string;
+	application_id: string;
+	guild_id: string;
+	permissions: ApplicationCommandPermissions[];
+}
+
+/**
+ * The Application Command Permissions structure. Allows you to enable/disable commands for specific targets within a guild.
+ */
+export interface ApplicationCommandPermissions {
+	id: string;
+	type: ApplicationCommandPermissionType;
+	permission: boolean;
+}
+
+export enum ApplicationCommandPermissionType {
+	ROLE = 1,
+	USER = 2
+}
