@@ -16,7 +16,7 @@ enum HTTPHeaders {
 	/** Whether the ratelimit is applied globally or per-route. Returned only on HTTP 429 responses. */
 	RATELIMIT_GLOBAL = 'X-RateLimit-Global',
 	/** Whether the ratelimit is per-user limit (`user`), per-user global limit (`global`) or per-resource limit (`shared`). */
-	RATELIMIT_SCOPE = 'X-RateLimit-Scope'
+	RATELIMIT_SCOPE = 'X-RateLimit-Scope',
 }
 
 export default HTTPHeaders;

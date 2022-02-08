@@ -11,6 +11,14 @@ export default interface GatewayClientOptions {
 	intents: Array<GatewayIntents | keyof typeof GatewayIntents> | number;
 	/** The presence to use. */
 	presence?: BotPresenceUpdate;
+	/** Sharding configuration. For more information, visit @link https://discord.com/developers/docs/topics/gateway#sharding. */
+	sharding?: {
+		/** Whether to use shards. */
+		enable: boolean;
+		/** The number of shards. For bots that are assigned a number of shards by Discord, set the number to the given number. For library automated calculation, specify auto. */
+		number: number | 'auto';
+		override_guilds_per_shard?: number;
+	};
 }
 
 /**

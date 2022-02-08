@@ -106,3 +106,14 @@ export interface CREATE_GUILD {
 export interface EXECUTE_WEBHOOK extends Omit<CREATE_MESSAGE, 'message_reference' | 'sticker_ids'> {
 	avatar_url?: string;
 }
+
+export interface GET_GATEWAY_BOT {
+	url: string;
+	shards: number;
+	session_start_limit: {
+		total: number;
+		remaining: number;
+		reset_after: number;
+		max_concurrency: number;
+	};
+}

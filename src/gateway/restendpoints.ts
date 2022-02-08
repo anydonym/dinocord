@@ -142,6 +142,20 @@ const Endpoints = {
 		user_id: string,
 	) => `/guilds/${guild_id}/members/${user_id}`],
 	MODIFY_CURRENT_MEMBER: ['patch', (guild_id: string) => `/guilds/${guild_id}/members/@me`],
+	ADD_GUILD_MEMBER_ROLE: [
+		'put',
+		(guild_id: string, user_id: string, role_id: string) =>
+			`/guilds/${guild_id}/members/${user_id}/roles/${role_id}`,
+	],
+	REMOVE_GUILD_MEMBER_ROLE: [
+		'delete',
+		(guild_id: string, user_id: string, role_id: string) =>
+			`/guilds/${guild_id}/members/${user_id}/roles/${role_id}`,
+	],
+	REMOVE_GUILD_MEMBER: [
+		'delete',
+		(guild_id: string, user_id: string) => `/guilds/${guild_id}/members/${user_id}`,
+	],
 
 	CREATE_WEBHOOK: ['post', (channel_id: string) => `/channels/${channel_id}/webhooks`],
 	GET_CHANNEL_WEBHOOKS: ['get', (channel_id: string) => `/channels/${channel_id}/webhooks`],
@@ -164,6 +178,52 @@ const Endpoints = {
 	EXECUTE_WEBHOOK: [
 		'post',
 		(webhook_id: string, webhook_token: string) => `/webhooks/${webhook_id}/${webhook_token}`,
+	],
+
+	GET_CURRENT_USER: [
+		'get',
+		() => `/users/@me`,
+	],
+	GET_USER: [
+		'get',
+		(user_id: string) => `/users/${user_id}`,
+	],
+	MODIFY_CURRENT_USER: [
+		'patch',
+		() => `/users/@me`,
+	],
+	GET_CURRENT_USER_GUILDS: [
+		'get',
+		() => `/users/@me/guilds`,
+	],
+	GET_CURRENT_USER_GUILD_MEMBER: [
+		'get',
+		(guild_id: string) => `/users/@me/guilds/${guild_id}/member`,
+	],
+	LEAVE_GUILD: [
+		'delete',
+		(guild_id: string) => `/users/@me/guilds/${guild_id}`,
+	],
+	CREATE_DM: [
+		'post',
+		() => `/users/@me/channels`,
+	],
+	CREATE_GROUP_DM: [
+		'post',
+		() => `/users/@me/channels`,
+	],
+	GET_USER_CONNECTIONS: [
+		'get',
+		() => `/users/@me/connections`,
+	],
+
+	GET_GATEWAY: [
+		'get',
+		() => `/gateway`,
+	],
+	GET_GATEWAY_BOT: [
+		'get',
+		() => `/gateway/bot`,
 	],
 } as const;
 

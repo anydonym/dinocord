@@ -12,7 +12,7 @@ export interface WebsocketDebug {
 }
 
 export interface RestDebug {
-	url: string;
+	route: string;
 	method: string;
 }
 

@@ -2,19 +2,23 @@ import * as Activity from '../structures/base/activity.ts';
 import * as PayloadStructures from './resources/payloadstructures.ts';
 import * as GatewayCodes from './resources/codes.ts';
 
+import RestEndpoints from './restendpoints.ts';
 import GatewayClientOptions, {
 	BotPresenceUpdate,
 	GatewayIntents,
 	GatewayPresenceUpdate,
 } from './options.ts';
 import GatewayEventTypes from './resources/gatewayevents.ts';
-import InternalEventTypes, { ErrorEvent as InternalErrorEvent } from './resources/internalevents.ts';
+import InternalEventTypes, {
+	ErrorEvent as InternalErrorEvent,
+} from './resources/internalevents.ts';
 import {
 	DINOCORD_GITHUB_URL,
 	DINOCORD_VERSION,
 	DISCORD_REST_BASEURL,
 	DISCORD_WS_BASEURL,
 } from '../constants.ts';
+import { GET_GATEWAY_BOT } from './resources/reststructures.ts';
 
 import bitwiseCheck from '../util/bitwisecheck.ts';
 import json from '../util/json.ts';
@@ -64,6 +68,34 @@ export default class GatewayClient {
 	 * Facilitate a connection to the Discord gateway.
 	 */
 	async connect() {
+		this.requestHttp(RestEndpoints.GET_GATEWAY_BOT[0], RestEndpoints.GET_GATEWAY_BOT[1]()).then(
+			(response) => {
+				response.json().then((_json) => {
+					const json = _json as GET_GATEWAY_BOT;
+
+					if (json.session_start_limit.remaining == 0) {
+						this.emitInternal(
+							'ERROR',
+							error(
+								'SESSION_START_LIMIT_HIT',
+								trace(this.connect),
+								json.session_start_limit.reset_after.toString(),
+							),
+						);
+					}
+
+					if (this.options.sharding) {
+						if (this.options.sharding.enable) {
+							this.options.sharding.number = Math.ceil(
+								json.shards * 1000 *
+									(1000 / (this.options.sharding.override_guilds_per_shard ?? 1000)),
+							);
+						}
+					}
+				});
+			},
+		);
+
 		if (typeof this.options.intents != 'number') {
 			this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
 				.reduce(
@@ -167,12 +199,15 @@ export default class GatewayClient {
 		event_name: E,
 		payload: InternalEventTypes[E],
 	) {
-		const length = this.internal_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
-			.length > 0;
+		const length =
+			this.internal_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
+				.length > 0;
 
-		if (event_name == 'ERROR')
-			if (!length && (payload as InternalErrorEvent).severity == 'fatal')
+		if (event_name == 'ERROR') {
+			if (!length && (payload as InternalErrorEvent).severity == 'fatal') {
 				throw `fatal error occured.`;
+			}
+		}
 
 		return length;
 	}
@@ -216,30 +251,30 @@ export default class GatewayClient {
 	 * @param method The HTTP request method.
 	 * @param route The route to request.
 	 * @param data The data to send. Not necessary.
-	 * @param baseUrl The base URL. Defaults to Discord default HTTP base URL.
+	 * @param baseroute The base route. Defaults to Discord default HTTP base route.
 	 * @returns The native Fetch API promise.
 	 */
 	async requestHttp(
 		method: 'get' | 'put' | 'post' | 'delete' | 'patch',
 		route: string,
 		data?: Record<never, never> | undefined,
-		baseUrl: string = DISCORD_REST_BASEURL,
+		baseroute: string = DISCORD_REST_BASEURL,
 	) {
-		const requestMethod = method.toUpperCase(), requestUrl = baseUrl + route;
+		const requestMethod = method.toUpperCase(), requestroute = baseroute + route;
 
 		this.emitInternal('REST_DEBUG', {
-			'url': requestUrl,
+			'route': route,
 			'method': requestMethod,
 		});
 
-		const promise = fetch(requestUrl, {
+		const promise = fetch(requestroute, {
 			'body': JSON.stringify(data),
 			'headers': this.config.headers,
 			'method': requestMethod,
 		});
 
 		promise.then((response) => {
-			switch(response.status) {
+			switch (response.status) {
 				case 401:
 					this.emitInternal('ERROR', error('HTTP_401_INVALID_TOKEN', trace(this.requestHttp)));
 					break;
@@ -247,7 +282,7 @@ export default class GatewayClient {
 					this.emitInternal('ERROR', error('HTTP_403_PERMISSION_ERROR', trace(this.requestHttp)));
 					break;
 				case 429:
-					this.emitInternal('ERROR', error('HTTP_429_RATELIMITED', trace(this.requestHttp)))
+					this.emitInternal('ERROR', error('HTTP_429_RATELIMITED', trace(this.requestHttp)));
 					break;
 			}
 		}).catch((reason) => {
@@ -262,23 +297,15 @@ export default class GatewayClient {
 		return promise;
 	}
 
-	async #processAck(last_seq: number | null) {
-		this.#last_seq = last_seq;
-	}
-
 	/**
 	 * Sends the specified data to the gateway. Unless absolutely needed, avoid calling this method to send data.
 	 * @param data The data to send to the gateway.
 	 */
 	sendWs(
-		data: {
-			'op': GatewayCodes.GatewayOpcodes;
-			// deno-lint-ignore ban-types
-			'd'?: object | string | number;
-		} & Record<string, unknown>,
+		data: PayloadStructures.GatewayPayload,
 	) {
 		if (this.ws.readyState == this.ws.OPEN) {
-			this.ws.send(json(data, { d: {} }));
+			this.ws.send(json(data as unknown as Record<string, unknown>, { d: {} }));
 		}
 	}
 
@@ -301,12 +328,13 @@ export default class GatewayClient {
 				break;
 
 			case GatewayCodes.GatewayOpcodes.HEARTBEAT_ACK:
+				this.#hb_ghost_count = 0;
 				this.emitInternal('WEBSOCKET_DEBUG', debug('RECEIVE_HEARTBEAT_ACK'));
 				this.ws.latency = Date.now() - this.#hb_sent;
 				break;
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
-				this.#processAck(data.s ?? null);
+				this.#last_seq = data.s ?? null;
 
 				if (data.t === 'READY') {
 					this.user = new User(this, data.d.user);
@@ -333,6 +361,7 @@ export default class GatewayClient {
 	#last_seq!: number | null;
 	#session_id!: number;
 	#hb_sent!: number;
+	#hb_ghost_count = 0;
 
 	/**
 	 * The automated periodical heartbeater.
@@ -348,7 +377,18 @@ export default class GatewayClient {
 				clearTimeout(num);
 
 				num = setTimeout(
-					() => {
+					async () => {
+						this.#hb_ghost_count += 1;
+
+						if (this.#hb_ghost_count == 3) {
+							this.emitInternal(
+								'ERROR',
+								error('WEBSOCKET_GHOST_CONNECTION', trace(this.#heartbeater)),
+							);
+							await this.disconnect(1001);
+							await this.connect();
+						}
+
 						call();
 						cb();
 					},
@@ -378,8 +418,9 @@ export default class GatewayClient {
 				},
 
 				'presence': this.options.presence,
+				'shard': this.options.sharding ? [0, this.options.sharding.number] : undefined,
 			},
-		});
+		} as PayloadStructures.Identify);
 	}
 
 	async #heartbeat() {
@@ -419,7 +460,10 @@ export default class GatewayClient {
 	 */
 	async #error(code?: number) {
 		if (code) {
-			const message_table: Record<GatewayCodes.GatewayCloseEventCodes, [string, InternalErrorEvent["severity"]]> = {
+			const message_table: Record<
+				GatewayCodes.GatewayCloseEventCodes,
+				[string, InternalErrorEvent['severity']]
+			> = {
 				4000: ['An unknown error occured. Try reconnecting?', 'severe'],
 				4001: ['An invalid Gateway opcode or payload was sent.', 'severe'],
 				4002: ['An invalid payload was sent.', 'severe'],
@@ -432,14 +476,18 @@ export default class GatewayClient {
 				4010: ['An invalid shard was sent in the IDENTIFY payload.', 'fatal'],
 				4011: ['Sharding required to connect.', 'fatal'],
 				4012: ['Invalid API version.', 'fatal'],
-				4013:
-					['Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.', 'fatal'],
-				4014:
-					['Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.', 'fatal'],
+				4013: [
+					'Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.',
+					'fatal',
+				],
+				4014: [
+					'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
+					'fatal',
+				],
 			};
 
 			if (message_table[code as keyof typeof message_table]) {
-				const [message, severity] = message_table[code as keyof typeof message_table]
+				const [message, severity] = message_table[code as keyof typeof message_table];
 				this.emitInternal('ERROR', {
 					'name': GatewayCodes.GatewayCloseEventCodes[code],
 					'message': message,

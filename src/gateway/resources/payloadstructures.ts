@@ -20,7 +20,8 @@ export interface GatewayPayload {
 /**
  * The Identify payload structure, used to authenticate with the gateway.
  */
-export interface Identify {
+export interface Identify extends GatewayPayload {
+	op: GatewayOpcodes.IDENTIFY;
 	/** The bot token. */
 	token: string;
 	/** Connection properties. */
@@ -35,7 +36,7 @@ export interface Identify {
 	/** Whether dinocord should use zlib compression. */
 	compress?: boolean;
 	/** The number of shards. */
-	shard?: number;
+	shard?: [number, number];
 	/** The presence for the bot user. */
 	presence?: BotPresenceUpdate;
 	/** The Gateway Intents. See @enum GatewayIntents for more. */
