@@ -5,6 +5,7 @@
 		},
 
 		"rules": {
+			"include": ["no-eval", "no-array-constructor"],
 			"exclude": ["require-await"]
 		}
 	},

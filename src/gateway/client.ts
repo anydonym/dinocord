@@ -2,9 +2,13 @@ import * as Activity from '../structures/base/activity.ts';
 import * as PayloadStructures from './resources/payloadstructures.ts';
 import * as GatewayCodes from './resources/codes.ts';
 
-import GatewayClientOptions, { BotPresenceUpdate, GatewayIntents } from './options.ts';
+import GatewayClientOptions, {
+	BotPresenceUpdate,
+	GatewayIntents,
+	GatewayPresenceUpdate,
+} from './options.ts';
 import GatewayEventTypes from './resources/gatewayevents.ts';
-import InternalEventTypes from './resources/internalevents.ts';
+import InternalEventTypes, { ErrorEvent as InternalErrorEvent } from './resources/internalevents.ts';
 import {
 	DINOCORD_GITHUB_URL,
 	DINOCORD_VERSION,
@@ -87,11 +91,14 @@ export default class GatewayClient {
 
 		this.ws.addEventListener('message', (event) => this.#receive(event));
 		this.ws.addEventListener('error', () => this.#error());
-		this.ws.addEventListener('close', (event) => this.#error(event.code));
-		this.ws.addEventListener(
-			'close',
-			(event) => console.log(event.code),
-		);
+		this.ws.addEventListener('close', (event) => {
+			this.emitInternal('CLIENT_EVENT', {
+				'name': 'WEBSOCKET_CLOSE',
+				'message': `Websocket has been closed (${event.code}).`,
+			});
+
+			this.#error(event.code);
+		});
 	}
 
 	/**
@@ -160,17 +167,29 @@ export default class GatewayClient {
 		event_name: E,
 		payload: InternalEventTypes[E],
 	) {
-		return this.internal_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
+		const length = this.internal_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
 			.length > 0;
+
+		if (event_name == 'ERROR')
+			if (!length && (payload as InternalErrorEvent).severity == 'fatal')
+				throw `fatal error occured.`;
+
+		return length;
 	}
 
 	/**
-	 * @deprecated Not yet usable
+	 * Updates the bot presence to the specified presence update object.
+	 * @param presenceupdate The presence to update.
 	 */
-	async updatePresence(presenceupdate: BotPresenceUpdate) {
+	async updatePresence(presenceupdate: Partial<GatewayPresenceUpdate>) {
 		this.sendWs({
 			'op': GatewayCodes.GatewayOpcodes.PRESENCE_UPDATE,
-			'd': this.parsePresence(presenceupdate),
+			'd': this.parsePresence(Object.assign({
+				'since': null,
+				'afk': false,
+				'status': this.options.presence?.status,
+				'activities': this.options.presence?.activities ?? [],
+			} as GatewayPresenceUpdate, presenceupdate)),
 		});
 	}
 
@@ -179,7 +198,7 @@ export default class GatewayClient {
 	 * @param presenceupdate The presence update to parse.
 	 * @returns The parsed presence update.
 	 */
-	private parsePresence(presenceupdate: BotPresenceUpdate) {
+	private parsePresence(presenceupdate: { activities: BotPresenceUpdate['activities'] }) {
 		const presence = presenceupdate;
 
 		presence.activities = presenceupdate.activities.flatMap((v) => {
@@ -192,46 +211,59 @@ export default class GatewayClient {
 		return presence;
 	}
 
+	/**
+	 * Make a HTTP request from the client. Uses native Fetch API.
+	 * @param method The HTTP request method.
+	 * @param route The route to request.
+	 * @param data The data to send. Not necessary.
+	 * @param baseUrl The base URL. Defaults to Discord default HTTP base URL.
+	 * @returns The native Fetch API promise.
+	 */
 	async requestHttp(
 		method: 'get' | 'put' | 'post' | 'delete' | 'patch',
-		url: string,
+		route: string,
 		data?: Record<never, never> | undefined,
 		baseUrl: string = DISCORD_REST_BASEURL,
 	) {
-		if (method) {
-			const promise = fetch(baseUrl + url, {
-				'body': JSON.stringify(data),
-				'headers': this.config.headers,
-				'method': method.toUpperCase(),
-			});
+		const requestMethod = method.toUpperCase(), requestUrl = baseUrl + route;
 
-			promise.catch((reason) => {
-				this.emitInternal('ERROR', {
-					'name': 'REST_REQUEST_ERROR',
-					'message': JSON.stringify(reason),
-					'trace': trace(this.requestHttp),
-				});
-			});
+		this.emitInternal('REST_DEBUG', {
+			'url': requestUrl,
+			'method': requestMethod,
+		});
 
-			return promise;
-		}
+		const promise = fetch(requestUrl, {
+			'body': JSON.stringify(data),
+			'headers': this.config.headers,
+			'method': requestMethod,
+		});
+
+		promise.then((response) => {
+			switch(response.status) {
+				case 401:
+					this.emitInternal('ERROR', error('HTTP_401_INVALID_TOKEN', trace(this.requestHttp)));
+					break;
+				case 403:
+					this.emitInternal('ERROR', error('HTTP_403_PERMISSION_ERROR', trace(this.requestHttp)));
+					break;
+				case 429:
+					this.emitInternal('ERROR', error('HTTP_429_RATELIMITED', trace(this.requestHttp)))
+					break;
+			}
+		}).catch((reason) => {
+			this.emitInternal('ERROR', {
+				'name': 'REST_REQUEST_ERROR',
+				'message': JSON.stringify(reason),
+				'severity': 'moderate',
+				'trace': trace(this.requestHttp),
+			});
+		});
+
+		return promise;
 	}
 
 	async #processAck(last_seq: number | null) {
 		this.#last_seq = last_seq;
-
-		if (this.options.temporary_file?.use) {
-			Deno.writeFileSync(
-				this.options.temporary_file.path!,
-				new TextEncoder().encode(
-					JSON.stringify({
-						last_date: Date.now(),
-						last_seq: last_seq,
-						session_id: this.#session_id,
-					}),
-				),
-			);
-		}
 	}
 
 	/**
@@ -274,15 +306,11 @@ export default class GatewayClient {
 				break;
 
 			case GatewayCodes.GatewayOpcodes.DISPATCH:
-				this.emitInternal('DISPATCH', { 'event_name': data.t! });
-
 				this.#processAck(data.s ?? null);
 
 				if (data.t === 'READY') {
 					this.user = new User(this, data.d.user);
 					this.#session_id = data.d.session_id;
-
-					// this.#resume();
 				}
 
 				if (GatewayEventTypes[data.t!]) {
@@ -391,33 +419,37 @@ export default class GatewayClient {
 	 */
 	async #error(code?: number) {
 		if (code) {
-			const message_table: Record<GatewayCodes.GatewayCloseEventCodes, string> = {
-				4000: 'An unknown error occured. Try reconnecting?',
-				4001: 'An invalid Gateway opcode or payload was sent.',
-				4002: 'An invalid payload was sent.',
-				4003: 'A payload was sent before authentication.',
-				4004: 'An invalid token was specified. Authentication failed.',
-				4005: 'An IDENTIFY payload was sent after authentication.',
-				4007: 'An invalid sequence ID was provided while resuming. Try reconnecting?',
-				4008: 'Too much payloads have been sent quickly!',
-				4009: 'The session timed out. Try reconnecting?',
-				4010: 'An invalid shard was sent in the IDENTIFY payload.',
-				4011: 'Sharding required to connect.',
-				4012: 'Invalid API version.',
+			const message_table: Record<GatewayCodes.GatewayCloseEventCodes, [string, InternalErrorEvent["severity"]]> = {
+				4000: ['An unknown error occured. Try reconnecting?', 'severe'],
+				4001: ['An invalid Gateway opcode or payload was sent.', 'severe'],
+				4002: ['An invalid payload was sent.', 'severe'],
+				4003: ['A payload was sent before authentication.', 'severe'],
+				4004: ['An invalid token was specified. Authentication failed.', 'fatal'],
+				4005: ['An IDENTIFY payload was sent after authentication.', 'moderate'],
+				4007: ['An invalid sequence ID was provided while resuming. Try reconnecting?', 'severe'],
+				4008: ['Too much payloads have been sent quickly!', 'severe'],
+				4009: ['The session timed out. Try reconnecting?', 'moderate'],
+				4010: ['An invalid shard was sent in the IDENTIFY payload.', 'fatal'],
+				4011: ['Sharding required to connect.', 'fatal'],
+				4012: ['Invalid API version.', 'fatal'],
 				4013:
-					'Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.',
+					['Invalid Gateway Intents. Try recalculating the bitwise value for the Gateway Intents before reconnecting.', 'fatal'],
 				4014:
-					'Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.',
+					['Disallowed Gateway Intents. Enable or remove unapproved Intents before reconnecting.', 'fatal'],
 			};
 
 			if (message_table[code as keyof typeof message_table]) {
+				const [message, severity] = message_table[code as keyof typeof message_table]
 				this.emitInternal('ERROR', {
 					'name': GatewayCodes.GatewayCloseEventCodes[code],
-					'message': message_table[code as keyof typeof message_table],
+					'message': message,
+					'severity': severity,
 					'trace': trace(this.#error),
 				});
 
-				if (
+				if (severity == 'fatal') {
+					return;
+				} else if (
 					[
 						GatewayCodes.GatewayCloseEventCodes.UNKNOWN_OPCODE,
 						GatewayCodes.GatewayCloseEventCodes.DECODE_ERROR,

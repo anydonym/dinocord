@@ -11,16 +11,6 @@ export default interface GatewayClientOptions {
 	intents: Array<GatewayIntents | keyof typeof GatewayIntents> | number;
 	/** The presence to use. */
 	presence?: BotPresenceUpdate;
-	/** The path to temporary file. Not necessary, but advisable. */
-	temporary_file?: {
-		/**
-		 * Whether to store temporary useful file.
-		 * @requires `--allow-read` and `--allow-write` permissions, if enabled.
-		 */
-		use?: boolean;
-		/** The path to store temporary file. */
-		path?: string;
-	};
 }
 
 /**
@@ -71,4 +61,14 @@ export enum GatewayIntents {
 	DIRECT_MESSAGE_REACTIONS = 1 << 13,
 	DIRECT_MESSAGE_TYPING = 1 << 14,
 	GUILD_SCHEDULED_EVENTS = 1 << 16,
+}
+
+export interface GatewayPresenceUpdate {
+	since: number | null;
+	activities: {
+		name: string;
+		type: Activity.ActivityType | keyof typeof Activity.ActivityType;
+	}[];
+	status: PresenceUpdate.Status | PresenceUpdate.Status[keyof PresenceUpdate.Status];
+	afk: boolean;
 }

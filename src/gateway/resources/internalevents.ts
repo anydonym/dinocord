@@ -1,21 +1,29 @@
 export default interface InternalEvents {
 	ERROR: ErrorEvent;
-	GATEWAY_EVENT: GatewayEvent;
-	WEBSOCKET_DEBUG: GatewayEvent;
-	DISPATCH: DispatchEvent;
+	FATAL_ERROR: ErrorEvent;
+	WEBSOCKET_DEBUG: WebsocketDebug;
+	REST_DEBUG: RestDebug;
+	CLIENT_EVENT: ClientEvent;
 }
 
-export interface GatewayEvent {
+export interface WebsocketDebug {
 	name: string;
 	message: string;
+}
+
+export interface RestDebug {
+	url: string;
+	method: string;
 }
 
 export interface ErrorEvent {
 	name: string;
 	message: string;
+	severity: 'ignorable' | 'moderate' | 'severe' | 'fatal';
 	trace: string;
 }
 
-export interface DispatchEvent {
-	event_name: string | number | symbol;
+export interface ClientEvent {
+	name: string;
+	message: string;
 }

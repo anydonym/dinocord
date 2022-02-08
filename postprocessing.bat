@@ -1,8 +1,8 @@
 @echo off
 echo Running linter...
-deno lint --config ./denocfg.json
+deno lint --config ./deno.json
 echo Ran deno lint.
 echo Formatting...
-deno fmt --config ./denocfg.json
+deno fmt --config ./deno.json
 echo Ran deno fmt.
 @echo on
