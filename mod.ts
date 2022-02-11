@@ -8,6 +8,7 @@ export * as GatewayOptions from './src/gateway/options.ts';
 // src/gateway/resources
 export * as GatewayCodes from './src/gateway/resources/codes.ts';
 export * as GatewayEvents from './src/gateway/resources/gatewayevents.ts';
+export * as GatewayHTTPHeaders from './src/gateway/resources/httpheaders.ts';
 export * as GatewayInternalEvents from './src/gateway/resources/internalevents.ts';
 export * as GatewayRestStructures from './src/gateway/resources/reststructures.ts';
 export * as GatewayPayloadStructures from './src/gateway/resources/payloadstructures.ts';

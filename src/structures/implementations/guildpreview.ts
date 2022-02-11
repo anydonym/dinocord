@@ -44,7 +44,7 @@ export default class GuildPreview extends IdBase implements GuildPreviewPayload 
 		}).catch((err) => {
 			client.emitInternal(
 				'ERROR',
-				error('FETCH_ERROR', trace(GuildPreview.get), 'Guild Preview', err),
+				error('FETCH_ERROR', trace(GuildPreview.get), 'guild preview', err),
 			);
 		});
 	}

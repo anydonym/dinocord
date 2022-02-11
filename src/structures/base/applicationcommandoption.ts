@@ -15,7 +15,7 @@ export default interface ApplicationCommandOption {
 }
 
 /**
- * The Application Command Option choice structure.
+ * The Application Command Option Choice structure.
  */
 export interface ApplicationCommandOptionChoice {
 	/** 1-100 character choice name. */
@@ -24,11 +24,31 @@ export interface ApplicationCommandOptionChoice {
 	value: string | number;
 }
 
+/**
+ * The Application Command Interaction Data Option structure.
+ */
+export interface ApplicationCommandInteractionDataOption {
+	/** The name of the parameter. */
+	name: string;
+	/** The application command option type. Refer to @enum ApplicationCommandOptionType for more on possible values. */
+	type: ApplicationCommandOptionType;
+	/** The value of the option resulting from user input. */
+	value?: string | number;
+	/** Present if this option is a group or subcommand. */
+	options?: ApplicationCommandInteractionDataOption[];
+	/** Whether the option is the currently focused option for autocomplete. */
+	focused?: boolean;
+}
+
 export enum ApplicationCommandOptionType {
-	/** Text-based command that shows up when the user types slash. */
-	CHAT_INPUT = 1,
-	/** UI-based command that shows up when you right click or tap on a user. */
-	USER = 2,
-	/** UI-based command that shows up when an user right click or tap on a message. */
-	MESSAGE = 3,
+	SUB_COMMAND = 1,
+	SUB_COMMAND_GROUP = 2,
+	STRING = 3,
+	INTEGER = 4,
+	BOOLEAN = 5,
+	USER = 6,
+	CHANNEL = 7,
+	ROLE = 8,
+	MENTIONABLE = 9,
+	NUMBER = 10
 }

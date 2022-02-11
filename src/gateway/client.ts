@@ -68,33 +68,34 @@ export default class GatewayClient {
 	 * Facilitate a connection to the Discord gateway.
 	 */
 	async connect() {
-		this.requestHttp(RestEndpoints.GET_GATEWAY_BOT[0], RestEndpoints.GET_GATEWAY_BOT[1]()).then(
-			(response) => {
-				response.json().then((_json) => {
-					const json = _json as GET_GATEWAY_BOT;
+		await this.requestHttp(RestEndpoints.GET_GATEWAY_BOT[0], RestEndpoints.GET_GATEWAY_BOT[1]())
+			.then(
+				(response) => {
+					response.json().then((_json) => {
+						const json = _json as GET_GATEWAY_BOT;
 
-					if (json.session_start_limit.remaining == 0) {
-						this.emitInternal(
-							'ERROR',
-							error(
-								'SESSION_START_LIMIT_HIT',
-								trace(this.connect),
-								json.session_start_limit.reset_after.toString(),
-							),
-						);
-					}
-
-					if (this.options.sharding) {
-						if (this.options.sharding.enable) {
-							this.options.sharding.number = Math.ceil(
-								json.shards * 1000 *
-									(1000 / (this.options.sharding.override_guilds_per_shard ?? 1000)),
+						if (json.session_start_limit.remaining == 0) {
+							this.emitInternal(
+								'ERROR',
+								error(
+									'SESSION_START_LIMIT_HIT',
+									trace(this.connect),
+									json.session_start_limit.reset_after.toString(),
+								),
 							);
 						}
-					}
-				});
-			},
-		);
+
+						if (this.options.sharding) {
+							if (this.options.sharding.enable) {
+								this.options.sharding.number = Math.ceil(
+									json.shards * 1000 *
+										(1000 / (this.options.sharding.override_guilds_per_shard ?? 1000)),
+								);
+							}
+						}
+					});
+				},
+			);
 
 		if (typeof this.options.intents != 'number') {
 			this.options.intents = <number> this.options.intents.filter((v, i, a) => a.indexOf(v) == i)
@@ -118,6 +119,10 @@ export default class GatewayClient {
 			}
 		}
 
+		this.startConnection();
+	}
+
+	startConnection() {
 		this.ws = new WebSocket(DISCORD_WS_BASEURL);
 		this.ws.latency = 0;
 
@@ -152,7 +157,7 @@ export default class GatewayClient {
 		callback: (
 			payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
 				? InstanceType<typeof GatewayEventTypes[E][1]['default']>
-				: undefined,
+				: typeof GatewayEventTypes[E][0],
 		) => void,
 	) {
 		this.gateway_listeners.push([event_name, callback]);
@@ -183,7 +188,7 @@ export default class GatewayClient {
 		event_name: E,
 		payload: typeof GatewayEventTypes[E][1] extends Record<never, never>
 			? InstanceType<typeof GatewayEventTypes[E][1]['default']>
-			: undefined,
+			: typeof GatewayEventTypes[E][0],
 	) {
 		return this.gateway_listeners.filter((v) => v[0] == event_name).flatMap((v) => v[1](payload))
 			.length > 0;
@@ -345,7 +350,7 @@ export default class GatewayClient {
 					this.emitGateway(
 						data.t!,
 						/// @ts-ignore If GatewayEventTypes[data.t!][1] is not undefined, so is the code below valid.
-						GatewayEventTypes[data.t!][1]
+						GatewayEventTypes[data.t!][0]
 							? new GatewayEventTypes[data.t!][1]!['default'](this, data.d!)
 							: undefined,
 					);
@@ -385,7 +390,7 @@ export default class GatewayClient {
 								'ERROR',
 								error('WEBSOCKET_GHOST_CONNECTION', trace(this.#heartbeater)),
 							);
-							await this.disconnect(1001);
+							await this.disconnect(3001);
 							await this.connect();
 						}
 
@@ -418,7 +423,7 @@ export default class GatewayClient {
 				},
 
 				'presence': this.options.presence,
-				'shard': this.options.sharding ? [0, this.options.sharding.number] : undefined,
+				'shard': this.options.sharding?.enable ? [0, this.options.sharding.number] : undefined,
 			},
 		} as PayloadStructures.Identify);
 	}
@@ -509,10 +514,14 @@ export default class GatewayClient {
 						GatewayCodes.GatewayCloseEventCodes.INVALID_SEQ,
 					].includes(code)
 				) {
-					this.#identify();
+					this.disconnect(3001);
+					this.startConnection();
+					this.ws.onopen = () => this.#identify();
 				} else {
 					this.emitInternal('ERROR', error('WEBSOCKET_ERROR', trace(this.#error), code.toString()));
-					this.#identify();
+					this.disconnect(3001);
+					this.startConnection();
+					this.ws.onopen = () => this.#identify();
 				}
 			}
 		} else {
@@ -520,7 +529,9 @@ export default class GatewayClient {
 				'ERROR',
 				error('WEBSOCKET_ERROR', trace(this.#error), 'unknown error code'),
 			);
-			this.#identify();
+			this.disconnect(3001);
+			this.startConnection();
+			this.ws.onopen = () => this.#resume();
 		}
 	}
 }

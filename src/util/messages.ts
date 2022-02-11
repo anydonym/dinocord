@@ -13,11 +13,11 @@ export const Errors = {
 		'Validation for the embeds of the specified content failed. Refer to https://discord.com/developers/docs/resources/channel#embed-limits for more.',
 		'ignorable',
 	],
-	'INVALID_CHANNEL_TYPE': [
-		'The action executed requires channel type other than the current channel type (#{0}).',
+	'INVALID_TYPE': [
+		'The action #{0} requires the #{1} to be #{2}.',
 		'moderate',
 	],
-	'FETCH_ERROR': ['Cannot fetch the desired #{0}; ${1}', 'moderate'],
+	'FETCH_ERROR': ['Cannot fetch the desired #{0}; #{1}', 'moderate'],
 	'WEBSOCKET_ERROR': [
 		'An unknown error occured. Websocket connection terminated unexpectedly (#{0}).',
 		'severe',
@@ -45,8 +45,8 @@ export function error<E extends keyof typeof Errors>(
 	trace: string,
 	...replacer: string[]
 ) {
-	const [message, severity] = Errors[name];
-	replacer.forEach((string, index) => message.replace(`#{${index}}`, string));
+	let [message, severity] = Errors[name];
+	replacer.forEach((string, index) => message = message.replace(`#{${index}}`, string));
 
 	return {
 		'name': name,
@@ -67,8 +67,8 @@ export function debug<E extends keyof typeof DebugMessages>(
 	name: E,
 	...replacer: string[]
 ) {
-	const message = DebugMessages[name];
-	replacer.forEach((string, index) => message.replace(`#{${index}}`, string));
+	let message = DebugMessages[name];
+	replacer.forEach((string, index) => message = message.replace(`#{${index}}`, string));
 
 	return {
 		'name': name,

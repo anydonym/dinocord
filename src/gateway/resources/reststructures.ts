@@ -6,6 +6,7 @@ import MessageReference from '../../structures/base/messagereference.ts';
 import Role from '../../structures/base/role.ts';
 import Channel from '../../structures/base/channel.ts';
 import AllowedMention from '../../structures/base/allowedmention.ts';
+import { ImageData } from '../../structures/misctypes.ts';
 
 /**
  * @todo Set icon type to binary.
@@ -101,6 +102,11 @@ export interface CREATE_GUILD {
 	afk_timeout?: number;
 	system_channel_id?: string;
 	system_channel_flags?: number;
+}
+
+export interface CREATE_WEBHOOK {
+	name: string;
+	avatar?: ImageData;
 }
 
 export interface EXECUTE_WEBHOOK extends Omit<CREATE_MESSAGE, 'message_reference' | 'sticker_ids'> {

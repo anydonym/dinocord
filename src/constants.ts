@@ -1,4 +1,4 @@
-export const DINOCORD_VERSION = 'b2.0';
+export const DINOCORD_VERSION = 'b2.1';
 
 export const DINOCORD_GITHUB_URL = 'https://github.com/anydonym/dinocord';
 

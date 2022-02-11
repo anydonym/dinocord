@@ -3,11 +3,12 @@ import ChannelPayload, { ChannelType } from '../base/channel.ts';
 import * as Base from '../base/channel.ts';
 import GatewayClient from '../../gateway/client.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
-import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
+import { CREATE_MESSAGE, CREATE_WEBHOOK } from '../../gateway/resources/reststructures.ts';
 import trace from '../../util/trace.ts';
 import StageInstance from '../base/stageinstance.ts';
 import { error } from '../../util/messages.ts';
 import Embed from '../embed.ts';
+import { ErrorEvent } from '../../gateway/resources/internalevents.ts';
 
 export * as Base from '../base/channel.ts';
 
@@ -77,7 +78,7 @@ export default class Channel extends IdBase implements ChannelPayload {
 		this.discoverable_disabled = payload.discoverable_disabled;
 	}
 
-	async createMessage(content: MessageContent) {
+	async createMessage(content: CREATE_MESSAGE) {
 		if (this.isText()) {
 			if (
 				content.content || content.embeds || content.sticker_ids ||
@@ -105,17 +106,40 @@ export default class Channel extends IdBase implements ChannelPayload {
 				return;
 			}
 		} else {
-			this.client.emitInternal(
-				'ERROR',
-				error('INVALID_CHANNEL_TYPE', trace(this.createMessage), this.type.toString()),
+			const e = error(
+				'INVALID_TYPE',
+				trace(this.createMessage),
+				'Channel.createMessage',
+				'channel',
+				'a text channel',
 			);
-			return;
+			this.client.emitInternal('ERROR', e);
+
+			return e;
 		}
 	}
 
-	createWebhook() {
+	createWebhook(webhook_information: CREATE_WEBHOOK) {
 		if (this.isText()) {
-			RestEndpoints;
+			this.client.requestHttp(
+				RestEndpoints.CREATE_WEBHOOK[0],
+				RestEndpoints.CREATE_WEBHOOK[1](this.id),
+				webhook_information,
+			);
+		} else {
+			const e = error(
+				'INVALID_TYPE',
+				trace(this.createWebhook),
+				'Channel.createWebhook',
+				'channel',
+				'a text channel',
+			);
+			this.client.emitInternal(
+				'ERROR',
+				e,
+			);
+
+			return e;
 		}
 	}
 
@@ -143,14 +167,17 @@ export default class Channel extends IdBase implements ChannelPayload {
 		return this.guild_id !== undefined;
 	}
 
-	static async get(client: GatewayClient, channel_id: string): Promise<Channel | void> {
+	static async get(client: GatewayClient, channel_id: string): Promise<Channel | ErrorEvent> {
 		return client.requestHttp(
 			RestEndpoints.GET_CHANNEL[0],
 			RestEndpoints.GET_CHANNEL[1](channel_id),
-		).then((response) => {
-			if (response) return response.json().then((payload) => new Channel(client, payload));
+		).then(async (response) => {
+			return response.json().then((payload) => new Channel(client, payload));
 		}).catch((err) => {
-			client.emitInternal('ERROR', error('FETCH_ERROR', trace(Channel.get), 'Channel', err));
+			const e = error('FETCH_ERROR', trace(Channel.get), 'channel', err);
+			client.emitInternal('ERROR', e);
+
+			return e;
 		});
 	}
 }

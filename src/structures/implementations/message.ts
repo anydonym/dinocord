@@ -2,13 +2,15 @@ import GatewayClient from '../../gateway/client.ts';
 import { IdBase } from '../idbase.a.ts';
 import MessagePayload, { MessageFlags } from '../base/message.ts';
 import bitwiseCheck from '../../util/bitwisecheck.ts';
-import { CREATE_MESSAGE as MessageContent } from '../../gateway/resources/reststructures.ts';
+import { CREATE_MESSAGE } from '../../gateway/resources/reststructures.ts';
 import RestEndpoints from '../../gateway/restendpoints.ts';
 import Channel from './channel.ts';
 import trace from '../../util/trace.ts';
 import { error } from '../../util/messages.ts';
 import Embed from '../embed.ts';
 import User from './user.ts';
+import Guild from './guild.ts';
+import { ErrorEvent } from '../../gateway/resources/internalevents.ts';
 
 export * as Base from '../base/message.ts';
 
@@ -86,20 +88,18 @@ export default class Message extends IdBase implements MessagePayload {
 		return bitwiseCheck(this.flags ?? 0, MessageFlags);
 	}
 
-	async getChannel() {
+	async getChannel(): Promise<Channel | ErrorEvent> {
 		return this.client.requestHttp(
 			RestEndpoints.GET_CHANNEL[0],
 			RestEndpoints.GET_CHANNEL[1](this.channel_id),
 			undefined,
-		).then((response) => {
-			if (response) return response.json().then((payload) => new Channel(this.client, payload));
+		).then(async (response) => {
+			return response.json().then((payload) => new Channel(this.client, payload));
 		}).catch((err) => {
-			this.client.emitInternal(
-				'ERROR',
-				error('FETCH_ERROR', trace(this.getChannel), 'channel', err),
-			);
+			const e = error('FETCH_ERROR', trace(this.getChannel), 'channel', err);
+			this.client.emitInternal('ERROR', e);
 
-			return;
+			return e;
 		});
 	}
 
@@ -107,7 +107,34 @@ export default class Message extends IdBase implements MessagePayload {
 		return new User(this.client, this.author);
 	}
 
-	async reply(content: Omit<MessageContent, 'reference'>) {
+	async getGuild(): Promise<Guild | ErrorEvent> {
+		if (this.guild_id) {
+			return this.client.requestHttp(
+				RestEndpoints.GET_GUILD[0],
+				RestEndpoints.GET_GUILD[1](this.guild_id),
+			).then(async (res) => {
+				return res.json().then((json) => new Guild(this.client, json));
+			}).catch((err) => {
+				const e = error('FETCH_ERROR', trace(this.getGuild), 'guild', err);
+				this.client.emitInternal('ERROR', e);
+
+				return e;
+			});
+		} else {
+			const e = error(
+				'INVALID_TYPE',
+				trace(this.getGuild),
+				'Message.getGuild()',
+				'message',
+				'sent in a guild',
+			);
+			this.client.emitInternal('ERROR', e);
+
+			return e;
+		}
+	}
+
+	async reply(content: Omit<CREATE_MESSAGE, 'reference'>) {
 		if (content.content || content.file || content.embeds) {
 			if (
 				(content.embeds ?? []).filter((e) =>
@@ -132,8 +159,10 @@ export default class Message extends IdBase implements MessagePayload {
 				_content,
 			);
 		} else {
-			this.client.emitInternal('ERROR', error('EMPTY_MESSAGE', trace(this.reply)));
-			return;
+			const e = error('EMPTY_MESSAGE', trace(this.reply));
+			this.client.emitInternal('ERROR', e);
+
+			return e;
 		}
 	}
 }
